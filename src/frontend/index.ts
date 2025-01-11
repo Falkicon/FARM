@@ -47,7 +47,7 @@ async function fetchSystemInfo() {
 }
 
 // Function to update the UI with system info
-async function updateSystemInfo() {
+export async function updateSystemInfo() {
   const systemInfoElement = document.getElementById('systemInfo');
   if (!systemInfoElement) return;
 

@@ -13,7 +13,7 @@ export default defineConfig({
   },
   plugins: [],
   optimizeDeps: {
-    include: ['lit', 'lit/decorators.js']
+    include: []
   },
   server: {
     fs: {

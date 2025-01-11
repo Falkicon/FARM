@@ -45,9 +45,10 @@ npm run build:backend   # Build backend
 
 # Testing
 npm run test           # Run unit tests
-npm run test:coverage  # Run tests with coverage
-npm run test:e2e      # Run end-to-end tests
-npm run test:e2e:ui   # Run e2e tests with UI
+npm run test:ui       # Run tests with UI
+npm run test:coverage # Run tests with coverage
+npm run test:e2e     # Run end-to-end tests with Playwright
+npm run test:e2e:ui  # Run Playwright tests with UI
 
 # Documentation
 npm run docs          # Serve documentation

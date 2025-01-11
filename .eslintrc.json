@@ -3,8 +3,7 @@
   "env": {
     "browser": true,
     "es2022": true,
-    "node": true,
-    "jest": true
+    "node": true
   },
   "extends": [
     "eslint:recommended",
@@ -24,7 +23,6 @@
   "plugins": [
     "@typescript-eslint",
     "import",
-    "jest",
     "jsx-a11y",
     "promise",
     "security",
@@ -164,11 +162,8 @@
         "**/*.spec.ts"
       ],
       "env": {
-        "jest": true
+        "vitest": true
       },
-      "extends": [
-        "plugin:jest/recommended"
-      ],
       "rules": {
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-non-null-assertion": "off"
