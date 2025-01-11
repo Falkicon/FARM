@@ -8,15 +8,16 @@ import { systemRoutes } from './api/system.js';
 // Create Fastify instance
 const fastify = Fastify({
   logger: {
-    transport: env.NODE_ENV === 'development'
-      ? {
-        target: 'pino-pretty',
-        options: {
-          translateTime: 'HH:MM:ss Z',
-          ignore: 'pid,hostname',
-        },
-      }
-      : undefined,
+    transport:
+      env.NODE_ENV === 'development'
+        ? {
+            target: 'pino-pretty',
+            options: {
+              translateTime: 'HH:MM:ss Z',
+              ignore: 'pid,hostname',
+            },
+          }
+        : undefined,
   },
 });
 
@@ -55,7 +56,7 @@ const start = async () => {
   try {
     await fastify.listen({
       port: env.PORT,
-      host: env.HOST
+      host: env.HOST,
     });
     fastify.log.info(`Server listening on ${env.HOST}:${env.PORT}`);
   } catch (err) {

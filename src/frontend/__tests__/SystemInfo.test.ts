@@ -1,10 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  ButtonDefinition,
-  DividerDefinition,
-  SpinnerDefinition,
-  TextDefinition
-} from '@fluentui/web-components';
+import { ButtonDefinition, DividerDefinition, SpinnerDefinition, TextDefinition } from '@fluentui/web-components';
 import { CardDefinition } from '@fabric-msft/fabric-web';
 
 describe('SystemInfo', () => {
@@ -13,19 +8,19 @@ describe('SystemInfo', () => {
       manufacturer: 'Intel',
       brand: 'Core i7',
       cores: 8,
-      physicalCores: 4
+      physicalCores: 4,
     },
     memory: {
       total: 16 * 1024 * 1024 * 1024, // 16GB
-      used: 8 * 1024 * 1024 * 1024,   // 8GB
-      free: 8 * 1024 * 1024 * 1024    // 8GB
+      used: 8 * 1024 * 1024 * 1024, // 8GB
+      free: 8 * 1024 * 1024 * 1024, // 8GB
     },
     os: {
       platform: 'win32',
       distro: 'Windows',
       release: '10',
-      arch: 'x64'
-    }
+      arch: 'x64',
+    },
   };
 
   beforeEach(() => {
@@ -40,8 +35,8 @@ describe('SystemInfo', () => {
     global.fetch = vi.fn().mockImplementation(() =>
       Promise.resolve({
         ok: true,
-        json: () => Promise.resolve(mockSystemInfo)
-      })
+        json: () => Promise.resolve(mockSystemInfo),
+      }),
     );
 
     // Reset the DOM
@@ -99,9 +94,7 @@ describe('SystemInfo', () => {
 
   it('should handle fetch errors gracefully', async () => {
     // Mock fetch to simulate an error
-    global.fetch = vi.fn().mockImplementation(() =>
-      Promise.reject(new Error('Network error'))
-    );
+    global.fetch = vi.fn().mockImplementation(() => Promise.reject(new Error('Network error')));
 
     // Setup initial DOM
     document.body.innerHTML = `
@@ -140,7 +133,7 @@ describe('SystemInfo', () => {
       const refreshButton = document.getElementById('refreshButton');
       if (refreshButton) {
         refreshButton.addEventListener('click', () => {
-          import('../index').then(module => {
+          import('../index').then((module) => {
             module.updateSystemInfo();
           });
         });

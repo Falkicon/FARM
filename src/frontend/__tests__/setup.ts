@@ -6,13 +6,13 @@ global.customElements = {
   define: vi.fn(),
   get: vi.fn(),
   upgrade: vi.fn(),
-  whenDefined: vi.fn(() => Promise.resolve())
+  whenDefined: vi.fn(() => Promise.resolve()),
 } as any;
 
 // Mock window.customElements
 Object.defineProperty(window, 'customElements', {
   value: global.customElements,
-  writable: true
+  writable: true,
 });
 
 // Mock ResizeObserver
@@ -32,7 +32,7 @@ global.IntersectionObserver = class IntersectionObserver {
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,

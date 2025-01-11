@@ -72,8 +72,7 @@ fluent-divider {
   margin: 12px 0;
 }
 
-
-fluent-text[size="700"] {
+fluent-text[size='700'] {
   margin-bottom: 8px;
 }
 

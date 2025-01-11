@@ -1,13 +1,6 @@
-import {
-  ButtonDefinition,
-  DividerDefinition,
-  SpinnerDefinition,
-  TextDefinition
-} from '@fluentui/web-components';
+import { ButtonDefinition, DividerDefinition, SpinnerDefinition, TextDefinition } from '@fluentui/web-components';
 
-import {
-  CardDefinition
-} from '@fabric-msft/fabric-web';
+import { CardDefinition } from '@fabric-msft/fabric-web';
 
 import { fabricLightTheme, setTheme } from '@fabric-msft/theme';
 
@@ -93,7 +86,7 @@ export async function updateSystemInfo() {
             <fluent-text>${formatBytes(data.memory.used)}</fluent-text>
           </div>
           <div class="memory-bar">
-            <div class="memory-used" style="width: ${(data.memory.used / data.memory.total * 100).toFixed(1)}%"></div>
+            <div class="memory-used" style="width: ${((data.memory.used / data.memory.total) * 100).toFixed(1)}%"></div>
           </div>
           <div class="info-item">
             <fluent-text>Free:</fluent-text>

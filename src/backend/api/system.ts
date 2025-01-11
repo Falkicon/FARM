@@ -4,11 +4,7 @@ import { cpu, mem, osInfo } from 'systeminformation';
 export const systemRoutes: FastifyPluginAsync = async (fastify) => {
   // Get basic system information
   fastify.get('/api/system/info', async () => {
-    const [cpuInfo, memInfo, os] = await Promise.all([
-      cpu(),
-      mem(),
-      osInfo()
-    ]);
+    const [cpuInfo, memInfo, os] = await Promise.all([cpu(), mem(), osInfo()]);
 
     return {
       cpu: {
@@ -27,7 +23,7 @@ export const systemRoutes: FastifyPluginAsync = async (fastify) => {
         distro: os.distro,
         release: os.release,
         arch: os.arch,
-      }
+      },
     };
   });
 
