@@ -1,7 +1,7 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": [
-    "src/types.ts",
+    "src/shared/types",
     "src/frontend",
     "src/backend",
     "src/shared"
@@ -27,7 +27,7 @@
   ],
   "plugin": [],
   "theme": "default",
-  "readme": "src/README.md",
+  "readme": "README.md",
   "tsconfig": "tsconfig.json",
   "sort": [
     "source-order"
@@ -52,10 +52,6 @@
   "preserveWatchOutput": true,
   "pretty": true,
   "titleLink": "https://falkicon.github.io/farm",
-  "htmlLang": "en",
-  "githubPages": true,
-  "disableSources": false,
   "sourceLinkTemplate": "https://github.com/Falkicon/farm/blob/{gitRevision}/{path}#L{line}",
-  "gitRevision": "main",
-  "gaID": ""
+  "gitRevision": "main"
 }

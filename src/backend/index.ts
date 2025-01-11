@@ -1,97 +1,68 @@
-import server from './server';
-import { config } from 'dotenv';
-import { networkInterfaces } from 'os';
-import { createStartupBanner } from './utils/banner';
+import Fastify from 'fastify';
+import cors from '@fastify/cors';
+import helmet from '@fastify/helmet';
+import multipart from '@fastify/multipart';
+import { env } from './config/env.js';
+import { systemRoutes } from './api/system.js';
 
-// Load environment variables
-config();
+// Create Fastify instance
+const fastify = Fastify({
+  logger: {
+    transport:
+      env.NODE_ENV === 'development'
+        ? {
+            target: 'pino-pretty',
+            options: {
+              translateTime: 'HH:MM:ss Z',
+              ignore: 'pid,hostname',
+            },
+          }
+        : undefined,
+  },
+});
 
-const PORT = 8000;
-const HOST = '0.0.0.0';
-const NODE_ENV = process.env.NODE_ENV || 'development';
-const FRONTEND_PORT = 3000;
+// Register plugins
+await fastify.register(cors, {
+  origin: env.CORS_ORIGIN,
+  credentials: true,
+});
 
-// Get local IP address
-const getLocalIP = () => {
-  try {
-    const nets = networkInterfaces();
-    for (const name of Object.keys(nets)) {
-      for (const net of nets[name] ?? []) {
-        // Skip internal and non-IPv4 addresses
-        if (!net.internal && net.family === 'IPv4') {
-          return net.address;
-        }
-      }
-    }
-    return '127.0.0.1';
-  } catch (error) {
-    console.error('Error getting local IP:', error);
-    return '127.0.0.1';
-  }
-};
+await fastify.register(helmet, {
+  contentSecurityPolicy: false,
+});
 
-// Start the server
-const start = async () => {
-  try {
-    // Configure server
-    server.log.info('Configuring server...');
+await fastify.register(multipart);
 
-    // Add error handlers
-    process.on('unhandledRejection', (err) => {
-      console.error('Unhandled rejection:', err);
-      process.exit(1);
-    });
+// Register routes
+await fastify.register(systemRoutes);
 
-    process.on('uncaughtException', (err) => {
-      console.error('Uncaught exception:', err);
-      process.exit(1);
-    });
+// Health check route
+fastify.get('/health', async () => {
+  return { status: 'ok', timestamp: new Date().toISOString() };
+});
 
-    // Start server silently
-    server.log.info(`Starting server on ${HOST}:${PORT}...`);
-    await server.listen({
-      port: PORT,
-      host: HOST,
-      listenTextResolver: () => '',
-    });
-
-    // Display startup banner
-    createStartupBanner({
-      mode: NODE_ENV,
-      backendPort: PORT,
-      frontendPort: FRONTEND_PORT,
-      localIP: getLocalIP(),
-    });
-
-    // Log startup message directly to stdout
-    process.stdout.write('Server started successfully\n\n');
-  } catch (err) {
-    console.error('Failed to start server:', err);
-    server.log.error('Failed to start server:', err);
-    process.exit(1);
-  }
-};
-
-// Handle graceful shutdown
-const shutdown = async () => {
-  try {
-    console.log('\nShutting down server...');
-    await server.close();
-    console.log('Server shutdown complete');
-    process.exit(0);
-  } catch (err) {
-    console.error('Error during shutdown:', err);
-    server.log.error('Error during shutdown:', err);
-    process.exit(1);
-  }
-};
-
-// Register shutdown handlers
-process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown);
+// Error handler
+fastify.setErrorHandler((error, request, reply) => {
+  fastify.log.error(error);
+  reply.status(error.statusCode ?? 500).send({
+    error: error.name,
+    message: error.message,
+    statusCode: error.statusCode ?? 500,
+  });
+});
 
 // Start server
-start().catch((err) => {
-  console.error('Fatal error during startup:', err);
-  process.exit(1);
-});
+const start = async () => {
+  try {
+    await fastify.listen({
+      port: env.PORT,
+      host: env.HOST,
+    });
+    fastify.log.info(`Server listening on ${env.HOST}:${env.PORT}`);
+  } catch (err) {
+    fastify.log.error(err);
+    process.exit(1);
+  }
+};
+
+start();

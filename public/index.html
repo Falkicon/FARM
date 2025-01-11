@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FARM - FAST Element App</title>
+
+  <!-- FAST Element and Fluent UI Web Components -->
+  <script type="module"
+    src="https://cdn.jsdelivr.net/npm/@microsoft/fast-element@2.0.0-beta.26/dist/fast-element.min.js"></script>
+  <script type="module"
+    src="https://cdn.jsdelivr.net/npm/@fluentui/web-components@3.0.0-alpha.31/dist/web-components.min.js"></script>
+
+  <!-- Application Styles -->
+  <style>
+    :root {
+      --fill-color: #FFFFFF;
+      --accent-fill-rest: #0078D4;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <fluent-design-system-provider>
+    <main>
+      <h1>Welcome to FARM</h1>
+      <fluent-button appearance="accent">Get Started</fluent-button>
+
+      <!-- Example of a custom FAST Element component -->
+      <farm-greeting name="Developer"></farm-greeting>
+    </main>
+  </fluent-design-system-provider>
+
+  <!-- Application Scripts -->
+  <script type="module">
+    import { FASTElement, customElement, attr, html } from '@microsoft/fast-element';
+
+    // Example custom component
+    const template = html`
+            <div>Hello, ${x => x.name}! Welcome to FAST Element.</div>
+        `;
+
+    @customElement({
+      name: 'farm-greeting',
+      template
+    })
+    class FarmGreeting extends FASTElement {
+      @attr name = 'World';
+    }
+  </script>
+</body>
+
+</html>

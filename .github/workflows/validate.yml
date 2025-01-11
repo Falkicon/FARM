@@ -1,16 +1,10 @@
-name: Validate Specifications
+name: Validate Code Quality
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'docs/specs/**'
-      - 'tools/validation/**'
   pull_request:
     branches: [main]
-    paths:
-      - 'docs/specs/**'
-      - 'tools/validation/**'
 
 jobs:
   validate:
@@ -27,16 +21,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Validate specifications
-        run: npm run validate:specs
+      - name: Run linting
+        run: npm run lint
 
-      - name: Validate OpenAPI
-        run: npm run validate:openapi
+      - name: Check formatting
+        run: npm run format:check
 
-      - name: Validate Markdown
-        run: |
-          npm install -g markdownlint-cli
-          markdownlint 'docs/specs/**/*.md' --config .markdownlint.json
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm test
 
       - name: Check for validation status
         run: |
