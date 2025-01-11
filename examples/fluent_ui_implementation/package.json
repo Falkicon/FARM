@@ -1,0 +1,11 @@
+{
+  "name": "typescript",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@fabric-msft/fabric-web": "2.0.0-beta.0",
+    "@fabric-msft/theme": "1.0.0-beta",
+    "@fluentui/web-components": "^3.0.0-beta.75",
+    "@microsoft/fast-element": "2.0.0-beta.26"
+  }
+}

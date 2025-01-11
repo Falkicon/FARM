@@ -1,5 +1,0 @@
-[33m69c79c2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mspecification-system-update[m[33m, [m[1;31morigin/specification-system-update[m[33m)[m fixed bug for missing @version
-[33m0bda76d[m Update validate-specs.ts
-[33m324ccd1[m Update validate-specs.ts
-[33mcd1ee32[m Small bug fix to fix run error.
-[33m8ec42cf[m package updates to fix error

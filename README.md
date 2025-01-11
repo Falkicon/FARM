@@ -1,20 +1,21 @@
-# FARM Stack Boilerplate
+# FARM Stack
 
-Modern web application boilerplate combining Fastify, API-first design, Lit Web Components, and MongoDB.
+![FARM Stack](README-banner.png)
+
+Modern web application boilerplate combining FAST Element 2.0, Fluent UI Web Components, and Fastify with a focus on developer experience and performance.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
-[![Node.js Version](https://img.shields.io/badge/Node.js-22.0%2B-brightgreen)](https://nodejs.org/)
+[![Node.js Version](https://img.shields.io/badge/Node.js-18.0%2B-brightgreen)](https://nodejs.org/)
 [![Documentation](https://img.shields.io/badge/docs-MkDocs-blue.svg)](https://falkicon.github.io/farm)
 
 ## Quick Start
 
 ### Prerequisites
-- Node.js 22.0 or higher
-- npm 10.0 or higher
-- Git
+- Node.js 18.0 or higher
+- npm 9.0 or higher
 - Python 3.x (for documentation)
-- Git Bash (recommended) or another terminal
+- PostgreSQL 14 or higher (optional)
 
 ### Installation
 ```bash
@@ -29,191 +30,108 @@ npm install
 npm run dev
 ```
 
-### Development Workflow
+### Development Scripts
 
-#### 1. Code Quality
 ```bash
-# Run linting
-npm run lint
+# Development
+npm run dev              # Start all development servers
+npm run dev:frontend    # Frontend only (port 3000)
+npm run dev:backend     # Backend only (port 3001)
 
-# Type checking
-npm run typecheck
+# Building
+npm run build           # Build all
+npm run build:frontend  # Build frontend
+npm run build:backend   # Build backend
 
-# Run tests
-npm run test
-```
-
-#### 2. Development Servers
-```bash
-# Start all development servers
-npm run dev
-
-# Start individual servers
-npm run dev:frontend    # Frontend on port 3000
-npm run dev:backend     # Backend on port 8000
-npm run storybook       # Storybook on port 6006
-```
-
-#### 3. Testing
-```bash
-# Run test suite
+# Testing
 npm run test           # Run unit tests
-npm run test:e2e       # Run end-to-end tests
-npm run test:ui        # Run component tests
+npm run test:coverage  # Run tests with coverage
+npm run test:e2e      # Run end-to-end tests
+npm run test:e2e:ui   # Run e2e tests with UI
 
-# Coverage report
-npm run test:coverage
+# Documentation
+npm run docs          # Serve documentation
+npm run docs:build    # Build documentation
+npm run docs:deploy   # Deploy to GitHub Pages
+
+# Code Quality
+npm run lint         # Run ESLint
+npm run format       # Run Prettier
+npm run typecheck    # Run TypeScript checks
+
+# Utilities
+npm run clean        # Clean build artifacts
+npm run clean:all    # Clean everything including node_modules
 ```
-
-#### 4. Building
-```bash
-# Production build
-npm run build
-
-# Preview production build
-npm run preview
-```
-
-#### 5. Documentation
-
-Our documentation system consists of two complementary parts:
-
-### 1. Project Documentation (MkDocs)
-
-Project-wide documentation, guides, and architecture overview.
-
-```bash
-# Start documentation server
-npm run docs:serve     # http://localhost:8000
-
-# Build documentation
-npm run docs:build     # Outputs to site/
-
-# Deploy to GitHub Pages
-npm run docs:deploy
-
-# Clean documentation
-npm run docs:clean
-```
-
-### 2. API Documentation (TypeDoc)
-
-Automatically generated API documentation from TypeScript source code.
-
-```bash
-# Generate and serve API docs
-npm run docs:api:serve # http://localhost:8001
-
-# Build API documentation
-npm run docs:api:build # Outputs to docs/api/
-
-# Clean API documentation
-npm run docs:api:clean
-```
-
-### Documentation Structure
-
-1. **Project Documentation** (`http://localhost:8000`):
-   - Getting Started Guide
-   - Architecture Overview
-   - Development Guidelines
-   - Component Documentation
-   - Specifications
-   - Contributing Guide
-
-2. **API Documentation** (`http://localhost:8001`):
-   - TypeScript Interfaces
-   - Component APIs
-   - Service Documentation
-   - Type Definitions
-   - Module Documentation
-
-### Development Workflow
-
-1. Start both documentation servers:
-   ```bash
-   # In terminal 1
-   npm run docs:serve      # Project docs on :8000
-
-   # In terminal 2
-   npm run docs:api:serve  # API docs on :8001
-   ```
-
-2. Make changes:
-   - Project docs: Edit markdown files in `docs/`
-   - API docs: Update TypeScript comments in source code
-
-3. View changes:
-   - Project docs: Auto-reloads on changes
-   - API docs: Run `npm run docs:api` to rebuild
-
-### Production Documentation
-
-Our documentation is available online:
-
-- Project Documentation: https://falkicon.github.io/farm
-- API Documentation: https://falkicon.github.io/farm/api
 
 ## Features
 
 ### Frontend
-- 🎨 Lit Web Components with TypeScript
-- 📱 Responsive design with Tailwind CSS
-- 🔄 Type-safe routing with Universal Router
-- 📚 Component development with Storybook
-- 🎯 State management with reactive stores
+- 🎨 FAST Element 2.0 for high-performance web components
+- 💅 Fluent UI Web Components for beautiful, accessible UI
+- 🌐 Universal Router for client-side routing
+- 📱 Responsive design with modern CSS
+- 🔄 Type-safe development with TypeScript
 
 ### Backend
 - 🚀 High-performance Fastify server
-- 🔒 Built-in security with Helmet and CORS
-- 📝 OpenAPI documentation
+- 🔒 Security with Helmet, CORS, and JWT
+- 📝 OpenAPI/Swagger documentation
+- 🗃️ Prisma for type-safe database access
 - 🔄 Real-time capabilities
-- 🗃️ MongoDB with Prisma ORM
 
-### Development
-- 📚 Documentation with MkDocs and TypeDoc
+### Development Experience
+- 📚 Comprehensive documentation with MkDocs
 - 🧪 Testing with Vitest and Playwright
-- 📖 Component library with Storybook
-- 🔄 CI/CD with GitHub Actions
-- 🛠️ ESLint and Prettier integration
+- 📖 Continuous Integration with GitHub Actions
+- 🛠️ ESLint and Prettier for code quality
+- 🔍 TypeDoc for API documentation
+
+## Project Structure
+
+```
+farm/
+├── docs/                # Documentation
+├── src/
+│   ├── frontend/
+│   │   ├── components/  # Web components
+│   │   ├── styles/     # Global styles
+│   │   ├── router/     # Client routing
+│   │   └── utils/      # Frontend utilities
+│   ├── backend/
+│   │   ├── api/        # API routes
+│   │   ├── services/   # Business logic
+│   │   ├── prisma/     # Database schema
+│   │   └── config/     # Configuration
+│   └── shared/
+│       ├── types/      # Shared types
+│       └── utils/      # Shared utilities
+├── tests/
+│   ├── unit/           # Unit tests
+│   ├── integration/    # Integration tests
+│   └── e2e/           # End-to-end tests
+└── public/            # Static assets
+```
 
 ## Documentation
 
-### Getting Started
-- [Installation](https://falkicon.github.io/farm/getting-started/installation)
-- [Development](https://falkicon.github.io/farm/getting-started/development)
-- [Project Structure](https://falkicon.github.io/farm/getting-started/project-structure)
-
-### Architecture
-- [Overview](https://falkicon.github.io/farm/architecture/overview)
-- [Backend](https://falkicon.github.io/farm/architecture/backend)
-- [Frontend](https://falkicon.github.io/farm/architecture/frontend)
-- [Shared](https://falkicon.github.io/farm/architecture/shared)
-
-### Development
-- [Guidelines](https://falkicon.github.io/farm/development/guidelines)
-- [Testing](https://falkicon.github.io/farm/development/testing)
-
-### Components
-- [Frontend Components](https://falkicon.github.io/farm/frontend/components/guidelines)
-- [Backend API](https://falkicon.github.io/farm/backend/api/guidelines)
-- [Database](https://falkicon.github.io/farm/backend/database)
-
-### Specifications
-- [Development Environment](https://falkicon.github.io/farm/specs/top-level/development-environment-spec)
-- [Documentation System](https://falkicon.github.io/farm/specs/top-level/documentation-system-spec)
-- [Module Structure](https://falkicon.github.io/farm/specs/top-level/module-structure-spec)
+Visit our [comprehensive documentation](https://falkicon.github.io/farm) for:
+- Getting Started Guide
+- Component Documentation
+- API Reference
+- Development Workflow
+- Deployment Guide
+- Security Best Practices
+- Performance Optimization
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](https://falkicon.github.io/farm/contributing) for details.
+We welcome contributions! Please see our [Contributing Guide](docs/contributing.md) for details on:
+- Development Setup
+- Code Style Guidelines
+- Pull Request Process
+- Testing Requirements
 
 ## License
 
-This project is licensed under the MIT License - see the [License](https://falkicon.github.io/farm/license) file for details.
-
-## Support
-
-- [Documentation](https://falkicon.github.io/farm)
-- [GitHub Issues](https://github.com/Falkicon/farm/issues)
-- [Discord Community](https://discord.gg/farm-stack)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

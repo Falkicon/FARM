@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FARM Stack</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <fluent-text size="700" weight="bold">FARM</fluent-text>
+      <fluent-text size="400">Modern web application boilerplate with FAST Element, Fluent UI Web Components, and
+        Fastify</fluent-text>
+      <fluent-button id="refreshButton" appearance="primary">Refresh Data</fluent-button>
+    </header>
+
+    <main>
+      <fluent-text size="600" weight="semibold">System Information</fluent-text>
+      <div id="systemInfo" class="info-grid">
+        <fluent-spinner></fluent-spinner>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="index.ts"></script>
+</body>
+
+</html>

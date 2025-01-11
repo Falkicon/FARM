@@ -4,13 +4,28 @@ site_author: Falkicon
 site_url: https://falkicon.github.io/farm
 
 theme:
-  name: dracula
+  name: material
   features:
     - navigation.tabs
     - navigation.sections
     - navigation.expand
     - search.highlight
     - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
 
 plugins:
   - search
@@ -18,15 +33,25 @@ plugins:
       minify_html: true
 
 markdown_extensions:
-  - pymdownx.highlight
+  - pymdownx.highlight:
+      anchor_linenums: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
-  - pymdownx.tabbed
-  - pymdownx.tasklist
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - admonition
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - def_list
   - toc:
       permalink: true
   - tables
@@ -38,58 +63,26 @@ nav:
     - Installation: getting-started/installation.md
     - Development: getting-started/development.md
     - Project Structure: getting-started/project-structure.md
-  - Architecture:
-    - Overview: architecture/overview.md
-    - Backend:
-      - Overview: architecture/overview/backend.md
-      - Implementation: architecture/backend.md
-    - Frontend:
-      - Overview: architecture/overview/frontend.md
-      - Implementation: architecture/frontend.md
-    - Shared:
-      - Overview: architecture/overview/shared.md
-      - Implementation: architecture/shared.md
-  - Development:
-    - Overview: development/index.md
-    - Guidelines: development/guidelines.md
-    - Testing: development/testing.md
   - Frontend:
+    - Overview: frontend/index.md
     - Components:
       - Guidelines: frontend/components/guidelines.md
+      - Fluent UI:
+        - Overview: frontend/components/fluent/overview.md
     - State Management: frontend/state-management.md
     - Routing: frontend/routing.md
   - Backend:
-    - API:
-      - Overview: api/overview.md
-      - Guidelines: backend/api/guidelines.md
-      - Reference: api/modules.md
+    - Overview: backend/index.md
+    - API Guidelines: backend/api/guidelines.md
     - Database: backend/database.md
-    - Security: backend/security.md
-  - Shared:
-    - Types: shared/types.md
-    - Utilities: shared/utilities.md
-    - Constants: shared/constants.md
-  - Specifications:
-    - Overview: specs/overview.md
-    - Tracking: specs/SPECIFICATION-TRACKING.md
-    - Core:
-      - Development Environment: specs/top-level/development-environment-spec.yaml
-      - Documentation System: specs/top-level/documentation-system-spec.yaml
-      - Module Structure: specs/top-level/module-structure-spec.yaml
-      - Processes: specs/top-level/processes-spec.yaml
-    - Components:
-      - Backend: specs/backend.md
-      - Frontend: specs/frontend.md
-      - Shared: specs/shared.md
-  - API Reference:
-    - Overview: api/index.md
-    - Modules: api/modules.md
-    - Interfaces: api/interfaces.md
-    - Classes: api/classes.md
-  - FAQ: faq.md
+  - Configuration: configuration/index.md
+  - Development:
+    - Workflow: development/workflow.md
+  - Security: security/index.md
+  - Performance: performance/index.md
+  - Testing: testing/index.md
+  - Deployment: deployment/index.md
   - Contributing: contributing.md
-  - License: license.md
-  - Changelog: changelog.md
 
 extra:
   social:

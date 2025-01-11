@@ -1,19 +1,11 @@
 {
-  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.defaultProfile.windows": "Command Prompt",
   "terminal.integrated.profiles.windows": {
-    "PowerShell": {
-      "source": "PowerShell",
-      "icon": "terminal-powershell",
-      "args": ["-NoLogo", "-NoProfile", "-ExecutionPolicy", "Bypass"]
+    "Command Prompt": {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "icon": "terminal-cmd"
     }
   },
-  "terminal.integrated.env.windows": {
-    "PSExecutionPolicyPreference": "Bypass"
-  },
-  "powershell.powerShellDefaultVersion": "Windows PowerShell (x64)",
-  "powershell.enableProfileLoading": false,
-  "powershell.startAutomatically": false,
-  "powershell.scriptAnalysis.enable": false,
   "files.associations": {
     "*.js": "javascript",
     "*.ts": "typescript",

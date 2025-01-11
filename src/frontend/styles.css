@@ -1,29 +1,88 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --card-padding: 20px;
+  --grid-gap: 20px;
+  --border-radius: 8px;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
-  background-color: #f5f5f5;
+  padding: 0;
+  font-family: var(--body-font);
+  background: var(--neutral-layer-1);
+  color: var(--neutral-foreground-rest);
 }
 
-#app {
-  max-width: 1280px;
+.container {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 20px;
 }
 
-fluent-card {
-  padding: 2rem;
-  margin-bottom: 1rem;
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--grid-gap);
+  margin-top: 20px;
+}
+
+.info-card {
+  height: 100%;
+  border-radius: var(--border-radius);
+  background: var(--neutral-layer-card-container);
+  box-shadow: var(--shadow-card-rest);
+}
+
+.card-content {
+  padding: var(--card-padding);
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0;
+  padding: 4px 0;
+}
+
+.memory-bar {
+  height: 8px;
+  background: var(--neutral-layer-3);
+  border-radius: 4px;
+  margin: 12px 0;
+  overflow: hidden;
+}
+
+.memory-used {
+  height: 100%;
+  background: var(--accent-fill-rest);
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+}
+
+fluent-divider {
+  margin: 12px 0;
+}
+
+
+fluent-text[size="700"] {
+  margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    padding: 16px;
+  }
 }

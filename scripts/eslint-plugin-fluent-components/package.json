@@ -1,0 +1,18 @@
+{
+  "name": "eslint-plugin-fluent-components",
+  "version": "1.0.0",
+  "description": "ESLint plugin for validating Fluent UI Web Components usage",
+  "type": "module",
+  "main": "index.js",
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "@typescript-eslint/parser": "^8.19.1",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/utils": "^8.19.1"
+  },
+  "peerDependencies": {
+    "eslint": ">=9.0.0",
+    "typescript": ">=5.0.0"
+  }
+}
