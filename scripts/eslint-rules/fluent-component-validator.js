@@ -2106,13 +2106,30 @@ function findUsedComponents(node) {
     });
   }
 
-  // Walk the AST to find template literals
+  // Check for component definitions (e.g., ButtonDefinition.define(customElements))
+  function checkComponentDefinition(node) {
+    if (
+      node.type === AST_NODE_TYPES.CallExpression &&
+      node.callee.type === AST_NODE_TYPES.MemberExpression &&
+      node.callee.property.name === 'define'
+    ) {
+      const componentName = node.callee.object.name;
+      if (componentName) {
+        used.add(componentName);
+      }
+    }
+  }
+
+  // Walk the AST to find template literals and component definitions
   function walk(node) {
     if (!node || typeof node !== 'object' || visited.has(node)) {
       return;
     }
 
     visited.add(node);
+
+    // Check for component definitions
+    checkComponentDefinition(node);
 
     // Check template literals
     if (node.type === AST_NODE_TYPES.TemplateLiteral) {

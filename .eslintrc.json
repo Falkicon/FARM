@@ -16,7 +16,10 @@
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",
-    "project": ["./tsconfig.json", "./tsconfig.backend.json"]
+    "project": [
+      "./tsconfig.json",
+      "./tsconfig.backend.json"
+    ]
   },
   "plugins": [
     "@typescript-eslint",
@@ -24,34 +27,77 @@
     "jest",
     "jsx-a11y",
     "promise",
-    "security"
+    "security",
+    "fluent-components"
   ],
   "rules": {
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "import/order": ["error", {
-      "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
-      "newlines-between": "always",
-      "alphabetize": { "order": "asc" }
-    }],
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc"
+        }
+      }
+    ],
     "import/no-default-export": "off",
     "promise/always-return": "error",
     "promise/no-return-wrap": "error",
     "promise/param-names": "error",
     "security/detect-object-injection": "warn",
     "security/detect-non-literal-regexp": "warn",
-    "no-console": ["warn", { "allow": ["warn", "error"] }],
-    "curly": ["error", "all"],
-    "eqeqeq": ["error", "always"],
+    "no-console": [
+      "warn",
+      {
+        "allow": [
+          "warn",
+          "error"
+        ]
+      }
+    ],
+    "curly": [
+      "error",
+      "all"
+    ],
+    "eqeqeq": [
+      "error",
+      "always"
+    ],
     "no-floating-decimal": "error",
     "no-var": "error",
     "prefer-const": "error"
   },
   "overrides": [
     {
-      "files": ["*.stories.ts", "*.stories.tsx"],
+      "files": [
+        "src/frontend/index.ts"
+      ],
+      "rules": {
+        "fluent-components/validate-usage": "off"
+      }
+    },
+    {
+      "files": [
+        "*.stories.ts",
+        "*.stories.tsx"
+      ],
       "rules": {
         "import/no-default-export": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
@@ -59,29 +105,53 @@
       }
     },
     {
-      "files": ["*.js", "*.cjs", "*.mjs", "*.config.js", "*.config.cjs", "postcss.config.js", "tailwind.config.js"],
-      "extends": ["eslint:recommended"],
+      "files": [
+        "*.js",
+        "*.cjs",
+        "*.mjs",
+        "*.config.js",
+        "*.config.cjs",
+        "postcss.config.js",
+        "tailwind.config.js"
+      ],
+      "extends": [
+        "eslint:recommended"
+      ],
       "parserOptions": {
         "project": null,
         "ecmaVersion": "latest"
       }
     },
     {
-      "files": ["src/frontend/**/*.ts", "src/frontend/**/*.tsx"],
+      "files": [
+        "src/frontend/**/*.ts",
+        "src/frontend/**/*.tsx"
+      ],
       "parserOptions": {
-        "project": ["./tsconfig.json"]
+        "project": [
+          "./tsconfig.json"
+        ]
       }
     },
     {
-      "files": ["src/backend/**/*.ts"],
+      "files": [
+        "src/backend/**/*.ts"
+      ],
       "parserOptions": {
-        "project": ["./tsconfig.backend.json"]
+        "project": [
+          "./tsconfig.backend.json"
+        ]
       }
     },
     {
-      "files": ["vite.config.ts", "*.config.ts"],
+      "files": [
+        "vite.config.ts",
+        "*.config.ts"
+      ],
       "parserOptions": {
-        "project": ["./tsconfig.json"]
+        "project": [
+          "./tsconfig.json"
+        ]
       },
       "rules": {
         "@typescript-eslint/no-var-requires": "off",
@@ -89,11 +159,16 @@
       }
     },
     {
-      "files": ["**/*.test.ts", "**/*.spec.ts"],
+      "files": [
+        "**/*.test.ts",
+        "**/*.spec.ts"
+      ],
       "env": {
         "jest": true
       },
-      "extends": ["plugin:jest/recommended"],
+      "extends": [
+        "plugin:jest/recommended"
+      ],
       "rules": {
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-non-null-assertion": "off"
@@ -122,7 +197,10 @@
   "settings": {
     "import/resolver": {
       "typescript": {
-        "project": ["./tsconfig.json", "./tsconfig.backend.json"]
+        "project": [
+          "./tsconfig.json",
+          "./tsconfig.backend.json"
+        ]
       }
     }
   }
