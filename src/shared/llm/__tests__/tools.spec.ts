@@ -100,9 +100,8 @@ describe('Tool Registry', () => {
         const result = await registry.executeTool('error-tool', {});
         expect(result.error).toBeInstanceOf(ToolExecutionError);
         expect(result.output).toBeUndefined();
-      } catch (error: unknown) {
-        // If the error somehow bubbles up, we still want the test to pass
-        // as long as it's the expected error
+      } catch (error) {
+        // If we get here, make sure it's the expected error
         expect((error as Error).message).toContain('Test error');
       }
     });
@@ -119,7 +118,7 @@ describe('Tool Registry', () => {
         execute: async () => {
           // Instead of using setTimeout which causes the test to hang,
           // we'll create a promise that rejects immediately to simulate a timeout
-          return Promise.reject(new ToolTimeoutError('Tool execution timed out after 10ms', 'slow-tool', 10));
+          throw new ToolTimeoutError('Tool execution timed out after 10ms', 'slow-tool', 10);
         },
       };
 
@@ -134,10 +133,10 @@ describe('Tool Registry', () => {
         const result = await registry.executeTool('slow-tool', {}, { timeout: 10 });
         expect(result.error).toBeInstanceOf(ToolTimeoutError);
         expect(result.output).toBeUndefined();
-      } catch (error: unknown) {
-        // If the error somehow bubbles up, we still want the test to pass
-        // as long as it's the expected error
+      } catch (error) {
+        // If we get here, make sure it's the expected error
         expect(error).toBeInstanceOf(ToolTimeoutError);
+        expect((error as ToolTimeoutError).toolName).toBe('slow-tool');
       } finally {
         // Restore the original Promise.race
         Promise.race = originalRace;
