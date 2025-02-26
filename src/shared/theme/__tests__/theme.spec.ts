@@ -439,7 +439,7 @@ describe('ThemeProvider', () => {
       try {
         document.documentElement.setAttribute('test', 'test');
         document.documentElement.removeAttribute('test');
-      } catch (e) {
+      } catch {
         console.warn('Skipping batch DOM updates test due to mocked setAttribute');
         return;
       }
@@ -568,7 +568,7 @@ describe('ThemeProvider', () => {
         // Call the original but catch any errors
         try {
           originalLoggerError(message, ...args);
-        } catch (e) {
+        } catch {
           // Ignore the error, we're just testing that it's logged
         }
       });
