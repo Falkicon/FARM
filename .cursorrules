@@ -1,128 +1,56 @@
-# Cursor Rules Configuration
+# TypeScript configuration settings for target version, module type, and class field behavior.
 
-# Cross-Platform Script Handling
-scripts.crossPlatform: {
-  "shell": {
-    "windows": "powershell",
-    "linux": "bash",
-    "darwin": "bash"
-  },
-  "commands": {
-    "docs": {
-      "serve": {
-        "windows": "python -m mkdocs serve",
-        "unix": "python3 -m mkdocs serve"
-      },
-      "build": {
-        "windows": "python -m mkdocs build",
-        "unix": "python3 -m mkdocs build"
-      },
-      "deploy": {
-        "windows": "python -m mkdocs gh-deploy",
-        "unix": "python3 -m mkdocs gh-deploy"
-      },
-      "clean": {
-        "windows": "if (Test-Path site) { Remove-Item -Recurse -Force site }",
-        "unix": "rm -rf site"
-      }
-    }
-  }
-}
+## TypeScript Configuration
 
-# Terminal Settings (Platform-specific)
-terminal.settings: {
-  "windows": {
-    "shell": "powershell",
-    "commandPrefix": "",
-    "pathSeparator": "\\",
-    "lineEnding": "\r\n"
-  },
-  "unix": {
-    "shell": "bash",
-    "commandPrefix": "",
-    "pathSeparator": "/",
-    "lineEnding": "\n"
-  }
-}
+- **Target:** ES2022
+- **Module:** ESNext
+- **Define For Class Fields:** true
 
-# Package Scripts (Cross-platform using npm packages)
-package.scripts.crossPlatform: {
-  "dev": "cross-env NODE_ENV=development vite",
-  "build": "cross-env NODE_ENV=production vite build",
-  "test": "vitest",
-  "clean": "rimraf dist",
-  "docs": "node scripts/docs.js",
-  "docs:build": "node scripts/docs.js build",
-  "docs:deploy": "node scripts/docs.js deploy",
-  "lint": "eslint . --ext .ts,.tsx",
-  "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
-  "typecheck": "tsc --noEmit",
-  "validate": "npm run lint && npm run typecheck && npm run test"
-}
+#Shell configuration settings for different operating systems.
 
-# Project Structure
-project.type: "web-app"
-project.framework: "lit"
-project.backend: "fastify"
-project.language: "typescript"
-project.styling: "tailwindcss"
-project.architecture: "monorepo"
+## Shell Configuration
 
-# Package Manager
-package.manager: "npm"
-package.nodeVersion: ">=18.0.0"
-package.lockfile: "package-lock.json"
+- **Windows:** cmd
+- **Linux:** bash
+- **Darwin (macOS):** bash
 
-# File Patterns (Cross-platform)
-files.source: "src/**/*.{ts,tsx}"
-files.styles: "src/**/*.css"
-files.tests: "**/*.test.ts"
-files.docs: "**/*.md"
-files.config: ["*.config.{js,ts}", "tsconfig*.json", ".env*"]
-files.ignore: [
-  "node_modules",
-  "dist",
-  "coverage",
-  ".turbo",
-  ".next",
-  ".git",
-  "*.log"
-]
+# Project structure details including type, framework, UI, backend, language, and architecture.
 
-# Project Structure Paths (Cross-platform format)
-paths.source: {
-  "frontend": "src/frontend",
-  "backend": "src/backend",
-  "components": "src/frontend/components",
-  "styles": "src/frontend/styles",
-  "server": "src/backend/server.ts",
-  "public": "public",
-  "build": "dist",
-  "docs": "docs"
-}
+## Project Structure
 
-# Development Tools
-tools.bundler: "vite"
-tools.testing: ["vitest", "playwright"]
-tools.linting: ["eslint", "prettier"]
-tools.documentation: ["mkdocs", "typedoc"]
-tools.database: "prisma"
+- **Type:** web-app
+- **Framework:** fast-element@2.0
+- **UI:** fluent-web-components@3.0
+- **Backend:** fastify@4.0
+- **Language:** typescript@5.0
+- **Architecture:** monorepo
 
-# TypeScript Configuration
-typescript.target: "ES2020"
-typescript.module: "ESNext"
-typescript.configs: ["tsconfig.json", "tsconfig.backend.json"]
-typescript.experimentalDecorators: true
-typescript.useDefineForClassFields: false
-typescript.emitDecoratorMetadata: true
+# Core development principles emphasizing a web-first approach, strict typing, performance, and accessibility.
 
-# Documentation Configuration
-documentation.settings: {
-  "engine": "mkdocs",
-  "theme": "dracula",
-  "output": "site",
-  "serve": {
-    "port": 8000,
-    "host": "localhost"
-  }
-}
+## Development Principles
+
+- **Web First:** true
+- **Type Strict:** true
+- **Performance:** true
+- **Accessibility:** true
+
+# Development tools configuration including bundler, testing, linting, and documentation generators.
+
+## Development Tools
+
+- **Bundler:** vite@5.0
+- **Testing:** vitest@1.0
+- **Linting:** eslint@8.0, prettier@3.0
+- **Documentation:** typedoc@0.25
+
+# Documentation references for web component libraries and standards.
+
+## Documentation References
+
+- **FAST Element Documentation:** @Introduction
+- **FAST Element API:** @API Documentation
+- **Fluent Web Components:** @GitHub Repository
+- **Fluent NPM Package:** @NPM Package
+- **MDN Web Components:** @MDN Docs
+- **W3C Web Standards:** @W3C Standards
+

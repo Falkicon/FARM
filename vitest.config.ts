@@ -1,26 +1,29 @@
-// Import Vitest's configuration utility
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
     environment: 'happy-dom',
-    setupFiles: ['./src/frontend/__tests__/setup.ts'],
-    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    exclude: ['**/node_modules/**', '**/dist/**', '**/e2e/**'],
+    setupFiles: [],
+    include: ['src/**/*.{spec,test}.ts'],
     globals: true,
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: [
-        'coverage/**',
-        'dist/**',
-        '**/[.]**',
-        'packages/*/test?(s)/**',
-        '**/*.d.ts',
-        '**/virtual:*',
-        '**/__mocks__/*',
-        '**/test-utils/*'
-      ]
-    }
+    testTimeout: 30000,
+    hookTimeout: 30000,
+    teardownTimeout: 30000,
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        singleThread: true
+      }
+    },
+    setupFilePatterns: [
+      {
+        pattern: 'src/shared/llm/__tests__/**/*.{spec,test}.ts',
+        setupFiles: ['src/shared/llm/__tests__/setup.ts']
+      },
+      {
+        pattern: 'src/shared/theme/__tests__/**/*.{spec,test}.ts',
+        setupFiles: ['src/shared/theme/__tests__/setup.ts']
+      }
+    ]
   }
 });

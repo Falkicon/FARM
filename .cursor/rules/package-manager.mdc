@@ -1,0 +1,8 @@
+---
+description: Configuration for package management and node version requirements.
+globs: package.json
+---
+# Package Manager
+
+- **Manager:** npm
+- **Node Version:** >=22.0.0

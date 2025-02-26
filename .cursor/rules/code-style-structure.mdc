@@ -1,0 +1,11 @@
+---
+description: Rules for code style including patterns, naming conventions, structure, and organization.
+globs: *.{ts,tsx}
+---
+# Code Style and Structure
+
+- **Patterns:** Functional, declarative.
+- **Naming:** Descriptive and action-oriented.
+- **Structure:** Organized into components, types, tests, and docs.
+- **Organization:** Modular with single-responsibility principles.
+- **Testing** Test Driven Development

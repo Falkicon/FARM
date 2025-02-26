@@ -1,0 +1,10 @@
+---
+description: Best practices for component composition, state management, testing, and documentation.
+globs: src/**/*.{ts,tsx}
+---
+# Best Practices
+
+- **Components:** Use FAST Element composition over inheritance.
+- **State:** Prefer observable properties over external state.
+- **Testing:** Write tests before implementation.
+- **Documentation:** Use TypeDoc for all public APIs and components.

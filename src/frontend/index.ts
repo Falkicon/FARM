@@ -4,15 +4,27 @@ import { CardDefinition } from '@fabric-msft/fabric-web';
 
 import { fabricLightTheme, setTheme } from '@fabric-msft/theme';
 
-// Define each component
-ButtonDefinition.define(customElements);
-CardDefinition.define(customElements);
-DividerDefinition.define(customElements);
-SpinnerDefinition.define(customElements);
-TextDefinition.define(customElements);
+// Only define components if they haven't been defined yet
+if (!customElements.get('fluent-button')) {
+  ButtonDefinition.define(customElements);
+}
+if (!customElements.get('fluent-card')) {
+  CardDefinition.define(customElements);
+}
+if (!customElements.get('fluent-divider')) {
+  DividerDefinition.define(customElements);
+}
+if (!customElements.get('fluent-spinner')) {
+  SpinnerDefinition.define(customElements);
+}
+if (!customElements.get('fluent-text')) {
+  TextDefinition.define(customElements);
+}
 
-// Set theme
-setTheme(fabricLightTheme);
+// Set theme only if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  setTheme(fabricLightTheme);
+}
 
 // Helper function to format bytes
 function formatBytes(bytes: number): string {

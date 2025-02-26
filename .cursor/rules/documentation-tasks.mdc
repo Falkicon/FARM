@@ -1,0 +1,11 @@
+---
+description: Standards for documentation and task management including formatting, updates, and detailed task planning.
+globs: *.{js,ts,tsx,md}
+---
+# Documentation and Tasks
+
+- **Format:** Use TypeDoc for API documentation.
+- **Updates:** Update documentation with every code change.
+- **Missing Docs:** Add documentation where needed before commits.
+- **Complex Tasks:** Create TEMP.md files for complex tasks.
+- **Task Overview:** Include task overview, status, plan, dependencies, progress, and next steps.
