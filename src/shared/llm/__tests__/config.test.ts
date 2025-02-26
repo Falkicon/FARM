@@ -11,7 +11,7 @@ import {
   validateGoogleConfig,
   mergeOptions,
   CONFIG_DEFAULTS,
-  DEFAULT_MODELS
+  DEFAULT_MODELS,
 } from '../core/config';
 import { ConfigurationError } from '../core/errors';
 import type { OpenAIConfig, AzureOpenAIConfig, AnthropicConfig, GoogleConfig } from '../types/providers';
@@ -68,13 +68,19 @@ describe('Configuration Utilities', () => {
     });
 
     it('should throw if temperature is out of range', () => {
-      expect(() => validateConfig({ provider: 'openai', temperature: -0.1 } as OpenAIConfig)).toThrow(ConfigurationError);
-      expect(() => validateConfig({ provider: 'openai', temperature: 1.1 } as OpenAIConfig)).toThrow(ConfigurationError);
+      expect(() => validateConfig({ provider: 'openai', temperature: -0.1 } as OpenAIConfig)).toThrow(
+        ConfigurationError,
+      );
+      expect(() => validateConfig({ provider: 'openai', temperature: 1.1 } as OpenAIConfig)).toThrow(
+        ConfigurationError,
+      );
     });
 
     it('should throw if maxTokens is out of range', () => {
       expect(() => validateConfig({ provider: 'openai', maxTokens: 0 } as OpenAIConfig)).toThrow(ConfigurationError);
-      expect(() => validateConfig({ provider: 'openai', maxTokens: 100001 } as OpenAIConfig)).toThrow(ConfigurationError);
+      expect(() => validateConfig({ provider: 'openai', maxTokens: 100001 } as OpenAIConfig)).toThrow(
+        ConfigurationError,
+      );
     });
 
     it('should apply default values', () => {
@@ -118,7 +124,7 @@ describe('Configuration Utilities', () => {
         provider: 'openai',
         apiKey: 'user-key',
         model: 'user-model',
-        embeddingModel: 'user-embedding-model'
+        embeddingModel: 'user-embedding-model',
       } as OpenAIConfig);
 
       expect(config.apiKey).toBe('user-key');
@@ -130,22 +136,28 @@ describe('Configuration Utilities', () => {
   describe('validateAzureOpenAIConfig', () => {
     it('should throw if required properties are missing', () => {
       expect(() => validateAzureOpenAIConfig({ provider: 'azure' } as AzureOpenAIConfig)).toThrow(ConfigurationError);
-      expect(() => validateAzureOpenAIConfig({
-        provider: 'azure',
-        endpoint: 'endpoint'
-      } as AzureOpenAIConfig)).toThrow(ConfigurationError);
-      expect(() => validateAzureOpenAIConfig({
-        provider: 'azure',
-        deploymentName: 'deployment'
-      } as AzureOpenAIConfig)).toThrow(ConfigurationError);
+      expect(() =>
+        validateAzureOpenAIConfig({
+          provider: 'azure',
+          endpoint: 'endpoint',
+        } as AzureOpenAIConfig),
+      ).toThrow(ConfigurationError);
+      expect(() =>
+        validateAzureOpenAIConfig({
+          provider: 'azure',
+          deploymentName: 'deployment',
+        } as AzureOpenAIConfig),
+      ).toThrow(ConfigurationError);
     });
 
     it('should throw if apiKey is missing and not in environment', () => {
-      expect(() => validateAzureOpenAIConfig({
-        provider: 'azure',
-        endpoint: 'endpoint',
-        deploymentName: 'deployment'
-      } as AzureOpenAIConfig)).toThrow(ConfigurationError);
+      expect(() =>
+        validateAzureOpenAIConfig({
+          provider: 'azure',
+          endpoint: 'endpoint',
+          deploymentName: 'deployment',
+        } as AzureOpenAIConfig),
+      ).toThrow(ConfigurationError);
     });
 
     it('should get apiKey from environment if not provided', () => {
@@ -153,7 +165,7 @@ describe('Configuration Utilities', () => {
       const config = validateAzureOpenAIConfig({
         provider: 'azure',
         endpoint: 'endpoint',
-        deploymentName: 'deployment'
+        deploymentName: 'deployment',
       } as AzureOpenAIConfig);
 
       expect(config.apiKey).toBe('test-key');
@@ -164,7 +176,7 @@ describe('Configuration Utilities', () => {
       const config = validateAzureOpenAIConfig({
         provider: 'azure',
         endpoint: 'endpoint',
-        deploymentName: 'deployment'
+        deploymentName: 'deployment',
       } as AzureOpenAIConfig);
 
       expect(config.model).toBe(DEFAULT_MODELS.azure);
@@ -207,10 +219,12 @@ describe('Configuration Utilities', () => {
     });
 
     it('should throw if serviceAccount is incomplete', () => {
-      expect(() => validateGoogleConfig({
-        provider: 'google',
-        serviceAccount: { clientEmail: 'email' } as any
-      } as GoogleConfig)).toThrow(ConfigurationError);
+      expect(() =>
+        validateGoogleConfig({
+          provider: 'google',
+          serviceAccount: { clientEmail: 'email' } as any,
+        } as GoogleConfig),
+      ).toThrow(ConfigurationError);
     });
 
     it('should accept a valid serviceAccount', () => {
@@ -219,8 +233,8 @@ describe('Configuration Utilities', () => {
         serviceAccount: {
           clientEmail: 'email',
           privateKey: 'key',
-          projectId: 'project'
-        }
+          projectId: 'project',
+        },
       } as GoogleConfig);
 
       expect(config.serviceAccount).toBeDefined();

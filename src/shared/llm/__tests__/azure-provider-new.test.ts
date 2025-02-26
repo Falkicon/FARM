@@ -22,19 +22,19 @@ describe('AzureOpenAIProviderNew', () => {
   class MockOpenAI {
     chat = {
       completions: {
-        create: mockChatCompletionsCreate
-      }
+        create: mockChatCompletionsCreate,
+      },
     };
 
     embeddings = {
-      create: mockEmbeddingsCreate
+      create: mockEmbeddingsCreate,
     };
   }
 
   // Mock the OpenAI constructor
   vi.mock('openai', () => {
     return {
-      default: vi.fn().mockImplementation(() => new MockOpenAI())
+      default: vi.fn().mockImplementation(() => new MockOpenAI()),
     };
   });
 
@@ -59,28 +59,25 @@ describe('AzureOpenAIProviderNew', () => {
       choices: [
         {
           message: {
-            content: 'API response'
-          }
-        }
+            content: 'API response',
+          },
+        },
       ],
       model: 'gpt-4',
       usage: {
         prompt_tokens: 10,
         completion_tokens: 20,
-        total_tokens: 30
-      }
+        total_tokens: 30,
+      },
     });
 
     mockEmbeddingsCreate.mockResolvedValue({
-      data: [
-        { embedding: [0.1, 0.2, 0.3] },
-        { embedding: [0.4, 0.5, 0.6] }
-      ],
+      data: [{ embedding: [0.1, 0.2, 0.3] }, { embedding: [0.4, 0.5, 0.6] }],
       model: 'text-embedding-ada-002',
       usage: {
         prompt_tokens: 10,
-        total_tokens: 10
-      }
+        total_tokens: 10,
+      },
     });
   });
 
@@ -95,7 +92,7 @@ describe('AzureOpenAIProviderNew', () => {
         provider: 'azure',
         apiKey: 'test-api-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
-        deploymentName: 'gpt-4'
+        deploymentName: 'gpt-4',
       });
 
       expect(provider).toBeDefined();
@@ -108,19 +105,25 @@ describe('AzureOpenAIProviderNew', () => {
     });
 
     it('should throw if endpoint is missing', () => {
-      expect(() => new AzureOpenAIProviderNew({
-        provider: 'azure',
-        apiKey: 'test-api-key',
-        deploymentName: 'gpt-4'
-      } as any)).toThrow(ConfigurationError);
+      expect(
+        () =>
+          new AzureOpenAIProviderNew({
+            provider: 'azure',
+            apiKey: 'test-api-key',
+            deploymentName: 'gpt-4',
+          } as any),
+      ).toThrow(ConfigurationError);
     });
 
     it('should throw if deploymentName is missing', () => {
-      expect(() => new AzureOpenAIProviderNew({
-        provider: 'azure',
-        apiKey: 'test-api-key',
-        endpoint: 'https://test-endpoint.openai.azure.com'
-      } as any)).toThrow(ConfigurationError);
+      expect(
+        () =>
+          new AzureOpenAIProviderNew({
+            provider: 'azure',
+            apiKey: 'test-api-key',
+            endpoint: 'https://test-endpoint.openai.azure.com',
+          } as any),
+      ).toThrow(ConfigurationError);
     });
   });
 
@@ -133,7 +136,7 @@ describe('AzureOpenAIProviderNew', () => {
         provider: 'azure',
         apiKey: 'test-api-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
-        deploymentName: 'gpt-4'
+        deploymentName: 'gpt-4',
       });
 
       const response = await provider.generateText('Test prompt');
@@ -152,7 +155,7 @@ describe('AzureOpenAIProviderNew', () => {
         provider: 'azure',
         apiKey: 'test-api-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
-        deploymentName: 'gpt-4'
+        deploymentName: 'gpt-4',
       });
 
       const response = await provider.generateText('Test prompt');
@@ -172,11 +175,11 @@ describe('AzureOpenAIProviderNew', () => {
         provider: 'azure',
         apiKey: 'test-api-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
-        deploymentName: 'gpt-4'
+        deploymentName: 'gpt-4',
       });
 
       const response = await provider.generateText('Test prompt', {
-        systemMessage: 'You are a helpful assistant'
+        systemMessage: 'You are a helpful assistant',
       });
 
       // Since we're in test environment, we should get a mock response
@@ -191,7 +194,7 @@ describe('AzureOpenAIProviderNew', () => {
         provider: 'azure',
         apiKey: 'test-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
-        deploymentName: 'test-deployment'
+        deploymentName: 'test-deployment',
       });
 
       // Mock the provider's generateText method to throw an authentication error
@@ -214,7 +217,7 @@ describe('AzureOpenAIProviderNew', () => {
         provider: 'azure',
         apiKey: 'test-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
-        deploymentName: 'test-deployment'
+        deploymentName: 'test-deployment',
       });
 
       // Mock the provider's generateText method to throw a rate limit error
@@ -237,7 +240,7 @@ describe('AzureOpenAIProviderNew', () => {
         provider: 'azure',
         apiKey: 'test-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
-        deploymentName: 'test-deployment'
+        deploymentName: 'test-deployment',
       });
 
       // Mock the provider's generateText method to throw an API error
@@ -265,7 +268,7 @@ describe('AzureOpenAIProviderNew', () => {
         provider: 'azure',
         apiKey: 'test-api-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
-        deploymentName: 'gpt-4'
+        deploymentName: 'gpt-4',
       });
 
       const response = await provider.generateStructured('Test prompt', {
@@ -274,9 +277,9 @@ describe('AzureOpenAIProviderNew', () => {
         parameters: {
           type: 'object',
           properties: {
-            test: { type: 'string' }
-          }
-        }
+            test: { type: 'string' },
+          },
+        },
       });
 
       expect(response).toBeDefined();
@@ -293,7 +296,7 @@ describe('AzureOpenAIProviderNew', () => {
         provider: 'azure',
         apiKey: 'test-api-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
-        deploymentName: 'gpt-4'
+        deploymentName: 'gpt-4',
       });
 
       const response = await provider.generateStructured('Test prompt', {
@@ -302,9 +305,9 @@ describe('AzureOpenAIProviderNew', () => {
         parameters: {
           type: 'object',
           properties: {
-            test: { type: 'string' }
-          }
-        }
+            test: { type: 'string' },
+          },
+        },
       });
 
       // Since we're in test environment, we should get a mock response
@@ -325,7 +328,7 @@ describe('AzureOpenAIProviderNew', () => {
         apiKey: 'test-api-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
         deploymentName: 'gpt-4',
-        embeddingDeploymentName: 'text-embedding-ada-002'
+        embeddingDeploymentName: 'text-embedding-ada-002',
       });
 
       const response = await provider.generateEmbeddings('Test input');
@@ -345,7 +348,7 @@ describe('AzureOpenAIProviderNew', () => {
         provider: 'azure',
         apiKey: 'test-api-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
-        deploymentName: 'gpt-4'
+        deploymentName: 'gpt-4',
       });
 
       await expect(provider.generateEmbeddings('Test input')).rejects.toThrow(ConfigurationError);
@@ -360,7 +363,7 @@ describe('AzureOpenAIProviderNew', () => {
         apiKey: 'test-api-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
         deploymentName: 'gpt-4',
-        embeddingDeploymentName: 'text-embedding-ada-002'
+        embeddingDeploymentName: 'text-embedding-ada-002',
       });
 
       const response = await provider.generateEmbeddings('Test input');
@@ -381,7 +384,7 @@ describe('AzureOpenAIProviderNew', () => {
         apiKey: 'test-api-key',
         endpoint: 'https://test-endpoint.openai.azure.com',
         deploymentName: 'gpt-4',
-        embeddingDeploymentName: 'text-embedding-ada-002'
+        embeddingDeploymentName: 'text-embedding-ada-002',
       });
 
       const response = await provider.generateEmbeddings(['Input 1', 'Input 2']);

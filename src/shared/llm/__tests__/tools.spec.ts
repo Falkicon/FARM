@@ -17,9 +17,9 @@ describe('Tool Registry', () => {
     description: 'Performs basic arithmetic operations',
     parameters: z.object({
       a: z.number(),
-      b: z.number()
+      b: z.number(),
     }),
-    execute: async ({ a, b }) => a + b
+    execute: async ({ a, b }) => a + b,
   };
 
   beforeEach(() => {
@@ -36,8 +36,7 @@ describe('Tool Registry', () => {
 
     it('should throw when registering duplicate tool names', () => {
       registry.register(calculatorTool);
-      expect(() => registry.register(calculatorTool))
-        .toThrow("Tool with name 'calculator' is already registered");
+      expect(() => registry.register(calculatorTool)).toThrow("Tool with name 'calculator' is already registered");
     });
 
     it('should unregister a tool successfully', () => {
@@ -47,8 +46,7 @@ describe('Tool Registry', () => {
     });
 
     it('should throw when unregistering non-existent tool', () => {
-      expect(() => registry.unregister('non-existent'))
-        .toThrow("Tool with name 'non-existent' is not registered");
+      expect(() => registry.unregister('non-existent')).toThrow("Tool with name 'non-existent' is not registered");
     });
   });
 
@@ -65,8 +63,9 @@ describe('Tool Registry', () => {
     });
 
     it('should throw when executing non-existent tool', async () => {
-      await expect(registry.executeTool('non-existent', {}))
-        .rejects.toThrow("Tool with name 'non-existent' is not registered");
+      await expect(registry.executeTool('non-existent', {})).rejects.toThrow(
+        "Tool with name 'non-existent' is not registered",
+      );
     });
 
     it('should handle validation errors', async () => {
@@ -76,8 +75,9 @@ describe('Tool Registry', () => {
     });
 
     it('should throw validation errors when throwOnError is true', async () => {
-      await expect(registry.executeTool('calculator', { a: 'invalid', b: 3 }, { throwOnError: true }))
-        .rejects.toThrow(ToolValidationError);
+      await expect(registry.executeTool('calculator', { a: 'invalid', b: 3 }, { throwOnError: true })).rejects.toThrow(
+        ToolValidationError,
+      );
     });
 
     it('should handle execution errors', async () => {
@@ -88,7 +88,9 @@ describe('Tool Registry', () => {
         name: 'error-tool',
         description: 'Always throws an error',
         parameters: z.object({}),
-        execute: async () => { throw new Error('Test error'); }
+        execute: async () => {
+          throw new Error('Test error');
+        },
       };
 
       registry.register(errorTool);
@@ -109,22 +111,14 @@ describe('Tool Registry', () => {
         execute: async () => {
           // Instead of using setTimeout which causes the test to hang,
           // we'll create a promise that rejects immediately to simulate a timeout
-          return Promise.reject(new ToolTimeoutError(
-            'Tool execution timed out after 10ms',
-            'slow-tool',
-            10
-          ));
-        }
+          return Promise.reject(new ToolTimeoutError('Tool execution timed out after 10ms', 'slow-tool', 10));
+        },
       };
 
       // Mock the Promise.race to always return the timeout error
       const originalRace = Promise.race;
       Promise.race = vi.fn().mockImplementation(() => {
-        return Promise.reject(new ToolTimeoutError(
-          'Tool execution timed out after 10ms',
-          'slow-tool',
-          10
-        ));
+        return Promise.reject(new ToolTimeoutError('Tool execution timed out after 10ms', 'slow-tool', 10));
       });
 
       try {
@@ -148,7 +142,7 @@ describe('Tool Registry', () => {
     it('should execute multiple tools in sequence', async () => {
       const calls = [
         { name: 'calculator', input: { a: 1, b: 2 } },
-        { name: 'calculator', input: { a: 3, b: 4 } }
+        { name: 'calculator', input: { a: 3, b: 4 } },
       ];
 
       const results = await registry.executeTools(calls);
@@ -163,7 +157,7 @@ describe('Tool Registry', () => {
 
       const calls = [
         { name: 'calculator', input: { a: 1, b: 2 } },
-        { name: 'calculator', input: { a: 3, b: 4 } }
+        { name: 'calculator', input: { a: 3, b: 4 } },
       ];
 
       const results = await registry.executeTools(calls);
@@ -176,11 +170,12 @@ describe('Tool Registry', () => {
       const calls = [
         { name: 'calculator', input: { a: 1, b: 2 } },
         { name: 'calculator', input: { a: 3, b: 4 } },
-        { name: 'calculator', input: { a: 5, b: 6 } }
+        { name: 'calculator', input: { a: 5, b: 6 } },
       ];
 
-      await expect(registry.executeTools(calls))
-        .rejects.toThrow('Cannot execute more than 2 tools in a single request');
+      await expect(registry.executeTools(calls)).rejects.toThrow(
+        'Cannot execute more than 2 tools in a single request',
+      );
     });
   });
 
@@ -197,10 +192,10 @@ describe('Tool Registry', () => {
           type: 'object',
           properties: {
             a: { type: 'number' },
-            b: { type: 'number' }
+            b: { type: 'number' },
           },
-          required: ['a', 'b']
-        }
+          required: ['a', 'b'],
+        },
       });
     });
   });

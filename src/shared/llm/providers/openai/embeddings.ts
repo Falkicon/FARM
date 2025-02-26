@@ -3,7 +3,13 @@
  */
 
 import OpenAI from 'openai';
-import { EmbeddingsProvider, type EmbeddingsConfig, type EmbeddingsInput, type EmbeddingsResponse, EmbeddingsError } from '../../core/embeddings';
+import {
+  EmbeddingsProvider,
+  type EmbeddingsConfig,
+  type EmbeddingsInput,
+  type EmbeddingsResponse,
+  EmbeddingsError,
+} from '../../core/embeddings';
 import { createOpenAIClient } from './config';
 
 /**
@@ -22,7 +28,7 @@ export const DEFAULT_OPENAI_EMBEDDINGS_CONFIG: Partial<OpenAIEmbeddingsConfig> =
   provider: 'openai',
   model: 'text-embedding-3-small',
   dimensions: 1536,
-  normalize: true
+  normalize: true,
 };
 
 /**
@@ -34,7 +40,7 @@ export class OpenAIEmbeddingsProvider extends EmbeddingsProvider {
   constructor(config: OpenAIEmbeddingsConfig) {
     super({
       ...DEFAULT_OPENAI_EMBEDDINGS_CONFIG,
-      ...config
+      ...config,
     });
 
     this.client = config.client ?? createOpenAIClient(config);
@@ -49,16 +55,14 @@ export class OpenAIEmbeddingsProvider extends EmbeddingsProvider {
       const validatedInput = await this.validateInput(input);
 
       // Convert input to array if string
-      const inputs = Array.isArray(validatedInput.input)
-        ? validatedInput.input
-        : [validatedInput.input];
+      const inputs = Array.isArray(validatedInput.input) ? validatedInput.input : [validatedInput.input];
 
       // Generate embeddings
       const response = await this.client.embeddings.create({
         model: this.config.model,
         input: inputs,
         dimensions: this.config.dimensions,
-        user: validatedInput.user
+        user: validatedInput.user,
       });
 
       // Format response
@@ -67,13 +71,13 @@ export class OpenAIEmbeddingsProvider extends EmbeddingsProvider {
         data: response.data.map((item, index) => ({
           object: 'embedding',
           embedding: item.embedding,
-          index
+          index,
         })),
         model: response.model,
         usage: {
           prompt_tokens: response.usage.prompt_tokens,
-          total_tokens: response.usage.total_tokens
-        }
+          total_tokens: response.usage.total_tokens,
+        },
       };
 
       // Post-process response (e.g., normalize vectors)

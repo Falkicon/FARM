@@ -15,7 +15,7 @@ export const validateToken = (token: string): ValidationResult => {
   if (!CSS_PROPERTY_REGEX.test(token)) {
     return {
       isValid: false,
-      error: `Invalid token format: ${token}. Tokens must use CSS custom properties in the format var(--token-name).`
+      error: `Invalid token format: ${token}. Tokens must use CSS custom properties in the format var(--token-name).`,
     };
   }
   return { isValid: true };
@@ -120,7 +120,8 @@ export const getTokenValue = (token: string): string => {
 
     // Track token usage if in debug mode
     if (ThemeProvider.isDebugMode) {
-      const componentName = document.currentScript?.ownerDocument?.currentScript?.parentElement?.tagName.toLowerCase() || 'unknown';
+      const componentName =
+        document.currentScript?.ownerDocument?.currentScript?.parentElement?.tagName.toLowerCase() || 'unknown';
       const key = `${token}:${componentName}`;
       const existing = ThemeProvider.tokenUsage.get(key);
 
@@ -132,7 +133,7 @@ export const getTokenValue = (token: string): string => {
           token,
           component: componentName,
           timestamp: Date.now(),
-          count: 1
+          count: 1,
         });
       }
     }
@@ -162,7 +163,7 @@ const wrapWithValidation = <T extends Record<string, any>>(obj: T): T => {
         }
       }
       return value;
-    }
+    },
   });
 };
 
@@ -294,7 +295,7 @@ export const colorTokens = wrapWithValidation({
       accessible: 'var(--stroke-accessible)',
       disabled: 'var(--stroke-disabled)',
       focus: 'var(--stroke-focus)',
-    }
+    },
   },
 
   // Extend with compound tokens
@@ -305,7 +306,7 @@ export const colorTokens = wrapWithValidation({
     focusStroke: 'var(--focus-stroke-outer)',
     cardBackground: 'var(--card-background)',
     cardShadow: 'var(--card-shadow)',
-  }
+  },
 } as ColorTokensStructure);
 
 // Memoize computed values for performance
@@ -355,14 +356,12 @@ export const spacingTokens = {
     xl: 'var(--spacing-xl)',
     xxl: 'var(--spacing-xxl)',
     xxxl: 'var(--spacing-xxxl)',
-  }
+  },
 } as const;
 
 // Add semantic scale utilities
 export const createScale = (base: number, ratio: number, steps: number) => {
-  return Array.from({ length: steps }, (_, i) =>
-    `${Math.round(base * Math.pow(ratio, i))}px`
-  );
+  return Array.from({ length: steps }, (_, i) => `${Math.round(base * Math.pow(ratio, i))}px`);
 };
 
 // Rest of tokens with type safety
@@ -413,8 +412,8 @@ export const typographyTokens = {
       size: 'var(--headline-font-size)',
       weight: 'var(--headline-font-weight)',
       lineHeight: 'var(--headline-line-height)',
-    }
-  }
+    },
+  },
 } as const;
 
 export const borderTokens = {
@@ -444,8 +443,8 @@ export const borderTokens = {
       thick: 'var(--stroke-width-thick)',
       thicker: 'var(--stroke-width-thicker)',
       thickest: 'var(--stroke-width-thickest)',
-    }
-  }
+    },
+  },
 } as const;
 
 export const shadowTokens = {
@@ -483,154 +482,274 @@ const createBaseStyles = () => css`
   :host {
     /* Define custom properties only once at root */
     ${Object.entries({
-  // Colors
-  '--color-brand-primary': validateToken(colorTokens.brand.primary).isValid ? colorTokens.brand.primary : '',
-  '--color-brand-secondary': validateToken(colorTokens.brand.secondary).isValid ? colorTokens.brand.secondary : '',
-  '--color-brand-tertiary': validateToken(colorTokens.brand.tertiary).isValid ? colorTokens.brand.tertiary : '',
+      // Colors
+      '--color-brand-primary': validateToken(colorTokens.brand.primary).isValid ? colorTokens.brand.primary : '',
+      '--color-brand-secondary': validateToken(colorTokens.brand.secondary).isValid ? colorTokens.brand.secondary : '',
+      '--color-brand-tertiary': validateToken(colorTokens.brand.tertiary).isValid ? colorTokens.brand.tertiary : '',
 
-  '--color-neutral-background': validateToken(colorTokens.neutral.background).isValid ? colorTokens.neutral.background : '',
-  '--color-neutral-foreground': validateToken(colorTokens.neutral.foreground).isValid ? colorTokens.neutral.foreground : '',
-  '--color-neutral-border': validateToken(colorTokens.neutral.border).isValid ? colorTokens.neutral.border : '',
-  '--color-neutral-divider': validateToken(colorTokens.neutral.divider).isValid ? colorTokens.neutral.divider : '',
+      '--color-neutral-background': validateToken(colorTokens.neutral.background).isValid
+        ? colorTokens.neutral.background
+        : '',
+      '--color-neutral-foreground': validateToken(colorTokens.neutral.foreground).isValid
+        ? colorTokens.neutral.foreground
+        : '',
+      '--color-neutral-border': validateToken(colorTokens.neutral.border).isValid ? colorTokens.neutral.border : '',
+      '--color-neutral-divider': validateToken(colorTokens.neutral.divider).isValid ? colorTokens.neutral.divider : '',
 
-  '--color-status-success': validateToken(colorTokens.status.success).isValid ? colorTokens.status.success : '',
-  '--color-status-warning': validateToken(colorTokens.status.warning).isValid ? colorTokens.status.warning : '',
-  '--color-status-error': validateToken(colorTokens.status.error).isValid ? colorTokens.status.error : '',
-  '--color-status-info': validateToken(colorTokens.status.info).isValid ? colorTokens.status.info : '',
+      '--color-status-success': validateToken(colorTokens.status.success).isValid ? colorTokens.status.success : '',
+      '--color-status-warning': validateToken(colorTokens.status.warning).isValid ? colorTokens.status.warning : '',
+      '--color-status-error': validateToken(colorTokens.status.error).isValid ? colorTokens.status.error : '',
+      '--color-status-info': validateToken(colorTokens.status.info).isValid ? colorTokens.status.info : '',
 
-  // Fabric Colors
-  '--color-fabric-accent-base': validateToken(colorTokens.fabric.accent.base).isValid ? colorTokens.fabric.accent.base : '',
-  '--color-fabric-accent-hover': validateToken(colorTokens.fabric.accent.hover).isValid ? colorTokens.fabric.accent.hover : '',
-  '--color-fabric-accent-pressed': validateToken(colorTokens.fabric.accent.pressed).isValid ? colorTokens.fabric.accent.pressed : '',
-  '--color-fabric-accent-selected': validateToken(colorTokens.fabric.accent.selected).isValid ? colorTokens.fabric.accent.selected : '',
+      // Fabric Colors
+      '--color-fabric-accent-base': validateToken(colorTokens.fabric.accent.base).isValid
+        ? colorTokens.fabric.accent.base
+        : '',
+      '--color-fabric-accent-hover': validateToken(colorTokens.fabric.accent.hover).isValid
+        ? colorTokens.fabric.accent.hover
+        : '',
+      '--color-fabric-accent-pressed': validateToken(colorTokens.fabric.accent.pressed).isValid
+        ? colorTokens.fabric.accent.pressed
+        : '',
+      '--color-fabric-accent-selected': validateToken(colorTokens.fabric.accent.selected).isValid
+        ? colorTokens.fabric.accent.selected
+        : '',
 
-  '--color-fabric-foreground-base': validateToken(colorTokens.fabric.foreground.base).isValid ? colorTokens.fabric.foreground.base : '',
-  '--color-fabric-foreground-secondary': validateToken(colorTokens.fabric.foreground.secondary).isValid ? colorTokens.fabric.foreground.secondary : '',
-  '--color-fabric-foreground-tertiary': validateToken(colorTokens.fabric.foreground.tertiary).isValid ? colorTokens.fabric.foreground.tertiary : '',
-  '--color-fabric-foreground-disabled': validateToken(colorTokens.fabric.foreground.disabled).isValid ? colorTokens.fabric.foreground.disabled : '',
+      '--color-fabric-foreground-base': validateToken(colorTokens.fabric.foreground.base).isValid
+        ? colorTokens.fabric.foreground.base
+        : '',
+      '--color-fabric-foreground-secondary': validateToken(colorTokens.fabric.foreground.secondary).isValid
+        ? colorTokens.fabric.foreground.secondary
+        : '',
+      '--color-fabric-foreground-tertiary': validateToken(colorTokens.fabric.foreground.tertiary).isValid
+        ? colorTokens.fabric.foreground.tertiary
+        : '',
+      '--color-fabric-foreground-disabled': validateToken(colorTokens.fabric.foreground.disabled).isValid
+        ? colorTokens.fabric.foreground.disabled
+        : '',
 
-  '--color-fabric-background-canvas': validateToken(colorTokens.fabric.background.canvas).isValid ? colorTokens.fabric.background.canvas : '',
-  '--color-fabric-background-layer1': validateToken(colorTokens.fabric.background.layer1).isValid ? colorTokens.fabric.background.layer1 : '',
-  '--color-fabric-background-layer2': validateToken(colorTokens.fabric.background.layer2).isValid ? colorTokens.fabric.background.layer2 : '',
-  '--color-fabric-background-layer3': validateToken(colorTokens.fabric.background.layer3).isValid ? colorTokens.fabric.background.layer3 : '',
-  '--color-fabric-background-layer4': validateToken(colorTokens.fabric.background.layer4).isValid ? colorTokens.fabric.background.layer4 : '',
+      '--color-fabric-background-canvas': validateToken(colorTokens.fabric.background.canvas).isValid
+        ? colorTokens.fabric.background.canvas
+        : '',
+      '--color-fabric-background-layer1': validateToken(colorTokens.fabric.background.layer1).isValid
+        ? colorTokens.fabric.background.layer1
+        : '',
+      '--color-fabric-background-layer2': validateToken(colorTokens.fabric.background.layer2).isValid
+        ? colorTokens.fabric.background.layer2
+        : '',
+      '--color-fabric-background-layer3': validateToken(colorTokens.fabric.background.layer3).isValid
+        ? colorTokens.fabric.background.layer3
+        : '',
+      '--color-fabric-background-layer4': validateToken(colorTokens.fabric.background.layer4).isValid
+        ? colorTokens.fabric.background.layer4
+        : '',
 
-  '--color-fabric-stroke-base': validateToken(colorTokens.fabric.stroke.base).isValid ? colorTokens.fabric.stroke.base : '',
-  '--color-fabric-stroke-accessible': validateToken(colorTokens.fabric.stroke.accessible).isValid ? colorTokens.fabric.stroke.accessible : '',
-  '--color-fabric-stroke-disabled': validateToken(colorTokens.fabric.stroke.disabled).isValid ? colorTokens.fabric.stroke.disabled : '',
-  '--color-fabric-stroke-focus': validateToken(colorTokens.fabric.stroke.focus).isValid ? colorTokens.fabric.stroke.focus : '',
+      '--color-fabric-stroke-base': validateToken(colorTokens.fabric.stroke.base).isValid
+        ? colorTokens.fabric.stroke.base
+        : '',
+      '--color-fabric-stroke-accessible': validateToken(colorTokens.fabric.stroke.accessible).isValid
+        ? colorTokens.fabric.stroke.accessible
+        : '',
+      '--color-fabric-stroke-disabled': validateToken(colorTokens.fabric.stroke.disabled).isValid
+        ? colorTokens.fabric.stroke.disabled
+        : '',
+      '--color-fabric-stroke-focus': validateToken(colorTokens.fabric.stroke.focus).isValid
+        ? colorTokens.fabric.stroke.focus
+        : '',
 
-  '--color-compound-button-face': validateToken(colorTokens.compound.buttonFace).isValid ? colorTokens.compound.buttonFace : '',
-  '--color-compound-button-text': validateToken(colorTokens.compound.buttonText).isValid ? colorTokens.compound.buttonText : '',
-  '--color-compound-field-border': validateToken(colorTokens.compound.fieldBorder).isValid ? colorTokens.compound.fieldBorder : '',
-  '--color-compound-focus-stroke': validateToken(colorTokens.compound.focusStroke).isValid ? colorTokens.compound.focusStroke : '',
-  '--color-compound-card-background': validateToken(colorTokens.compound.cardBackground).isValid ? colorTokens.compound.cardBackground : '',
-  '--color-compound-card-shadow': validateToken(colorTokens.compound.cardShadow).isValid ? colorTokens.compound.cardShadow : '',
+      '--color-compound-button-face': validateToken(colorTokens.compound.buttonFace).isValid
+        ? colorTokens.compound.buttonFace
+        : '',
+      '--color-compound-button-text': validateToken(colorTokens.compound.buttonText).isValid
+        ? colorTokens.compound.buttonText
+        : '',
+      '--color-compound-field-border': validateToken(colorTokens.compound.fieldBorder).isValid
+        ? colorTokens.compound.fieldBorder
+        : '',
+      '--color-compound-focus-stroke': validateToken(colorTokens.compound.focusStroke).isValid
+        ? colorTokens.compound.focusStroke
+        : '',
+      '--color-compound-card-background': validateToken(colorTokens.compound.cardBackground).isValid
+        ? colorTokens.compound.cardBackground
+        : '',
+      '--color-compound-card-shadow': validateToken(colorTokens.compound.cardShadow).isValid
+        ? colorTokens.compound.cardShadow
+        : '',
 
-  // Typography
-  '--font-family-base': validateToken(typographyTokens.family.base).isValid ? typographyTokens.family.base : '',
-  '--font-family-monospace': validateToken(typographyTokens.family.monospace).isValid ? typographyTokens.family.monospace : '',
+      // Typography
+      '--font-family-base': validateToken(typographyTokens.family.base).isValid ? typographyTokens.family.base : '',
+      '--font-family-monospace': validateToken(typographyTokens.family.monospace).isValid
+        ? typographyTokens.family.monospace
+        : '',
 
-  '--font-size-100': validateToken(typographyTokens.size[100]).isValid ? typographyTokens.size[100] : '',
-  '--font-size-200': validateToken(typographyTokens.size[200]).isValid ? typographyTokens.size[200] : '',
-  '--font-size-300': validateToken(typographyTokens.size[300]).isValid ? typographyTokens.size[300] : '',
-  '--font-size-400': validateToken(typographyTokens.size[400]).isValid ? typographyTokens.size[400] : '',
-  '--font-size-500': validateToken(typographyTokens.size[500]).isValid ? typographyTokens.size[500] : '',
-  '--font-size-600': validateToken(typographyTokens.size[600]).isValid ? typographyTokens.size[600] : '',
-  '--font-size-700': validateToken(typographyTokens.size[700]).isValid ? typographyTokens.size[700] : '',
-  '--font-size-800': validateToken(typographyTokens.size[800]).isValid ? typographyTokens.size[800] : '',
-  '--font-size-900': validateToken(typographyTokens.size[900]).isValid ? typographyTokens.size[900] : '',
+      '--font-size-100': validateToken(typographyTokens.size[100]).isValid ? typographyTokens.size[100] : '',
+      '--font-size-200': validateToken(typographyTokens.size[200]).isValid ? typographyTokens.size[200] : '',
+      '--font-size-300': validateToken(typographyTokens.size[300]).isValid ? typographyTokens.size[300] : '',
+      '--font-size-400': validateToken(typographyTokens.size[400]).isValid ? typographyTokens.size[400] : '',
+      '--font-size-500': validateToken(typographyTokens.size[500]).isValid ? typographyTokens.size[500] : '',
+      '--font-size-600': validateToken(typographyTokens.size[600]).isValid ? typographyTokens.size[600] : '',
+      '--font-size-700': validateToken(typographyTokens.size[700]).isValid ? typographyTokens.size[700] : '',
+      '--font-size-800': validateToken(typographyTokens.size[800]).isValid ? typographyTokens.size[800] : '',
+      '--font-size-900': validateToken(typographyTokens.size[900]).isValid ? typographyTokens.size[900] : '',
 
-  '--font-weight-regular': validateToken(typographyTokens.weight.regular).isValid ? typographyTokens.weight.regular : '',
-  '--font-weight-medium': validateToken(typographyTokens.weight.medium).isValid ? typographyTokens.weight.medium : '',
-  '--font-weight-semibold': validateToken(typographyTokens.weight.semibold).isValid ? typographyTokens.weight.semibold : '',
-  '--font-weight-bold': validateToken(typographyTokens.weight.bold).isValid ? typographyTokens.weight.bold : '',
+      '--font-weight-regular': validateToken(typographyTokens.weight.regular).isValid
+        ? typographyTokens.weight.regular
+        : '',
+      '--font-weight-medium': validateToken(typographyTokens.weight.medium).isValid
+        ? typographyTokens.weight.medium
+        : '',
+      '--font-weight-semibold': validateToken(typographyTokens.weight.semibold).isValid
+        ? typographyTokens.weight.semibold
+        : '',
+      '--font-weight-bold': validateToken(typographyTokens.weight.bold).isValid ? typographyTokens.weight.bold : '',
 
-  '--line-height-base': validateToken(typographyTokens.lineHeight.base).isValid ? typographyTokens.lineHeight.base : '',
-  '--line-height-tight': validateToken(typographyTokens.lineHeight.tight).isValid ? typographyTokens.lineHeight.tight : '',
-  '--line-height-loose': validateToken(typographyTokens.lineHeight.loose).isValid ? typographyTokens.lineHeight.loose : '',
+      '--line-height-base': validateToken(typographyTokens.lineHeight.base).isValid
+        ? typographyTokens.lineHeight.base
+        : '',
+      '--line-height-tight': validateToken(typographyTokens.lineHeight.tight).isValid
+        ? typographyTokens.lineHeight.tight
+        : '',
+      '--line-height-loose': validateToken(typographyTokens.lineHeight.loose).isValid
+        ? typographyTokens.lineHeight.loose
+        : '',
 
-  // Fabric Typography
-  '--font-fabric-body': validateToken(typographyTokens.fabric.body.font).isValid ? typographyTokens.fabric.body.font : '',
-  '--font-size-fabric-body': validateToken(typographyTokens.fabric.body.size).isValid ? typographyTokens.fabric.body.size : '',
-  '--font-weight-fabric-body': validateToken(typographyTokens.fabric.body.weight).isValid ? typographyTokens.fabric.body.weight : '',
-  '--line-height-fabric-body': validateToken(typographyTokens.fabric.body.lineHeight).isValid ? typographyTokens.fabric.body.lineHeight : '',
+      // Fabric Typography
+      '--font-fabric-body': validateToken(typographyTokens.fabric.body.font).isValid
+        ? typographyTokens.fabric.body.font
+        : '',
+      '--font-size-fabric-body': validateToken(typographyTokens.fabric.body.size).isValid
+        ? typographyTokens.fabric.body.size
+        : '',
+      '--font-weight-fabric-body': validateToken(typographyTokens.fabric.body.weight).isValid
+        ? typographyTokens.fabric.body.weight
+        : '',
+      '--line-height-fabric-body': validateToken(typographyTokens.fabric.body.lineHeight).isValid
+        ? typographyTokens.fabric.body.lineHeight
+        : '',
 
-  '--font-fabric-caption': validateToken(typographyTokens.fabric.caption.font).isValid ? typographyTokens.fabric.caption.font : '',
-  '--font-size-fabric-caption': validateToken(typographyTokens.fabric.caption.size).isValid ? typographyTokens.fabric.caption.size : '',
-  '--font-weight-fabric-caption': validateToken(typographyTokens.fabric.caption.weight).isValid ? typographyTokens.fabric.caption.weight : '',
-  '--line-height-fabric-caption': validateToken(typographyTokens.fabric.caption.lineHeight).isValid ? typographyTokens.fabric.caption.lineHeight : '',
+      '--font-fabric-caption': validateToken(typographyTokens.fabric.caption.font).isValid
+        ? typographyTokens.fabric.caption.font
+        : '',
+      '--font-size-fabric-caption': validateToken(typographyTokens.fabric.caption.size).isValid
+        ? typographyTokens.fabric.caption.size
+        : '',
+      '--font-weight-fabric-caption': validateToken(typographyTokens.fabric.caption.weight).isValid
+        ? typographyTokens.fabric.caption.weight
+        : '',
+      '--line-height-fabric-caption': validateToken(typographyTokens.fabric.caption.lineHeight).isValid
+        ? typographyTokens.fabric.caption.lineHeight
+        : '',
 
-  '--font-fabric-headline': validateToken(typographyTokens.fabric.headline.font).isValid ? typographyTokens.fabric.headline.font : '',
-  '--font-size-fabric-headline': validateToken(typographyTokens.fabric.headline.size).isValid ? typographyTokens.fabric.headline.size : '',
-  '--font-weight-fabric-headline': validateToken(typographyTokens.fabric.headline.weight).isValid ? typographyTokens.fabric.headline.weight : '',
-  '--line-height-fabric-headline': validateToken(typographyTokens.fabric.headline.lineHeight).isValid ? typographyTokens.fabric.headline.lineHeight : '',
+      '--font-fabric-headline': validateToken(typographyTokens.fabric.headline.font).isValid
+        ? typographyTokens.fabric.headline.font
+        : '',
+      '--font-size-fabric-headline': validateToken(typographyTokens.fabric.headline.size).isValid
+        ? typographyTokens.fabric.headline.size
+        : '',
+      '--font-weight-fabric-headline': validateToken(typographyTokens.fabric.headline.weight).isValid
+        ? typographyTokens.fabric.headline.weight
+        : '',
+      '--line-height-fabric-headline': validateToken(typographyTokens.fabric.headline.lineHeight).isValid
+        ? typographyTokens.fabric.headline.lineHeight
+        : '',
 
-  // Spacing
-  '--spacing-0': validateToken(spacingBase[0]).isValid ? spacingBase[0] : '',
-  '--spacing-1': validateToken(spacingBase[1]).isValid ? spacingBase[1] : '',
-  '--spacing-2': validateToken(spacingBase[2]).isValid ? spacingBase[2] : '',
-  '--spacing-3': validateToken(spacingBase[3]).isValid ? spacingBase[3] : '',
-  '--spacing-4': validateToken(spacingBase[4]).isValid ? spacingBase[4] : '',
-  '--spacing-5': validateToken(spacingBase[5]).isValid ? spacingBase[5] : '',
-  '--spacing-6': validateToken(spacingBase[6]).isValid ? spacingBase[6] : '',
+      // Spacing
+      '--spacing-0': validateToken(spacingBase[0]).isValid ? spacingBase[0] : '',
+      '--spacing-1': validateToken(spacingBase[1]).isValid ? spacingBase[1] : '',
+      '--spacing-2': validateToken(spacingBase[2]).isValid ? spacingBase[2] : '',
+      '--spacing-3': validateToken(spacingBase[3]).isValid ? spacingBase[3] : '',
+      '--spacing-4': validateToken(spacingBase[4]).isValid ? spacingBase[4] : '',
+      '--spacing-5': validateToken(spacingBase[5]).isValid ? spacingBase[5] : '',
+      '--spacing-6': validateToken(spacingBase[6]).isValid ? spacingBase[6] : '',
 
-  // Fabric Spacing
-  '--spacing-fabric-xxxs': validateToken(spacingTokens.fabric.xxxs).isValid ? spacingTokens.fabric.xxxs : '',
-  '--spacing-fabric-xxs': validateToken(spacingTokens.fabric.xxs).isValid ? spacingTokens.fabric.xxs : '',
-  '--spacing-fabric-xs': validateToken(spacingTokens.fabric.xs).isValid ? spacingTokens.fabric.xs : '',
-  '--spacing-fabric-s': validateToken(spacingTokens.fabric.s).isValid ? spacingTokens.fabric.s : '',
-  '--spacing-fabric-m': validateToken(spacingTokens.fabric.m).isValid ? spacingTokens.fabric.m : '',
-  '--spacing-fabric-l': validateToken(spacingTokens.fabric.l).isValid ? spacingTokens.fabric.l : '',
-  '--spacing-fabric-xl': validateToken(spacingTokens.fabric.xl).isValid ? spacingTokens.fabric.xl : '',
-  '--spacing-fabric-xxl': validateToken(spacingTokens.fabric.xxl).isValid ? spacingTokens.fabric.xxl : '',
-  '--spacing-fabric-xxxl': validateToken(spacingTokens.fabric.xxxl).isValid ? spacingTokens.fabric.xxxl : '',
+      // Fabric Spacing
+      '--spacing-fabric-xxxs': validateToken(spacingTokens.fabric.xxxs).isValid ? spacingTokens.fabric.xxxs : '',
+      '--spacing-fabric-xxs': validateToken(spacingTokens.fabric.xxs).isValid ? spacingTokens.fabric.xxs : '',
+      '--spacing-fabric-xs': validateToken(spacingTokens.fabric.xs).isValid ? spacingTokens.fabric.xs : '',
+      '--spacing-fabric-s': validateToken(spacingTokens.fabric.s).isValid ? spacingTokens.fabric.s : '',
+      '--spacing-fabric-m': validateToken(spacingTokens.fabric.m).isValid ? spacingTokens.fabric.m : '',
+      '--spacing-fabric-l': validateToken(spacingTokens.fabric.l).isValid ? spacingTokens.fabric.l : '',
+      '--spacing-fabric-xl': validateToken(spacingTokens.fabric.xl).isValid ? spacingTokens.fabric.xl : '',
+      '--spacing-fabric-xxl': validateToken(spacingTokens.fabric.xxl).isValid ? spacingTokens.fabric.xxl : '',
+      '--spacing-fabric-xxxl': validateToken(spacingTokens.fabric.xxxl).isValid ? spacingTokens.fabric.xxxl : '',
 
-  // Borders
-  '--border-width-thin': validateToken(borderTokens.width.thin).isValid ? borderTokens.width.thin : '',
-  '--border-width-medium': validateToken(borderTokens.width.medium).isValid ? borderTokens.width.medium : '',
-  '--border-width-thick': validateToken(borderTokens.width.thick).isValid ? borderTokens.width.thick : '',
+      // Borders
+      '--border-width-thin': validateToken(borderTokens.width.thin).isValid ? borderTokens.width.thin : '',
+      '--border-width-medium': validateToken(borderTokens.width.medium).isValid ? borderTokens.width.medium : '',
+      '--border-width-thick': validateToken(borderTokens.width.thick).isValid ? borderTokens.width.thick : '',
 
-  '--border-radius-none': validateToken(borderTokens.radius.none).isValid ? borderTokens.radius.none : '',
-  '--border-radius-small': validateToken(borderTokens.radius.small).isValid ? borderTokens.radius.small : '',
-  '--border-radius-medium': validateToken(borderTokens.radius.medium).isValid ? borderTokens.radius.medium : '',
-  '--border-radius-large': validateToken(borderTokens.radius.large).isValid ? borderTokens.radius.large : '',
-  '--border-radius-circular': validateToken(borderTokens.radius.circular).isValid ? borderTokens.radius.circular : '',
+      '--border-radius-none': validateToken(borderTokens.radius.none).isValid ? borderTokens.radius.none : '',
+      '--border-radius-small': validateToken(borderTokens.radius.small).isValid ? borderTokens.radius.small : '',
+      '--border-radius-medium': validateToken(borderTokens.radius.medium).isValid ? borderTokens.radius.medium : '',
+      '--border-radius-large': validateToken(borderTokens.radius.large).isValid ? borderTokens.radius.large : '',
+      '--border-radius-circular': validateToken(borderTokens.radius.circular).isValid
+        ? borderTokens.radius.circular
+        : '',
 
-  // Fabric Borders
-  '--border-radius-fabric-small': validateToken(borderTokens.fabric.cornerRadius.small).isValid ? borderTokens.fabric.cornerRadius.small : '',
-  '--border-radius-fabric-medium': validateToken(borderTokens.fabric.cornerRadius.medium).isValid ? borderTokens.fabric.cornerRadius.medium : '',
-  '--border-radius-fabric-large': validateToken(borderTokens.fabric.cornerRadius.large).isValid ? borderTokens.fabric.cornerRadius.large : '',
-  '--border-radius-fabric-circular': validateToken(borderTokens.fabric.cornerRadius.circular).isValid ? borderTokens.fabric.cornerRadius.circular : '',
+      // Fabric Borders
+      '--border-radius-fabric-small': validateToken(borderTokens.fabric.cornerRadius.small).isValid
+        ? borderTokens.fabric.cornerRadius.small
+        : '',
+      '--border-radius-fabric-medium': validateToken(borderTokens.fabric.cornerRadius.medium).isValid
+        ? borderTokens.fabric.cornerRadius.medium
+        : '',
+      '--border-radius-fabric-large': validateToken(borderTokens.fabric.cornerRadius.large).isValid
+        ? borderTokens.fabric.cornerRadius.large
+        : '',
+      '--border-radius-fabric-circular': validateToken(borderTokens.fabric.cornerRadius.circular).isValid
+        ? borderTokens.fabric.cornerRadius.circular
+        : '',
 
-  '--border-stroke-fabric-thin': validateToken(borderTokens.fabric.stroke.thin).isValid ? borderTokens.fabric.stroke.thin : '',
-  '--border-stroke-fabric-thick': validateToken(borderTokens.fabric.stroke.thick).isValid ? borderTokens.fabric.stroke.thick : '',
-  '--border-stroke-fabric-thicker': validateToken(borderTokens.fabric.stroke.thicker).isValid ? borderTokens.fabric.stroke.thicker : '',
-  '--border-stroke-fabric-thickest': validateToken(borderTokens.fabric.stroke.thickest).isValid ? borderTokens.fabric.stroke.thickest : '',
+      '--border-stroke-fabric-thin': validateToken(borderTokens.fabric.stroke.thin).isValid
+        ? borderTokens.fabric.stroke.thin
+        : '',
+      '--border-stroke-fabric-thick': validateToken(borderTokens.fabric.stroke.thick).isValid
+        ? borderTokens.fabric.stroke.thick
+        : '',
+      '--border-stroke-fabric-thicker': validateToken(borderTokens.fabric.stroke.thicker).isValid
+        ? borderTokens.fabric.stroke.thicker
+        : '',
+      '--border-stroke-fabric-thickest': validateToken(borderTokens.fabric.stroke.thickest).isValid
+        ? borderTokens.fabric.stroke.thickest
+        : '',
 
-  // Shadows
-  '--shadow-rest': validateToken(shadowTokens.rest).isValid ? shadowTokens.rest : '',
-  '--shadow-hover': validateToken(shadowTokens.hover).isValid ? shadowTokens.hover : '',
-  '--shadow-active': validateToken(shadowTokens.active).isValid ? shadowTokens.active : '',
-  '--shadow-focus': validateToken(shadowTokens.focus).isValid ? shadowTokens.focus : '',
+      // Shadows
+      '--shadow-rest': validateToken(shadowTokens.rest).isValid ? shadowTokens.rest : '',
+      '--shadow-hover': validateToken(shadowTokens.hover).isValid ? shadowTokens.hover : '',
+      '--shadow-active': validateToken(shadowTokens.active).isValid ? shadowTokens.active : '',
+      '--shadow-focus': validateToken(shadowTokens.focus).isValid ? shadowTokens.focus : '',
 
-  // Animations
-  '--animation-duration-fast': validateToken(animationTokens.duration.fast).isValid ? animationTokens.duration.fast : '',
-  '--animation-duration-normal': validateToken(animationTokens.duration.normal).isValid ? animationTokens.duration.normal : '',
-  '--animation-duration-slow': validateToken(animationTokens.duration.slow).isValid ? animationTokens.duration.slow : '',
+      // Animations
+      '--animation-duration-fast': validateToken(animationTokens.duration.fast).isValid
+        ? animationTokens.duration.fast
+        : '',
+      '--animation-duration-normal': validateToken(animationTokens.duration.normal).isValid
+        ? animationTokens.duration.normal
+        : '',
+      '--animation-duration-slow': validateToken(animationTokens.duration.slow).isValid
+        ? animationTokens.duration.slow
+        : '',
 
-  '--animation-easing-ease-out': validateToken(animationTokens.easing.easeOut).isValid ? animationTokens.easing.easeOut : '',
-  '--animation-easing-ease-in': validateToken(animationTokens.easing.easeIn).isValid ? animationTokens.easing.easeIn : '',
-  '--animation-easing-ease-in-out': validateToken(animationTokens.easing.easeInOut).isValid ? animationTokens.easing.easeInOut : '',
+      '--animation-easing-ease-out': validateToken(animationTokens.easing.easeOut).isValid
+        ? animationTokens.easing.easeOut
+        : '',
+      '--animation-easing-ease-in': validateToken(animationTokens.easing.easeIn).isValid
+        ? animationTokens.easing.easeIn
+        : '',
+      '--animation-easing-ease-in-out': validateToken(animationTokens.easing.easeInOut).isValid
+        ? animationTokens.easing.easeInOut
+        : '',
 
-  // Fabric Elevation
-  '--elevation-base': validateToken(elevationTokens.base).isValid ? elevationTokens.base : '',
-  '--elevation-raised': validateToken(elevationTokens.raised).isValid ? elevationTokens.raised : '',
-  '--elevation-overlay': validateToken(elevationTokens.overlay).isValid ? elevationTokens.overlay : '',
-  '--elevation-sticky': validateToken(elevationTokens.sticky).isValid ? elevationTokens.sticky : '',
-  '--elevation-dialog': validateToken(elevationTokens.dialog).isValid ? elevationTokens.dialog : '',
-  '--elevation-flyout': validateToken(elevationTokens.flyout).isValid ? elevationTokens.flyout : '',
-}).map(([key, value]) => `${key}: ${value};`).join('\n')}
+      // Fabric Elevation
+      '--elevation-base': validateToken(elevationTokens.base).isValid ? elevationTokens.base : '',
+      '--elevation-raised': validateToken(elevationTokens.raised).isValid ? elevationTokens.raised : '',
+      '--elevation-overlay': validateToken(elevationTokens.overlay).isValid ? elevationTokens.overlay : '',
+      '--elevation-sticky': validateToken(elevationTokens.sticky).isValid ? elevationTokens.sticky : '',
+      '--elevation-dialog': validateToken(elevationTokens.dialog).isValid ? elevationTokens.dialog : '',
+      '--elevation-flyout': validateToken(elevationTokens.flyout).isValid ? elevationTokens.flyout : '',
+    })
+      .map(([key, value]) => `${key}: ${value};`)
+      .join('\n')}
   }
 `;
 
@@ -651,10 +770,4 @@ export type ShadowToken = keyof typeof shadowTokens;
 export type AnimationToken = keyof typeof animationTokens;
 
 // Export all token types as a union
-export type DesignToken =
-  | ColorToken
-  | TypographyToken
-  | SpacingToken
-  | BorderToken
-  | ShadowToken
-  | AnimationToken;
+export type DesignToken = ColorToken | TypographyToken | SpacingToken | BorderToken | ShadowToken | AnimationToken;

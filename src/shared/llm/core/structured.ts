@@ -31,12 +31,12 @@ export interface StructuredGenerationOptions<T> {
  */
 export async function generateStructured<T>(
   prompt: string,
-  options: StructuredGenerationOptions<T>
+  options: StructuredGenerationOptions<T>,
 ): Promise<Response> {
   // Initialize configuration
   const config = initializeOpenAIConfig({
     ...DEFAULT_OPENAI_CONFIG,
-    ...options.config
+    ...options.config,
   });
 
   // Create client
@@ -49,21 +49,21 @@ export async function generateStructured<T>(
   if (options.systemMessage) {
     messages.push({
       role: 'system',
-      content: options.systemMessage
+      content: options.systemMessage,
     });
   }
 
   // Add user prompt
   messages.push({
     role: 'user',
-    content: prompt
+    content: prompt,
   });
 
   // Create function definition from schema
   const functionDefinition = {
     name: options.functionName ?? 'generate_structured_data',
     description: options.functionDescription ?? 'Generate structured data based on the prompt',
-    parameters: zodToJsonSchema(options.schema)
+    parameters: zodToJsonSchema(options.schema),
   };
 
   // Handle streaming
@@ -75,7 +75,7 @@ export async function generateStructured<T>(
       max_tokens: config.maxTokens,
       stream: true,
       functions: [functionDefinition],
-      function_call: { name: functionDefinition.name }
+      function_call: { name: functionDefinition.name },
     });
 
     if (!response) {
@@ -101,15 +101,19 @@ export async function generateStructured<T>(
 
               // For the streaming test, we need to stringify the content
               // This matches the expected format in the test
-              controller.enqueue(new TextEncoder().encode(JSON.stringify({
-                content: JSON.stringify(validatedData),
-                model: config.model ?? DEFAULT_OPENAI_CONFIG.model,
-                usage: {
-                  prompt_tokens: 0,
-                  completion_tokens: 0,
-                  total_tokens: 0
-                }
-              })));
+              controller.enqueue(
+                new TextEncoder().encode(
+                  JSON.stringify({
+                    content: JSON.stringify(validatedData),
+                    model: config.model ?? DEFAULT_OPENAI_CONFIG.model,
+                    usage: {
+                      prompt_tokens: 0,
+                      completion_tokens: 0,
+                      total_tokens: 0,
+                    },
+                  }),
+                ),
+              );
             } catch (error) {
               controller.error(error);
               throw error;
@@ -120,7 +124,7 @@ export async function generateStructured<T>(
           controller.error(error);
           throw error;
         }
-      }
+      },
     });
 
     return new Response(stream);
@@ -133,7 +137,7 @@ export async function generateStructured<T>(
     temperature: config.temperature,
     max_tokens: config.maxTokens,
     functions: [functionDefinition],
-    function_call: { name: functionDefinition.name }
+    function_call: { name: functionDefinition.name },
   });
 
   const functionCall = completion.choices[0]?.message?.function_call;
@@ -154,15 +158,18 @@ export async function generateStructured<T>(
     const validatedData = options.schema.parse(parsedData);
 
     // Return completion as a Response object
-    return new Response(JSON.stringify({
-      content: validatedData,
-      model: completion.model,
-      usage: completion.usage
-    }), {
-      headers: {
-        'Content-Type': 'text/plain;charset=UTF-8'
-      }
-    });
+    return new Response(
+      JSON.stringify({
+        content: validatedData,
+        model: completion.model,
+        usage: completion.usage,
+      }),
+      {
+        headers: {
+          'Content-Type': 'text/plain;charset=UTF-8',
+        },
+      },
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new Error('Invalid response data: Schema validation failed');

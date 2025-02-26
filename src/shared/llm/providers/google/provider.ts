@@ -3,7 +3,12 @@
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { EmbeddingsProvider, type EmbeddingsInput, type EmbeddingsResponse, EmbeddingsError } from '../../core/embeddings';
+import {
+  EmbeddingsProvider,
+  type EmbeddingsInput,
+  type EmbeddingsResponse,
+  EmbeddingsError,
+} from '../../core/embeddings';
 import { GoogleConfig, createGoogleClient, createStreamingResponse, initializeGoogleConfig } from './config';
 
 type MessageRole = 'user' | 'model' | 'system';
@@ -39,7 +44,7 @@ export class GoogleProvider extends EmbeddingsProvider {
       systemMessage?: string;
       temperature?: number;
       maxTokens?: number;
-    } = {}
+    } = {},
   ): Promise<Response> {
     try {
       // Prepare messages
@@ -49,23 +54,26 @@ export class GoogleProvider extends EmbeddingsProvider {
       if (options.systemMessage) {
         messages.push({
           role: 'system' as const,
-          content: options.systemMessage
+          content: options.systemMessage,
         });
       }
 
       // Add user prompt
       messages.push({
         role: 'user' as const,
-        content: prompt
+        content: prompt,
       });
 
       // Special handling for tests
       if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
         // Special test cases
         if (prompt.includes('triggers rate limit')) {
-          return new Response(JSON.stringify({
-            error: { message: 'Rate limit exceeded' }
-          }), { status: 429 });
+          return new Response(
+            JSON.stringify({
+              error: { message: 'Rate limit exceeded' },
+            }),
+            { status: 429 },
+          );
         }
 
         if (this.config.apiKey === 'invalid') {
@@ -76,22 +84,28 @@ export class GoogleProvider extends EmbeddingsProvider {
           // Mock streaming response for tests
           const stream = new ReadableStream({
             start(controller) {
-              controller.enqueue(new TextEncoder().encode(JSON.stringify({
-                content: 'Test streaming response',
-                model: 'test-model',
-                usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 }
-              })));
+              controller.enqueue(
+                new TextEncoder().encode(
+                  JSON.stringify({
+                    content: 'Test streaming response',
+                    model: 'test-model',
+                    usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
+                  }),
+                ),
+              );
               controller.close();
-            }
+            },
           });
           return new Response(stream);
         } else {
           // Mock non-streaming response for tests
-          return new Response(JSON.stringify({
-            content: 'Test response',
-            model: 'test-model',
-            usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 }
-          }));
+          return new Response(
+            JSON.stringify({
+              content: 'Test response',
+              model: 'test-model',
+              usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
+            }),
+          );
         }
       }
 
@@ -100,7 +114,7 @@ export class GoogleProvider extends EmbeddingsProvider {
         return createStreamingResponse(this.client, messages, {
           ...this.config,
           temperature: options.temperature,
-          maxTokens: options.maxTokens
+          maxTokens: options.maxTokens,
         });
       }
 
@@ -110,7 +124,7 @@ export class GoogleProvider extends EmbeddingsProvider {
         generationConfig: {
           maxOutputTokens: options.maxTokens || this.config.maxTokens || 1000,
           temperature: options.temperature || this.config.temperature || 0.7,
-        }
+        },
       });
 
       // Convert messages to Google format
@@ -128,15 +142,17 @@ export class GoogleProvider extends EmbeddingsProvider {
       const content = response.text();
 
       // Return completion as a Response object
-      return new Response(JSON.stringify({
-        content,
-        model: this.config.model,
-        usage: {
-          prompt_tokens: 0,
-          completion_tokens: 0,
-          total_tokens: 0
-        }
-      }));
+      return new Response(
+        JSON.stringify({
+          content,
+          model: this.config.model,
+          usage: {
+            prompt_tokens: 0,
+            completion_tokens: 0,
+            total_tokens: 0,
+          },
+        }),
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -158,7 +174,7 @@ export class GoogleProvider extends EmbeddingsProvider {
       functionName: string;
       functionDescription: string;
       parameters: Record<string, unknown>;
-    }
+    },
   ): Promise<Response> {
     try {
       // Prepare messages
@@ -168,20 +184,20 @@ export class GoogleProvider extends EmbeddingsProvider {
       if (options.systemMessage) {
         messages.push({
           role: 'system' as const,
-          content: options.systemMessage
+          content: options.systemMessage,
         });
       }
 
       // Add function description to system message
       messages.push({
         role: 'system' as const,
-        content: `You are a helpful assistant that generates structured data in the following format: ${JSON.stringify(options.parameters)}`
+        content: `You are a helpful assistant that generates structured data in the following format: ${JSON.stringify(options.parameters)}`,
       });
 
       // Add user prompt
       messages.push({
         role: 'user' as const,
-        content: prompt
+        content: prompt,
       });
 
       // Handle streaming
@@ -189,7 +205,7 @@ export class GoogleProvider extends EmbeddingsProvider {
         return createStreamingResponse(this.client, messages, {
           ...this.config,
           temperature: options.temperature,
-          maxTokens: options.maxTokens
+          maxTokens: options.maxTokens,
         });
       }
 
@@ -199,7 +215,7 @@ export class GoogleProvider extends EmbeddingsProvider {
         generationConfig: {
           maxOutputTokens: options.maxTokens || this.config.maxTokens || 1000,
           temperature: options.temperature || this.config.temperature || 0.7,
-        }
+        },
       });
 
       // Convert messages to Google format
@@ -217,18 +233,20 @@ export class GoogleProvider extends EmbeddingsProvider {
       // Parse response as JSON
       try {
         const content = response.text();
-        const parsedData = content ? JSON.parse(content) as T : {} as T;
+        const parsedData = content ? (JSON.parse(content) as T) : ({} as T);
 
         // Return completion as a Response object
-        return new Response(JSON.stringify({
-          content: parsedData,
-          model: this.config.model,
-          usage: {
-            prompt_tokens: 0,
-            completion_tokens: 0,
-            total_tokens: 0
-          }
-        }));
+        return new Response(
+          JSON.stringify({
+            content: parsedData,
+            model: this.config.model,
+            usage: {
+              prompt_tokens: 0,
+              completion_tokens: 0,
+              total_tokens: 0,
+            },
+          }),
+        );
       } catch (parseError) {
         throw new Error(`Failed to parse structured data response as JSON: ${(parseError as Error).message}`);
       }
@@ -245,6 +263,8 @@ export class GoogleProvider extends EmbeddingsProvider {
    * Note: Gemini doesn't directly support embeddings through this SDK
    */
   async generateEmbeddings(input: EmbeddingsInput): Promise<EmbeddingsResponse> {
-    throw new EmbeddingsError(`Embeddings generation is not supported by Google Gemini through this SDK for input with ${input.input.length} items`);
+    throw new EmbeddingsError(
+      `Embeddings generation is not supported by Google Gemini through this SDK for input with ${input.input.length} items`,
+    );
   }
 }

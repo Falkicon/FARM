@@ -3,17 +3,9 @@
  */
 import { OpenAI } from 'openai';
 import { OpenAIConfig } from '../../types/providers';
-import {
-  TextGenerationOptions,
-  StructuredDataOptions,
-  EmbeddingOptions
-} from '../../types/core';
+import { TextGenerationOptions, StructuredDataOptions, EmbeddingOptions } from '../../types/core';
 import { getEnvVar, isTestEnvironment } from '../../core/env';
-import {
-  createMockTextResponse,
-  createMockStructuredResponse,
-  createMockEmbeddingsResponse
-} from '../../core/mocks';
+import { createMockTextResponse, createMockStructuredResponse, createMockEmbeddingsResponse } from '../../core/mocks';
 import { BaseProvider } from '../../core/provider';
 
 /**
@@ -24,7 +16,7 @@ const DEFAULT_CONFIG: Partial<OpenAIConfig> = {
   model: 'gpt-3.5-turbo',
   temperature: 0.7,
   maxTokens: 1000,
-  embeddingModel: 'text-embedding-3-small'
+  embeddingModel: 'text-embedding-3-small',
 };
 
 /**
@@ -42,7 +34,7 @@ export class OpenAIProvider extends BaseProvider<OpenAIConfig> {
     const mergedConfig = {
       ...DEFAULT_CONFIG,
       ...config,
-      provider: 'openai' // Ensure provider is always set
+      provider: 'openai', // Ensure provider is always set
     } as OpenAIConfig;
 
     super(mergedConfig);
@@ -56,17 +48,14 @@ export class OpenAIProvider extends BaseProvider<OpenAIConfig> {
     this.client = new OpenAI({
       apiKey: this.config.apiKey || 'dummy-key-for-testing',
       organization: this.config.organization,
-      dangerouslyAllowBrowser: true
+      dangerouslyAllowBrowser: true,
     });
   }
 
   /**
    * Generate text using OpenAI
    */
-  async generateText(
-    prompt: string | string[],
-    options: Partial<TextGenerationOptions> = {}
-  ): Promise<Response> {
+  async generateText(prompt: string | string[], options: Partial<TextGenerationOptions> = {}): Promise<Response> {
     // Merge options with configuration
     const mergedOptions = this.mergeOptions(options);
 
@@ -85,10 +74,7 @@ export class OpenAIProvider extends BaseProvider<OpenAIConfig> {
   /**
    * Generate structured data using OpenAI
    */
-  async generateStructured(
-    prompt: string | string[],
-    options: StructuredDataOptions
-  ): Promise<Response> {
+  async generateStructured(prompt: string | string[], options: StructuredDataOptions): Promise<Response> {
     // Merge options with configuration
     const mergedOptions = this.mergeOptions(options);
 
@@ -110,15 +96,12 @@ export class OpenAIProvider extends BaseProvider<OpenAIConfig> {
    * @param options Options for the embedding generation
    * @returns The generated embeddings
    */
-  async generateEmbeddings(
-    text: string,
-    options?: Partial<EmbeddingOptions>
-  ): Promise<Response> {
+  async generateEmbeddings(text: string, options?: Partial<EmbeddingOptions>): Promise<Response> {
     // Convert the text parameter to the format expected by the implementation
     const embeddingOptions: EmbeddingOptions = {
       input: typeof text === 'string' ? text : Array.isArray(text) ? text : [text],
       model: this.config.embeddingModel,
-      ...(options || {})
+      ...(options || {}),
     };
 
     // In a real implementation, this would call the embeddings generation function
@@ -127,13 +110,13 @@ export class OpenAIProvider extends BaseProvider<OpenAIConfig> {
       const mockResponse = createMockEmbeddingsResponse(
         3,
         Array.isArray(embeddingOptions.input) ? embeddingOptions.input.length : 1,
-        this.config.embeddingModel || 'text-embedding-3-small'
+        this.config.embeddingModel || 'text-embedding-3-small',
       );
 
       // Convert the mock response to a standard Response object
       return new Response(JSON.stringify(mockResponse), {
         status: 200,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
 

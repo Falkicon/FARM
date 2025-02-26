@@ -55,7 +55,7 @@ export function createOpenAIClient(config: OpenAIConfig): OpenAI {
     apiKey: config.apiKey,
     organization: config.organization,
     baseURL: config.baseUrl,
-    dangerouslyAllowBrowser: true // Allow testing in Node.js environments
+    dangerouslyAllowBrowser: true, // Allow testing in Node.js environments
   });
 }
 
@@ -65,7 +65,7 @@ export function createOpenAIClient(config: OpenAIConfig): OpenAI {
 export async function createStreamingResponse(
   openai: OpenAI,
   messages: OpenAI.Chat.ChatCompletionMessageParam[],
-  config: Partial<OpenAIConfig> = {}
+  config: Partial<OpenAIConfig> = {},
 ): Promise<Response> {
   try {
     const response = await openai.chat.completions.create({
@@ -87,22 +87,26 @@ export async function createStreamingResponse(
           for await (const chunk of response) {
             const content = chunk.choices[0]?.delta?.content;
             if (content) {
-              controller.enqueue(new TextEncoder().encode(JSON.stringify({
-                content,
-                model: config.model ?? DEFAULT_OPENAI_CONFIG.model,
-                usage: {
-                  prompt_tokens: 0,
-                  completion_tokens: 0,
-                  total_tokens: 0
-                }
-              })));
+              controller.enqueue(
+                new TextEncoder().encode(
+                  JSON.stringify({
+                    content,
+                    model: config.model ?? DEFAULT_OPENAI_CONFIG.model,
+                    usage: {
+                      prompt_tokens: 0,
+                      completion_tokens: 0,
+                      total_tokens: 0,
+                    },
+                  }),
+                ),
+              );
             }
           }
           controller.close();
         } catch (error) {
           controller.error(error);
         }
-      }
+      },
     });
 
     // Return a standard Response object with the stream

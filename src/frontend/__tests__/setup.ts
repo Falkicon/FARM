@@ -65,7 +65,7 @@ Object.defineProperty(window, 'customElements', {
 vi.mock('@microsoft/fast-element', async () => {
   const actual = await vi.importActual('@microsoft/fast-element');
   return {
-    ...actual as any,
+    ...(actual as any),
     FASTElement: class extends MockElement {
       static define(nameOrDef: any) {
         const name = typeof nameOrDef === 'string' ? nameOrDef : nameOrDef.name;
@@ -85,20 +85,24 @@ vi.mock('@microsoft/fast-element', async () => {
     attr: () => (proto: any, key: string) => {
       const privateKey = `_${key}`;
       Object.defineProperty(proto, key, {
-        get() { return this[privateKey]; },
+        get() {
+          return this[privateKey];
+        },
         set(value) {
           const oldValue = this[privateKey];
           this[privateKey] = value;
           this.attributeChangedCallback?.(key, oldValue, value);
         },
         enumerable: true,
-        configurable: true
+        configurable: true,
       });
     },
     observable: () => (proto: any, key: string) => {
       const privateKey = `_${key}`;
       Object.defineProperty(proto, key, {
-        get() { return this[privateKey]; },
+        get() {
+          return this[privateKey];
+        },
         set(value) {
           const oldValue = this[privateKey];
           this[privateKey] = value;
@@ -108,18 +112,20 @@ vi.mock('@microsoft/fast-element', async () => {
           }
         },
         enumerable: true,
-        configurable: true
+        configurable: true,
       });
     },
     volatile: () => (proto: any, key: string) => {
       const privateKey = `_${key}`;
       Object.defineProperty(proto, key, {
-        get() { return this[privateKey]; },
+        get() {
+          return this[privateKey];
+        },
         set(value) {
           this[privateKey] = value;
         },
         enumerable: true,
-        configurable: true
+        configurable: true,
       });
     },
     css: vi.fn().mockReturnValue({}),

@@ -31,7 +31,7 @@ vi.mock('../core/base-provider', () => {
       getProviderName() {
         return this.config.provider;
       }
-    }
+    },
   };
 });
 
@@ -46,7 +46,7 @@ vi.mock('../core/config', () => {
         throw new ConfigurationError('Invalid provider');
       }
       return { ...defaults, ...config };
-    })
+    }),
   };
 });
 
@@ -56,10 +56,10 @@ vi.mock('@anthropic-ai/sdk', () => {
     default: vi.fn().mockImplementation(() => ({
       messages: {
         create: vi.fn().mockResolvedValue({
-          content: [{ type: 'text', text: 'This is a response from Anthropic Claude.' }]
-        })
-      }
-    }))
+          content: [{ type: 'text', text: 'This is a response from Anthropic Claude.' }],
+        }),
+      },
+    })),
   };
 });
 
@@ -72,8 +72,8 @@ vi.mock('../core/mocks', () => {
       usage: {
         promptTokens: 10,
         completionTokens: 20,
-        totalTokens: 30
-      }
+        totalTokens: 30,
+      },
     }),
     createMockStructuredResponse: vi.fn().mockImplementation(() => {
       return {
@@ -84,23 +84,23 @@ vi.mock('../core/mocks', () => {
             {
               day: 'Monday',
               temperature: 75,
-              conditions: 'Partly Cloudy'
+              conditions: 'Partly Cloudy',
             },
             {
               day: 'Tuesday',
               temperature: 70,
-              conditions: 'Rainy'
-            }
-          ]
+              conditions: 'Rainy',
+            },
+          ],
         },
         model: 'claude-3-sonnet-20240229',
         usage: {
           promptTokens: 10,
           completionTokens: 20,
-          totalTokens: 30
-        }
+          totalTokens: 30,
+        },
       };
-    })
+    }),
   };
 });
 
@@ -124,7 +124,7 @@ describe('AnthropicProviderNew', () => {
         model: 'claude-3-opus-20240229',
         maxTokens: 1024,
         temperature: 0.7,
-        topP: 1
+        topP: 1,
       });
 
       expect(provider).toBeInstanceOf(AnthropicProviderNew);
@@ -133,7 +133,7 @@ describe('AnthropicProviderNew', () => {
     it('should throw an error if apiKey is missing', () => {
       expect(() => {
         new AnthropicProviderNew({
-          provider: 'anthropic'
+          provider: 'anthropic',
         } as any);
       }).toThrow(ConfigurationError);
     });
@@ -142,7 +142,7 @@ describe('AnthropicProviderNew', () => {
       expect(() => {
         new AnthropicProviderNew({
           apiKey: 'test-api-key',
-          provider: 'openai'
+          provider: 'openai',
         } as any);
       }).toThrow(ConfigurationError);
     });
@@ -156,11 +156,11 @@ describe('AnthropicProviderNew', () => {
         model: 'claude-3-opus-20240229',
         maxTokens: 1024,
         temperature: 0.7,
-        topP: 1
+        topP: 1,
       });
 
       const response = await provider.generateText({
-        messages: [{ role: 'user', content: 'Hello, world!' }]
+        messages: [{ role: 'user', content: 'Hello, world!' }],
       });
 
       expect(response).toHaveProperty('content');
@@ -178,12 +178,12 @@ describe('AnthropicProviderNew', () => {
         model: 'claude-3-opus-20240229',
         maxTokens: 1024,
         temperature: 0.7,
-        topP: 1
+        topP: 1,
       });
 
       const WeatherTool = z.object({
         location: z.string(),
-        unit: z.enum(['celsius', 'fahrenheit']).optional()
+        unit: z.enum(['celsius', 'fahrenheit']).optional(),
       });
 
       const response = await provider.generateText({
@@ -192,9 +192,9 @@ describe('AnthropicProviderNew', () => {
           {
             name: 'get_weather',
             description: 'Get the weather for a location',
-            parameters: WeatherTool
-          }
-        ]
+            parameters: WeatherTool,
+          },
+        ],
       });
 
       expect(response).toHaveProperty('content');
@@ -211,17 +211,19 @@ describe('AnthropicProviderNew', () => {
         model: 'claude-3-opus-20240229',
         maxTokens: 1024,
         temperature: 0.7,
-        topP: 1
+        topP: 1,
       });
 
       const WeatherReport = z.object({
         temperature: z.number(),
         conditions: z.string(),
-        forecast: z.array(z.object({
-          day: z.string(),
-          temperature: z.number(),
-          conditions: z.string()
-        }))
+        forecast: z.array(
+          z.object({
+            day: z.string(),
+            temperature: z.number(),
+            conditions: z.string(),
+          }),
+        ),
       });
 
       const response = await provider.generateStructured({
@@ -240,12 +242,12 @@ describe('AnthropicProviderNew', () => {
                 properties: {
                   day: { type: 'string' },
                   temperature: { type: 'number' },
-                  conditions: { type: 'string' }
-                }
-              }
-            }
-          }
-        }
+                  conditions: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
       });
 
       expect(response).toHaveProperty('content');
@@ -273,19 +275,19 @@ describe('AnthropicProviderNew', () => {
                     {
                       day: 'Monday',
                       temperature: 75,
-                      conditions: 'Partly Cloudy'
+                      conditions: 'Partly Cloudy',
                     },
                     {
                       day: 'Tuesday',
                       temperature: 70,
-                      conditions: 'Rainy'
-                    }
-                  ]
-                })
-              }
-            ]
-          })
-        }
+                      conditions: 'Rainy',
+                    },
+                  ],
+                }),
+              },
+            ],
+          }),
+        },
       };
 
       // Replace the mocked implementation
@@ -300,17 +302,19 @@ describe('AnthropicProviderNew', () => {
         model: 'claude-3-opus-20240229',
         maxTokens: 1024,
         temperature: 0.7,
-        topP: 1
+        topP: 1,
       });
 
       const WeatherReport = z.object({
         temperature: z.number(),
         conditions: z.string(),
-        forecast: z.array(z.object({
-          day: z.string(),
-          temperature: z.number(),
-          conditions: z.string()
-        }))
+        forecast: z.array(
+          z.object({
+            day: z.string(),
+            temperature: z.number(),
+            conditions: z.string(),
+          }),
+        ),
       });
 
       const response = await provider.generateStructured({
@@ -329,12 +333,12 @@ describe('AnthropicProviderNew', () => {
                 properties: {
                   day: { type: 'string' },
                   temperature: { type: 'number' },
-                  conditions: { type: 'string' }
-                }
-              }
-            }
-          }
-        }
+                  conditions: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
       });
 
       // Restore the original mock
@@ -358,12 +362,14 @@ describe('AnthropicProviderNew', () => {
         model: 'claude-3-opus-20240229',
         maxTokens: 1024,
         temperature: 0.7,
-        topP: 1
+        topP: 1,
       });
 
-      await expect(provider.generateEmbeddings({
-        input: 'Hello, world!'
-      })).rejects.toThrow('Anthropic does not support embeddings generation');
+      await expect(
+        provider.generateEmbeddings({
+          input: 'Hello, world!',
+        }),
+      ).rejects.toThrow('Anthropic does not support embeddings generation');
     });
   });
 });

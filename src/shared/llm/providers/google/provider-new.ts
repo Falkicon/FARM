@@ -18,7 +18,7 @@ import {
   EmbeddingOptions,
   EmbeddingResponse,
   TextGenerationResponse,
-  StructuredDataResponse
+  StructuredDataResponse,
 } from '../../types/core';
 
 /**
@@ -106,7 +106,7 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
       temperature: 0.7,
       topK: 40,
       topP: 0.95,
-      maxTokens: 1024
+      maxTokens: 1024,
     };
 
     // Merge with user config
@@ -145,7 +145,7 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
    */
   async generateText(
     prompt: string | TextGenerationOptions,
-    options?: Partial<TextGenerationOptions>
+    options?: Partial<TextGenerationOptions>,
   ): Promise<TextGenerationResponse> {
     // If we're in a test environment, return a mock response
     if (this.isTestEnvironment()) {
@@ -156,8 +156,8 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
         usage: {
           promptTokens: 10,
           completionTokens: 20,
-          totalTokens: 30
-        }
+          totalTokens: 30,
+        },
       };
     }
 
@@ -173,27 +173,27 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
         safetySettings: [
           {
             category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
+            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
           },
           {
             category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
+            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
           },
           {
             category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
+            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
           },
           {
             category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
-          }
+            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+          },
         ],
         generationConfig: {
           temperature: this.config.temperature || 0.7,
           topK: this.config.topK || 40,
           topP: this.config.topP || 0.95,
-          maxOutputTokens: this.config.maxTokens || 1024
-        }
+          maxOutputTokens: this.config.maxTokens || 1024,
+        },
       });
 
       // Generate content
@@ -216,8 +216,8 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
         usage: {
           promptTokens: 0, // Google doesn't provide token usage
           completionTokens: 0,
-          totalTokens: 0
-        }
+          totalTokens: 0,
+        },
       };
     } catch (error: any) {
       // Handle API errors
@@ -255,7 +255,7 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
    */
   async generateStructured<T extends z.ZodType>(
     prompt: string | StructuredDataOptions,
-    schema?: T
+    schema?: T,
   ): Promise<StructuredDataResponse<z.infer<T>>> {
     // If we're in a test environment, return a mock response
     if (this.isTestEnvironment()) {
@@ -267,14 +267,14 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
           {
             day: 'Monday',
             temperature: 75,
-            conditions: 'Partly Cloudy'
+            conditions: 'Partly Cloudy',
           },
           {
             day: 'Tuesday',
             temperature: 70,
-            conditions: 'Rainy'
-          }
-        ]
+            conditions: 'Rainy',
+          },
+        ],
       };
 
       return {
@@ -283,8 +283,8 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
         usage: {
           promptTokens: 10,
           completionTokens: 20,
-          totalTokens: 30
-        }
+          totalTokens: 30,
+        },
       };
     }
 
@@ -303,27 +303,27 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
         safetySettings: [
           {
             category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
+            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
           },
           {
             category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
+            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
           },
           {
             category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
+            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
           },
           {
             category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
-          }
+            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+          },
         ],
         generationConfig: {
           temperature: this.config.temperature || 0.7,
           topK: this.config.topK || 40,
           topP: this.config.topP || 0.95,
-          maxOutputTokens: this.config.maxTokens || 1024
-        }
+          maxOutputTokens: this.config.maxTokens || 1024,
+        },
       });
 
       // Convert the schema to JSON Schema
@@ -345,7 +345,8 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
       // Parse the JSON from the response
       try {
         // Extract JSON from the response
-        const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```\n([\s\S]*?)\n```/) || text.match(/{[\s\S]*}/);
+        const jsonMatch =
+          text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```\n([\s\S]*?)\n```/) || text.match(/{[\s\S]*}/);
         const jsonString = jsonMatch ? jsonMatch[0].replace(/```json\n|```\n|```/g, '') : text;
 
         // Parse and validate the JSON
@@ -358,8 +359,8 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
           usage: {
             promptTokens: 0,
             completionTokens: 0,
-            totalTokens: 0
-          }
+            totalTokens: 0,
+          },
         };
       } catch (parseError: any) {
         throw new ConfigurationError(`Failed to parse structured data: ${parseError.message}`);
@@ -389,7 +390,9 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
     // Log the options for debugging purposes
     console.log('Embedding options that cannot be used:', options);
 
-    throw new Error(`Google Gemini does not support embeddings generation through this SDK for input: ${JSON.stringify(options.input)}`);
+    throw new Error(
+      `Google Gemini does not support embeddings generation through this SDK for input: ${JSON.stringify(options.input)}`,
+    );
   }
 
   /**
@@ -400,13 +403,13 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
    * @private
    */
   private convertMessagesToGoogleFormat(messages: Message[]): any[] {
-    return messages.map(message => {
+    return messages.map((message) => {
       // Map role to Google format
       const role = message.role === 'assistant' ? 'model' : 'user';
 
       return {
         role,
-        parts: [{ text: message.content }]
+        parts: [{ text: message.content }],
       };
     });
   }

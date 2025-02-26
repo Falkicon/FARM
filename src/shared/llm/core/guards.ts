@@ -3,21 +3,9 @@
  * @since 1.0.0
  */
 
-import {
-  TextGenerationResponse,
-  StructuredDataResponse,
-  EmbeddingResponse,
-  Message,
-  ToolCall
-} from '../types/core';
+import { TextGenerationResponse, StructuredDataResponse, EmbeddingResponse, Message, ToolCall } from '../types/core';
 
-import {
-  ProviderConfig,
-  OpenAIConfig,
-  AzureOpenAIConfig,
-  AnthropicConfig,
-  GoogleConfig
-} from '../types/providers';
+import { ProviderConfig, OpenAIConfig, AzureOpenAIConfig, AnthropicConfig, GoogleConfig } from '../types/providers';
 
 // For testing purposes
 interface TestProviderConfig extends ProviderConfig {
@@ -61,11 +49,7 @@ export function isObject(value: unknown): value is Record<string, unknown> {
  * @since 1.0.0
  */
 export function isTextGenerationResponse(value: unknown): value is TextGenerationResponse {
-  return (
-    isObject(value) &&
-    typeof value.content === 'string' &&
-    typeof value.model === 'string'
-  );
+  return isObject(value) && typeof value.content === 'string' && typeof value.model === 'string';
 }
 
 /**
@@ -84,11 +68,7 @@ export function isTextGenerationResponse(value: unknown): value is TextGeneratio
  * @since 1.0.0
  */
 export function isStructuredDataResponse<T = any>(value: unknown): value is StructuredDataResponse<T> {
-  return (
-    isObject(value) &&
-    'content' in value &&
-    typeof value.model === 'string'
-  );
+  return isObject(value) && 'content' in value && typeof value.model === 'string';
 }
 
 /**
@@ -107,11 +87,7 @@ export function isStructuredDataResponse<T = any>(value: unknown): value is Stru
  * @since 1.0.0
  */
 export function isEmbeddingResponse(value: unknown): value is EmbeddingResponse {
-  return (
-    isObject(value) &&
-    Array.isArray(value.embeddings) &&
-    typeof value.model === 'string'
-  );
+  return isObject(value) && Array.isArray(value.embeddings) && typeof value.model === 'string';
 }
 
 /**
@@ -133,13 +109,11 @@ export function isMessage(value: unknown): value is Message {
   return (
     isObject(value) &&
     typeof value.content === 'string' &&
-    (
-      value.role === 'user' ||
+    (value.role === 'user' ||
       value.role === 'assistant' ||
       value.role === 'system' ||
       value.role === 'function' ||
-      value.role === 'tool'
-    )
+      value.role === 'tool')
   );
 }
 
@@ -159,12 +133,7 @@ export function isMessage(value: unknown): value is Message {
  * @since 1.0.0
  */
 export function isToolCall(value: unknown): value is ToolCall {
-  return (
-    isObject(value) &&
-    typeof value.id === 'string' &&
-    typeof value.name === 'string' &&
-    'arguments' in value
-  );
+  return isObject(value) && typeof value.id === 'string' && typeof value.name === 'string' && 'arguments' in value;
 }
 
 /**
@@ -306,13 +275,8 @@ export function isTestConfig(config: unknown): config is TestProviderConfig {
  *
  * @since 1.0.0
  */
-export function hasRequiredProperties(
-  config: Record<string, unknown>,
-  requiredProps: string[]
-): boolean {
-  return requiredProps.every(prop =>
-    prop in config && config[prop] !== undefined && config[prop] !== null
-  );
+export function hasRequiredProperties(config: Record<string, unknown>, requiredProps: string[]): boolean {
+  return requiredProps.every((prop) => prop in config && config[prop] !== undefined && config[prop] !== null);
 }
 
 /**
@@ -351,10 +315,6 @@ export function isNonEmptyString(value: unknown): value is string {
  *
  * @since 1.0.0
  */
-export function isNumberInRange(
-  value: unknown,
-  min: number,
-  max: number
-): value is number {
+export function isNumberInRange(value: unknown, min: number, max: number): value is number {
   return typeof value === 'number' && !isNaN(value) && value >= min && value <= max;
 }

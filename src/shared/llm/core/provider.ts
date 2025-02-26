@@ -26,7 +26,7 @@ export interface BaseProviderConfig {
  */
 export const DEFAULT_PROVIDER_CONFIG: Partial<BaseProviderConfig> = {
   temperature: 0.7,
-  maxTokens: 1000
+  maxTokens: 1000,
 };
 
 /**
@@ -149,10 +149,7 @@ export abstract class BaseProvider<T extends ProviderConfig> {
   /**
    * Generate embeddings for a text
    */
-  async generateEmbeddings(
-    text: string,
-    options?: any
-  ): Promise<Response> {
+  async generateEmbeddings(text: string, options?: any): Promise<Response> {
     throw new Error(`Method not implemented for text: "${text}" with options: ${JSON.stringify(options)}`);
   }
 }

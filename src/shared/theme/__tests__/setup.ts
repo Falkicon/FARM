@@ -9,9 +9,7 @@ const debugLog = (message: string, data?: any) => {
 
     if (data) {
       // Format data to be more readable
-      const dataStr = typeof data === 'object'
-        ? JSON.stringify(data, null, 2).replace(/\n/g, '\n  ')
-        : data.toString();
+      const dataStr = typeof data === 'object' ? JSON.stringify(data, null, 2).replace(/\n/g, '\n  ') : data.toString();
       console.log(`${formattedMessage}\n  ${dataStr}`);
     } else {
       console.log(formattedMessage);
@@ -77,14 +75,17 @@ export const logger = {
   error: (message: string, data?: any) => {
     logQueue.push({ level: 'error', message, data });
     processLogQueue();
-  }
+  },
 };
 
 // Mock FASTElement for testing
 class MockFASTElement extends HTMLElement {
   $fastController: any;
   shadowRoot: ShadowRoot | null = null;
-  private eventListeners: Map<string, Set<{ listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions }>> = new Map();
+  private eventListeners: Map<
+    string,
+    Set<{ listener: EventListenerOrEventListenerObject; options?: boolean | AddEventListenerOptions }>
+  > = new Map();
   private mediaQueryListener: ((e: MediaQueryListEvent) => void) | null = null;
 
   constructor() {
@@ -96,7 +97,7 @@ class MockFASTElement extends HTMLElement {
       removeBehaviors: vi.fn(),
       onConnectedCallback: vi.fn(),
       onDisconnectedCallback: vi.fn(),
-      onAttributeChangedCallback: vi.fn()
+      onAttributeChangedCallback: vi.fn(),
     };
 
     // Create shadow root for testing shadow DOM operations
@@ -125,7 +126,7 @@ class MockFASTElement extends HTMLElement {
     const listeners = this.eventListeners.get('mediaquery')!;
     listeners.add({
       listener: this.mediaQueryListener as EventListenerOrEventListenerObject,
-      options: undefined
+      options: undefined,
     });
 
     this.$fastController.onConnectedCallback();
@@ -154,20 +155,28 @@ class MockFASTElement extends HTMLElement {
   }
 
   private handlePreferenceChange(e: MediaQueryListEvent) {
-    this.dispatchEvent(new CustomEvent('prefers-color-scheme-change', {
-      detail: { matches: e.matches }
-    }));
+    this.dispatchEvent(
+      new CustomEvent('prefers-color-scheme-change', {
+        detail: { matches: e.matches },
+      }),
+    );
   }
 
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     this.$fastController.onAttributeChangedCallback(name, oldValue, newValue);
-    this.dispatchEvent(new CustomEvent('attributechanged', {
-      detail: { name, oldValue, newValue }
-    }));
+    this.dispatchEvent(
+      new CustomEvent('attributechanged', {
+        detail: { name, oldValue, newValue },
+      }),
+    );
   }
 
   // Override event handling
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ) {
     if (!this.eventListeners.has(type)) {
       this.eventListeners.set(type, new Set());
     }
@@ -183,7 +192,11 @@ class MockFASTElement extends HTMLElement {
     }
   }
 
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions) {
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ) {
     const listeners = this.eventListeners.get(type);
     if (listeners) {
       for (const listenerInfo of listeners) {
@@ -211,14 +224,14 @@ class MockFASTElement extends HTMLElement {
         bubbles: event.bubbles,
         cancelable: event.cancelable,
         composed: event.composed,
-        detail: (event as any).detail
+        detail: (event as any).detail,
       });
 
       // Set target and currentTarget
       Object.defineProperties(newEvent, {
         target: { value: this },
         currentTarget: { value: this },
-        srcElement: { value: this }
+        srcElement: { value: this },
       });
 
       // Call listeners directly first
@@ -237,7 +250,7 @@ class MockFASTElement extends HTMLElement {
             const errorEvent = new CustomEvent('error', {
               bubbles: true,
               cancelable: false,
-              detail: { error, originalEvent: event }
+              detail: { error, originalEvent: event },
             });
             this.dispatchEvent(errorEvent);
           }
@@ -252,7 +265,7 @@ class MockFASTElement extends HTMLElement {
       const errorEvent = new CustomEvent('error', {
         bubbles: true,
         cancelable: false,
-        detail: { error, originalEvent: event }
+        detail: { error, originalEvent: event },
       });
       this.dispatchEvent(errorEvent);
       return false;
@@ -323,14 +336,14 @@ Object.defineProperty(window, 'matchMedia', {
       setMatches: function (matches: boolean) {
         this.matches = matches;
         this.dispatchEvent(new Event('change'));
-      }
+      },
     };
 
     // Store in mediaQueries map for later access
     mediaQueries.set(query, mediaQueryList);
 
     return mediaQueryList;
-  }
+  },
 });
 
 // Mock CSS properties for testing
@@ -372,7 +385,7 @@ export const cssProperties = (() => {
     // Add forEach method for compatibility
     forEach: (callback: (value: string, key: string) => void): void => {
       properties.forEach(callback);
-    }
+    },
   };
 })();
 
@@ -386,7 +399,10 @@ if (isDevelopment()) {
 
 // Error types for CSS operations
 class CSSPropertyError extends Error {
-  constructor(message: string, public propertyName: string) {
+  constructor(
+    message: string,
+    public propertyName: string,
+  ) {
     super(message);
     this.name = 'CSSPropertyError';
   }
@@ -428,7 +444,10 @@ function sanitizeCSSValue(value: string): string {
 // Helper function to validate token format
 function validateTokenFormat(token: string): { isValid: boolean; message?: string } {
   if (!token.startsWith('var(--') || !token.endsWith(')')) {
-    logger.warn('Invalid token format', { token, message: 'Tokens must use CSS custom properties in the format var(--token-name).' });
+    logger.warn('Invalid token format', {
+      token,
+      message: 'Tokens must use CSS custom properties in the format var(--token-name).',
+    });
     return { isValid: false, message: 'Invalid token format' };
   }
   return { isValid: true };
@@ -455,7 +474,7 @@ window.getComputedStyle = vi.fn().mockImplementation(() => {
           prop,
           propertyName,
           value,
-          allProperties: Array.from(cssProperties.entries())
+          allProperties: Array.from(cssProperties.entries()),
         });
 
         // Sanitize the value if it contains semicolons
@@ -470,7 +489,7 @@ window.getComputedStyle = vi.fn().mockImplementation(() => {
         logger.error('Error in getPropertyValue', error);
         return '';
       }
-    }
+    },
   };
 });
 
@@ -508,7 +527,7 @@ if (!(globalThis as any)[THEME_SETUP_APPLIED]) {
         }
       },
       configurable: true,
-      writable: true
+      writable: true,
     });
   } catch (error) {
     console.warn('Could not redefine style.setProperty, it may already be defined', error);
@@ -525,7 +544,7 @@ Object.defineProperty(document.documentElement.style, 'getPropertyValue', {
         logger.debug('getPropertyValue', {
           property: propertyName,
           value,
-          exists: cssProperties.has(propertyName)
+          exists: cssProperties.has(propertyName),
         });
       }
 
@@ -534,7 +553,7 @@ Object.defineProperty(document.documentElement.style, 'getPropertyValue', {
       logger.error('Error in getPropertyValue', error);
       return '';
     }
-  }
+  },
 });
 
 Object.defineProperty(document.documentElement.style, 'removeProperty', {
@@ -552,7 +571,7 @@ Object.defineProperty(document.documentElement.style, 'removeProperty', {
         logger.debug('removeProperty', {
           property: propertyName,
           wasRemoved: hadProperty,
-          remainingProperties: Array.from(cssProperties.entries())
+          remainingProperties: Array.from(cssProperties.entries()),
         });
       }
 
@@ -561,7 +580,7 @@ Object.defineProperty(document.documentElement.style, 'removeProperty', {
       logger.error('Error in removeProperty', error);
       return '';
     }
-  }
+  },
 });
 
 // Export for testing
@@ -612,7 +631,7 @@ class MockResizeObserver {
         logger.debug('ResizeObserver.observe called', {
           element: element.tagName,
           id: element.id,
-          observedCount: this.observedElements.size
+          observedCount: this.observedElements.size,
         });
       }
     } catch (error) {
@@ -627,7 +646,7 @@ class MockResizeObserver {
         logger.debug('ResizeObserver.unobserve called', {
           element: element.tagName,
           id: element.id,
-          remainingObserved: this.observedElements.size
+          remainingObserved: this.observedElements.size,
         });
       }
     } catch (error) {
@@ -698,8 +717,8 @@ Element.prototype.setAttribute = function (name: string, value: string) {
         error,
         operation: 'setAttribute',
         attribute: name,
-        value
-      }
+        value,
+      },
     });
     this.dispatchEvent(errorEvent);
     // Re-throw to allow error handling tests to work
@@ -724,8 +743,8 @@ Element.prototype.getAttribute = function (name: string) {
       detail: {
         error,
         operation: 'getAttribute',
-        attribute: name
-      }
+        attribute: name,
+      },
     });
     this.dispatchEvent(errorEvent);
     throw error;
@@ -749,8 +768,8 @@ Element.prototype.removeAttribute = function (name: string) {
       detail: {
         error,
         operation: 'removeAttribute',
-        attribute: name
-      }
+        attribute: name,
+      },
     });
     this.dispatchEvent(errorEvent);
     throw error;
@@ -820,10 +839,10 @@ const highContrastMediaQuery = {
   dispatchEvent(event: Event): boolean {
     if (event instanceof Event && event.type === 'change') {
       const mediaQueryEvent = { matches: this.matches, media: this.media } as MediaQueryListEvent;
-      this.listeners.forEach(listener => listener(mediaQueryEvent));
+      this.listeners.forEach((listener) => listener(mediaQueryEvent));
     }
     return true;
-  }
+  },
 };
 
 // Helper function to toggle high contrast mode
@@ -866,7 +885,7 @@ export function simulateThemeChange(isDark: boolean): void {
       media: mediaQueryKey,
       addListener: vi.fn(),
       removeListener: vi.fn(),
-      setMatches: vi.fn()
+      setMatches: vi.fn(),
     });
   }
 
@@ -896,12 +915,15 @@ export function simulateThemeChange(isDark: boolean): void {
 
 // Enhanced microtask and timer handling
 const pendingMicrotasks = new Set<() => void | Promise<void>>();
-const pendingTimers = new Map<number, {
-  callback: () => void | Promise<void>,
-  delay: number,
-  isAnimationFrame: boolean,
-  promise?: Promise<void>
-}>();
+const pendingTimers = new Map<
+  number,
+  {
+    callback: () => void | Promise<void>;
+    delay: number;
+    isAnimationFrame: boolean;
+    promise?: Promise<void>;
+  }
+>();
 
 let timerIdCounter = 1;
 
@@ -912,7 +934,7 @@ const mockSetTimeout = (callback: () => void | Promise<void>, delay: number): nu
     callback,
     delay,
     isAnimationFrame: false,
-    promise: undefined
+    promise: undefined,
   });
   return id;
 };
@@ -1030,12 +1052,14 @@ export const testHelpers = {
       const pendingMicrotasksCount = pendingMicrotasks.size;
       const pendingTimersCount = pendingTimers.size;
 
-      debugLog(`FlushAll iteration ${iteration}: ${pendingMicrotasksCount} microtasks, ${pendingTimersCount} timers, elapsed ${elapsedTime}ms`);
+      debugLog(
+        `FlushAll iteration ${iteration}: ${pendingMicrotasksCount} microtasks, ${pendingTimersCount} timers, elapsed ${elapsedTime}ms`,
+      );
       logger.debug('FlushAll iteration', {
         iteration,
         pendingMicrotasks: pendingMicrotasksCount,
         pendingTimers: pendingTimersCount,
-        elapsedTime
+        elapsedTime,
       });
 
       if (pendingMicrotasksCount === 0 && pendingTimersCount === 0) {
@@ -1061,7 +1085,7 @@ export const testHelpers = {
     logger.debug('FlushAll completed', {
       totalIterations: iteration,
       reachedMax,
-      elapsedTime: totalTime
+      elapsedTime: totalTime,
     });
   },
 
@@ -1076,7 +1100,7 @@ export const testHelpers = {
     logger.debug('Getting attribute changes', {
       attribute: attributeName,
       count: changes.length,
-      changes
+      changes,
     });
     return changes;
   },
@@ -1086,13 +1110,13 @@ export const testHelpers = {
       dispatchedEvents: dispatchedEvents.size,
       attributeChanges: domAttributeChanges.size,
       microtasks: pendingMicrotasks.size,
-      timers: pendingTimers.size
+      timers: pendingTimers.size,
     });
     dispatchedEvents.clear();
     domAttributeChanges.clear();
     pendingMicrotasks.clear();
     pendingTimers.clear();
-  }
+  },
 };
 
 // Track dispatched events
@@ -1122,7 +1146,7 @@ class MockMutationObserver {
     logger.debug(`[MockMutationObserver] Instance #${this.id} observing:`, {
       target: target.tagName,
       id: (target as Element).id,
-      options: this.options
+      options: this.options,
     });
   }
 
@@ -1149,7 +1173,7 @@ class MockMutationObserver {
         nextSibling: null,
         attributeName: 'mode',
         attributeNamespace: null,
-        oldValue: null
+        oldValue: null,
       };
       this.callback([record], this);
     } else {
@@ -1178,6 +1202,6 @@ beforeEach(async () => {
   // Log the current global MutationObserver
   logger.debug('Current global MutationObserver:', {
     isMocked: global.MutationObserver === MockMutationObserver,
-    constructor: global.MutationObserver.name
+    constructor: global.MutationObserver.name,
   });
 });

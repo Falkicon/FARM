@@ -27,14 +27,14 @@ describe('ThemeProvider', () => {
     logger.debug('Provider instance created', {
       isConnected: provider.isConnected,
       mode: provider.mode,
-      currentTheme: provider.currentTheme
+      currentTheme: provider.currentTheme,
     });
 
     // Directly patch the observer with our mock
     const mockObserver = new MockObserver();
     Object.defineProperty(provider, 'observer', {
       value: mockObserver,
-      writable: true
+      writable: true,
     });
 
     logger.debug('Patched provider observer with mock');
@@ -44,7 +44,7 @@ describe('ThemeProvider', () => {
     // Log after appending to body
     logger.debug('Provider appended to body', {
       isConnected: provider.isConnected,
-      mutationObservers: getMutationObservers().length
+      mutationObservers: getMutationObservers().length,
     });
 
     await testHelpers.flushAll();
@@ -154,8 +154,8 @@ describe('ThemeProvider', () => {
         detail: {
           code: 'THEME_UPDATE_ERROR',
           error: new Error('Invalid theme'),
-          timestamp: Date.now()
-        }
+          timestamp: Date.now(),
+        },
       });
 
       // Log the error to trigger the spy
@@ -284,7 +284,7 @@ describe('ThemeProvider', () => {
       announcer.remove();
 
       // Remove any other announcer elements that might have been created
-      document.querySelectorAll('[role="status"]').forEach(el => el.remove());
+      document.querySelectorAll('[role="status"]').forEach((el) => el.remove());
 
       expect(document.querySelector('[role="status"]')).toBeNull();
     });
@@ -328,8 +328,8 @@ describe('ThemeProvider', () => {
       expect(debugSpy).toHaveBeenCalledWith(
         expect.stringContaining('Theme update complete'),
         expect.objectContaining({
-          duration: expect.any(String)
-        })
+          duration: expect.any(String),
+        }),
       );
     });
 
@@ -338,18 +338,13 @@ describe('ThemeProvider', () => {
       const warnSpy = vi.spyOn(console, 'warn');
       const performanceNow = vi.spyOn(performance, 'now');
 
-      performanceNow
-        .mockReturnValueOnce(0)
-        .mockReturnValueOnce(20); // 20ms
+      performanceNow.mockReturnValueOnce(0).mockReturnValueOnce(20); // 20ms
 
       (provider as any).updateTheme();
 
       console.warn('Theme update took 20ms, which exceeds the recommended 16ms frame budget', { duration: '20ms' });
 
-      expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Theme update took'),
-        expect.any(Object)
-      );
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Theme update took'), expect.any(Object));
     });
 
     it('should optimize repeated theme changes', async () => {
@@ -517,14 +512,14 @@ describe('ThemeProvider', () => {
       // Add a bunch of listeners
       const listeners = [];
       for (let i = 0; i < 10; i++) {
-        listeners.push(provider.onThemeChange(() => { }));
+        listeners.push(provider.onThemeChange(() => {}));
       }
 
       // Verify we have 10 listeners
       expect((provider as any).themeChangeListeners.size).toBe(10);
 
       // Clean up all listeners
-      listeners.forEach(cleanup => cleanup());
+      listeners.forEach((cleanup) => cleanup());
 
       // Verify all listeners were removed
       expect((provider as any).themeChangeListeners.size).toBe(0);
@@ -586,21 +581,23 @@ describe('ThemeProvider', () => {
       const testError = new Error('Test error');
 
       // Directly dispatch a theme-error event
-      provider.dispatchEvent(new CustomEvent('theme-error', {
-        detail: {
-          error: testError,
-          timestamp: Date.now()
-        }
-      }));
+      provider.dispatchEvent(
+        new CustomEvent('theme-error', {
+          detail: {
+            error: testError,
+            timestamp: Date.now(),
+          },
+        }),
+      );
 
       // Verify error event was received with correct details
       expect(errorListener).toHaveBeenCalledWith(
         expect.objectContaining({
           detail: expect.objectContaining({
             error: testError,
-            timestamp: expect.any(Number)
-          })
-        })
+            timestamp: expect.any(Number),
+          }),
+        }),
       );
 
       // Clean up

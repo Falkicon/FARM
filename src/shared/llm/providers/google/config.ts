@@ -37,7 +37,7 @@ export const DEFAULT_GOOGLE_CONFIG: Partial<GoogleConfig> = {
   provider: 'google',
   model: 'gemini-pro',
   temperature: 0.7,
-  maxTokens: 1000
+  maxTokens: 1000,
 };
 
 /**
@@ -89,7 +89,7 @@ export function createGoogleClient(config: GoogleConfig): GoogleGenerativeAI {
 export async function createStreamingResponse(
   client: GoogleGenerativeAI,
   messages: Array<{ role: 'user' | 'model' | 'system'; content: string }>,
-  config: Partial<GoogleConfig> = {}
+  config: Partial<GoogleConfig> = {},
 ): Promise<Response> {
   try {
     // Get the model
@@ -98,7 +98,7 @@ export async function createStreamingResponse(
       generationConfig: {
         maxOutputTokens: config.maxTokens ?? DEFAULT_GOOGLE_CONFIG.maxTokens,
         temperature: config.temperature ?? DEFAULT_GOOGLE_CONFIG.temperature,
-      }
+      },
     });
 
     // Convert messages to Google format
@@ -118,22 +118,26 @@ export async function createStreamingResponse(
           for await (const chunk of result.stream) {
             const content = chunk.text();
             if (content) {
-              controller.enqueue(new TextEncoder().encode(JSON.stringify({
-                content,
-                model: config.model ?? DEFAULT_GOOGLE_CONFIG.model,
-                usage: {
-                  prompt_tokens: 0,
-                  completion_tokens: 0,
-                  total_tokens: 0
-                }
-              })));
+              controller.enqueue(
+                new TextEncoder().encode(
+                  JSON.stringify({
+                    content,
+                    model: config.model ?? DEFAULT_GOOGLE_CONFIG.model,
+                    usage: {
+                      prompt_tokens: 0,
+                      completion_tokens: 0,
+                      total_tokens: 0,
+                    },
+                  }),
+                ),
+              );
             }
           }
           controller.close();
         } catch (error) {
           controller.error(error);
         }
-      }
+      },
     });
 
     return new Response(stream);
@@ -153,13 +157,13 @@ function convertMessagesToPrompt(messages: Array<{ role: 'user' | 'model' | 'sys
   let prompt = '';
 
   // Extract system message if present
-  const systemMessages = messages.filter(msg => msg.role === 'system');
+  const systemMessages = messages.filter((msg) => msg.role === 'system');
   if (systemMessages.length > 0) {
-    systemMessage = systemMessages.map(msg => msg.content).join('\n');
+    systemMessage = systemMessages.map((msg) => msg.content).join('\n');
   }
 
   // Build conversation
-  const conversationMessages = messages.filter(msg => msg.role !== 'system');
+  const conversationMessages = messages.filter((msg) => msg.role !== 'system');
 
   for (const message of conversationMessages) {
     if (message.role === 'user') {

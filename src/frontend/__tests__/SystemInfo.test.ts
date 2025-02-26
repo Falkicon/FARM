@@ -33,7 +33,7 @@ describe('SystemInfo', () => {
 
     // Mock setInterval to prevent automatic updates
     vi.spyOn(global, 'setInterval').mockImplementation(() => {
-      return setTimeout(() => { }, 0) as unknown as NodeJS.Timeout;
+      return setTimeout(() => {}, 0) as unknown as NodeJS.Timeout;
     });
 
     // Mock web components
@@ -198,7 +198,7 @@ describe('SystemInfo', () => {
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve(mockSystemInfo),
-      })
+      }),
     );
     global.fetch = fetchMock;
 

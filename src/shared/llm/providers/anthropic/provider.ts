@@ -3,7 +3,12 @@
  */
 
 import Anthropic from '@anthropic-ai/sdk';
-import { EmbeddingsProvider, type EmbeddingsInput, type EmbeddingsResponse, EmbeddingsError } from '../../core/embeddings';
+import {
+  EmbeddingsProvider,
+  type EmbeddingsInput,
+  type EmbeddingsResponse,
+  EmbeddingsError,
+} from '../../core/embeddings';
 import { AnthropicConfig, createAnthropicClient, generateAnthropicStream, initializeAnthropicConfig } from './config';
 
 type MessageRole = 'user' | 'assistant';
@@ -39,7 +44,7 @@ export class AnthropicProvider extends EmbeddingsProvider {
       systemMessage?: string;
       temperature?: number;
       maxTokens?: number;
-    } = {}
+    } = {},
   ): Promise<Response> {
     try {
       // Prepare messages
@@ -49,14 +54,14 @@ export class AnthropicProvider extends EmbeddingsProvider {
       if (options.systemMessage) {
         messages.push({
           role: 'assistant' as const,
-          content: options.systemMessage
+          content: options.systemMessage,
         });
       }
 
       // Add user prompt
       messages.push({
         role: 'user' as const,
-        content: prompt
+        content: prompt,
       });
 
       // Handle streaming
@@ -64,7 +69,7 @@ export class AnthropicProvider extends EmbeddingsProvider {
         return generateAnthropicStream(this.client, messages, {
           ...this.config,
           temperature: options.temperature,
-          maxTokens: options.maxTokens
+          maxTokens: options.maxTokens,
         });
       }
 
@@ -77,18 +82,20 @@ export class AnthropicProvider extends EmbeddingsProvider {
       });
 
       // Get content from response
-      const content = response.content.find(block => block.type === 'text')?.text || '';
+      const content = response.content.find((block) => block.type === 'text')?.text || '';
 
       // Return completion as a Response object
-      return new Response(JSON.stringify({
-        content,
-        model: this.config.model,
-        usage: {
-          prompt_tokens: 0,
-          completion_tokens: 0,
-          total_tokens: 0
-        }
-      }));
+      return new Response(
+        JSON.stringify({
+          content,
+          model: this.config.model,
+          usage: {
+            prompt_tokens: 0,
+            completion_tokens: 0,
+            total_tokens: 0,
+          },
+        }),
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -110,7 +117,7 @@ export class AnthropicProvider extends EmbeddingsProvider {
       functionName: string;
       functionDescription: string;
       parameters: Record<string, unknown>;
-    }
+    },
   ): Promise<Response> {
     try {
       // Prepare messages
@@ -120,20 +127,20 @@ export class AnthropicProvider extends EmbeddingsProvider {
       if (options.systemMessage) {
         messages.push({
           role: 'assistant' as const,
-          content: options.systemMessage
+          content: options.systemMessage,
         });
       }
 
       // Add function description to system message
       messages.push({
         role: 'assistant' as const,
-        content: `You are a helpful assistant that generates structured data in the following format: ${JSON.stringify(options.parameters)}`
+        content: `You are a helpful assistant that generates structured data in the following format: ${JSON.stringify(options.parameters)}`,
       });
 
       // Add user prompt
       messages.push({
         role: 'user' as const,
-        content: prompt
+        content: prompt,
       });
 
       // Handle streaming
@@ -141,7 +148,7 @@ export class AnthropicProvider extends EmbeddingsProvider {
         return generateAnthropicStream(this.client, messages, {
           ...this.config,
           temperature: options.temperature,
-          maxTokens: options.maxTokens
+          maxTokens: options.maxTokens,
         });
       }
 
@@ -155,19 +162,21 @@ export class AnthropicProvider extends EmbeddingsProvider {
 
       // Parse response as JSON
       try {
-        const content = response.content.find(block => block.type === 'text')?.text;
-        const parsedData = content ? JSON.parse(content) as T : {} as T;
+        const content = response.content.find((block) => block.type === 'text')?.text;
+        const parsedData = content ? (JSON.parse(content) as T) : ({} as T);
 
         // Return completion as a Response object
-        return new Response(JSON.stringify({
-          content: parsedData,
-          model: this.config.model,
-          usage: {
-            prompt_tokens: 0,
-            completion_tokens: 0,
-            total_tokens: 0
-          }
-        }));
+        return new Response(
+          JSON.stringify({
+            content: parsedData,
+            model: this.config.model,
+            usage: {
+              prompt_tokens: 0,
+              completion_tokens: 0,
+              total_tokens: 0,
+            },
+          }),
+        );
       } catch (parseError) {
         throw new Error(`Failed to parse structured data response as JSON: ${(parseError as Error).message}`);
       }
@@ -184,6 +193,8 @@ export class AnthropicProvider extends EmbeddingsProvider {
    * Note: Anthropic doesn't directly support embeddings through this SDK
    */
   async generateEmbeddings(input: EmbeddingsInput): Promise<EmbeddingsResponse> {
-    throw new EmbeddingsError(`Embeddings generation is not supported by Anthropic for input with ${input.input.length} items`);
+    throw new EmbeddingsError(
+      `Embeddings generation is not supported by Anthropic for input with ${input.input.length} items`,
+    );
   }
 }

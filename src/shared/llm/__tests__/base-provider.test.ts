@@ -53,7 +53,7 @@ describe('BaseProvider', () => {
     it('should validate and normalize the configuration', () => {
       const provider = new TestProvider({
         provider: 'test',
-        apiKey: 'test-key'
+        apiKey: 'test-key',
       });
 
       const config = provider.getConfig();
@@ -68,7 +68,7 @@ describe('BaseProvider', () => {
 
       const provider = new TestProvider({
         provider: 'test',
-        apiKey: 'test-key'
+        apiKey: 'test-key',
       });
 
       expect(provider.isTestEnvironment()).toBe(true);
@@ -79,7 +79,7 @@ describe('BaseProvider', () => {
     it('should return the provider name', () => {
       const provider = new TestProvider({
         provider: 'test',
-        apiKey: 'test-key'
+        apiKey: 'test-key',
       });
 
       expect(provider.getProviderName()).toBe('test');
@@ -91,7 +91,7 @@ describe('BaseProvider', () => {
       const provider = new TestProvider({
         provider: 'test',
         apiKey: 'test-key',
-        model: 'test-model'
+        model: 'test-model',
       });
 
       const config = provider.getConfig();
@@ -101,7 +101,7 @@ describe('BaseProvider', () => {
         model: 'test-model',
         temperature: 0.7,
         maxTokens: 1000,
-        stream: false
+        stream: false,
       });
 
       // Ensure it's a copy, not the original
@@ -116,7 +116,7 @@ describe('BaseProvider', () => {
 
       const provider = new TestProvider({
         provider: 'test',
-        apiKey: 'test-key'
+        apiKey: 'test-key',
       });
 
       expect(provider.isTestEnvironment()).toBe(true);
@@ -127,7 +127,7 @@ describe('BaseProvider', () => {
 
       const provider = new TestProvider({
         provider: 'test',
-        apiKey: 'test-key'
+        apiKey: 'test-key',
       });
 
       expect(provider.isTestEnvironment()).toBe(false);

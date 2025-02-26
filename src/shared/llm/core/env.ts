@@ -27,7 +27,7 @@ export const ENV_VARS = {
   // General
   LLM_PROVIDER: 'LLM_PROVIDER',
   LLM_API_KEY: 'LLM_API_KEY',
-  LLM_MODEL: 'LLM_MODEL'
+  LLM_MODEL: 'LLM_MODEL',
 } as const;
 
 /**

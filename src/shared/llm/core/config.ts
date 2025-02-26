@@ -12,7 +12,7 @@ import {
   isAzureOpenAIConfig,
   isAnthropicConfig,
   isGoogleConfig,
-  isTestConfig
+  isTestConfig,
 } from './guards';
 import { getEnvVar } from './env';
 
@@ -21,7 +21,7 @@ import type {
   OpenAIConfig,
   AzureOpenAIConfig,
   AnthropicConfig,
-  GoogleConfig
+  GoogleConfig,
 } from '../types/providers';
 
 // For testing purposes
@@ -37,7 +37,7 @@ interface TestProviderConfig extends ProviderConfig {
 export const CONFIG_DEFAULTS = {
   temperature: 0.7,
   maxTokens: 1000,
-  stream: false
+  stream: false,
 };
 
 /**
@@ -49,7 +49,7 @@ export const DEFAULT_MODELS = {
   anthropic: 'claude-3-opus-20240229',
   google: 'gemini-pro',
   openaiEmbedding: 'text-embedding-3-small',
-  azureEmbedding: 'text-embedding-ada-002'
+  azureEmbedding: 'text-embedding-ada-002',
 };
 
 /**
@@ -81,18 +81,16 @@ export function validateConfig<T extends ProviderConfig>(config: T): T {
   // Apply default values
   const normalizedConfig = {
     ...CONFIG_DEFAULTS,
-    ...config
+    ...config,
   };
 
   // Validate temperature if provided
-  if (normalizedConfig.temperature !== undefined &&
-    !isNumberInRange(normalizedConfig.temperature, 0, 1)) {
+  if (normalizedConfig.temperature !== undefined && !isNumberInRange(normalizedConfig.temperature, 0, 1)) {
     throw new ConfigurationError('Temperature must be between 0 and 1');
   }
 
   // Validate maxTokens if provided
-  if (normalizedConfig.maxTokens !== undefined &&
-    !isNumberInRange(normalizedConfig.maxTokens, 1, 100000)) {
+  if (normalizedConfig.maxTokens !== undefined && !isNumberInRange(normalizedConfig.maxTokens, 1, 100000)) {
     throw new ConfigurationError('Max tokens must be between 1 and 100000');
   }
 
@@ -347,16 +345,13 @@ export function validateTestConfig(config: TestProviderConfig): TestProviderConf
  *
  * @since 1.0.0
  */
-export function mergeOptions<T extends Record<string, any>>(
-  defaultOptions: T,
-  userOptions?: Partial<T>
-): T {
+export function mergeOptions<T extends Record<string, any>>(defaultOptions: T, userOptions?: Partial<T>): T {
   if (!userOptions) {
     return { ...defaultOptions };
   }
 
   return {
     ...defaultOptions,
-    ...userOptions
+    ...userOptions,
   };
 }

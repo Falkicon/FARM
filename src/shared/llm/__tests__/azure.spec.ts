@@ -3,7 +3,11 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { initializeAzureOpenAIConfig, createAzureOpenAIClient, type AzureOpenAIConfig } from '../providers/azure/config';
+import {
+  initializeAzureOpenAIConfig,
+  createAzureOpenAIClient,
+  type AzureOpenAIConfig,
+} from '../providers/azure/config';
 import { AzureOpenAIProvider } from '../providers/azure/provider';
 
 // Mock OpenAI client
@@ -33,31 +37,35 @@ vi.mock('openai', () => ({
                     return { done: true, value: undefined };
                   }
                   const value = {
-                    choices: [{
-                      delta: chunks[chunkIndex]
-                    }]
+                    choices: [
+                      {
+                        delta: chunks[chunkIndex],
+                      },
+                    ],
                   };
                   chunkIndex++;
                   return { done: false, value };
-                }
-              })
+                },
+              }),
             };
           }
           return {
-            choices: [{
-              message: functions
-                ? { function_call: { arguments: '{"name":"test","age":25}' } }
-                : { content: 'test response' }
-            }],
+            choices: [
+              {
+                message: functions
+                  ? { function_call: { arguments: '{"name":"test","age":25}' } }
+                  : { content: 'test response' },
+              },
+            ],
             model: 'gpt-4',
             usage: {
               prompt_tokens: 10,
               completion_tokens: 20,
-              total_tokens: 30
-            }
+              total_tokens: 30,
+            },
           };
-        })
-      }
+        }),
+      },
     };
 
     embeddings = {
@@ -68,12 +76,12 @@ vi.mock('openai', () => ({
           model: 'text-embedding-3-small',
           usage: {
             prompt_tokens: 10,
-            total_tokens: 10
-          }
+            total_tokens: 10,
+          },
         };
-      })
+      }),
     };
-  }
+  },
 }));
 
 describe('Azure OpenAI Provider', () => {
@@ -81,32 +89,38 @@ describe('Azure OpenAI Provider', () => {
     provider: 'azure' as const,
     apiKey: 'test-key',
     endpoint: 'https://test.openai.azure.com',
-    deploymentName: 'test-deployment'
+    deploymentName: 'test-deployment',
   };
 
   describe('Configuration', () => {
     it('should throw error when API key is missing', () => {
-      expect(() => initializeAzureOpenAIConfig({
-        provider: 'azure',
-        endpoint: 'https://test.openai.azure.com',
-        deploymentName: 'test-deployment'
-      })).toThrow('API key must be provided');
+      expect(() =>
+        initializeAzureOpenAIConfig({
+          provider: 'azure',
+          endpoint: 'https://test.openai.azure.com',
+          deploymentName: 'test-deployment',
+        }),
+      ).toThrow('API key must be provided');
     });
 
     it('should throw error when endpoint is missing', () => {
-      expect(() => initializeAzureOpenAIConfig({
-        provider: 'azure',
-        apiKey: 'test-key',
-        deploymentName: 'test-deployment'
-      })).toThrow('Endpoint must be provided');
+      expect(() =>
+        initializeAzureOpenAIConfig({
+          provider: 'azure',
+          apiKey: 'test-key',
+          deploymentName: 'test-deployment',
+        }),
+      ).toThrow('Endpoint must be provided');
     });
 
     it('should throw error when deployment name is missing', () => {
-      expect(() => initializeAzureOpenAIConfig({
-        provider: 'azure',
-        apiKey: 'test-key',
-        endpoint: 'https://test.openai.azure.com'
-      })).toThrow('Deployment name must be provided');
+      expect(() =>
+        initializeAzureOpenAIConfig({
+          provider: 'azure',
+          apiKey: 'test-key',
+          endpoint: 'https://test.openai.azure.com',
+        }),
+      ).toThrow('Deployment name must be provided');
     });
 
     it('should create valid configuration with required fields', () => {
@@ -118,7 +132,7 @@ describe('Azure OpenAI Provider', () => {
         endpoint: 'https://test.openai.azure.com',
         deploymentName: 'test-deployment',
         temperature: 0.7,
-        maxTokens: 1000
+        maxTokens: 1000,
       });
     });
 
@@ -127,7 +141,7 @@ describe('Azure OpenAI Provider', () => {
         ...baseConfig,
         temperature: 0.9,
         maxTokens: 2000,
-        apiVersion: '2024-03-01-preview'
+        apiVersion: '2024-03-01-preview',
       });
 
       expect(config).toMatchObject({
@@ -137,7 +151,7 @@ describe('Azure OpenAI Provider', () => {
         deploymentName: 'test-deployment',
         temperature: 0.9,
         maxTokens: 2000,
-        apiVersion: '2024-03-01-preview'
+        apiVersion: '2024-03-01-preview',
       });
     });
   });
@@ -167,14 +181,14 @@ describe('Azure OpenAI Provider', () => {
 
         expect(data).toMatchObject({
           content: 'test response',
-          model: 'gpt-4'
+          model: 'gpt-4',
         });
         expect(data.usage).toBeDefined();
       });
 
       it('should include system message when provided', async () => {
         const response = await provider.generateText('Hello', {
-          systemMessage: 'You are a helpful assistant'
+          systemMessage: 'You are a helpful assistant',
         });
         const data = await response.json();
 
@@ -222,9 +236,9 @@ describe('Azure OpenAI Provider', () => {
           type: 'object',
           properties: {
             name: { type: 'string' },
-            age: { type: 'number' }
-          }
-        }
+            age: { type: 'number' },
+          },
+        },
       };
 
       it('should generate structured data', async () => {
@@ -239,7 +253,7 @@ describe('Azure OpenAI Provider', () => {
       it('should handle streaming structured data', async () => {
         const response = await provider.generateStructured('Generate user data', {
           ...structuredOptions,
-          stream: true
+          stream: true,
         });
 
         expect(response).toBeDefined();
@@ -257,7 +271,7 @@ describe('Azure OpenAI Provider', () => {
 
       it('should generate embeddings for multiple inputs', async () => {
         const result = await provider.generateEmbeddings({
-          input: ['test input 1', 'test input 2']
+          input: ['test input 1', 'test input 2'],
         });
         expect(result.data).toHaveLength(2);
       });
@@ -265,18 +279,20 @@ describe('Azure OpenAI Provider', () => {
       it('should handle embeddings errors', async () => {
         const mockClient = {
           embeddings: {
-            create: vi.fn().mockRejectedValue(new Error('API Error'))
-          }
+            create: vi.fn().mockRejectedValue(new Error('API Error')),
+          },
         };
 
         const errorProvider = new AzureOpenAIProvider({
           ...baseConfig,
-          client: mockClient as any
+          client: mockClient as any,
         });
 
-        await expect(errorProvider.generateEmbeddings({
-          input: 'test input'
-        })).rejects.toThrow('Failed to generate embeddings');
+        await expect(
+          errorProvider.generateEmbeddings({
+            input: 'test input',
+          }),
+        ).rejects.toThrow('Failed to generate embeddings');
       });
     });
   });

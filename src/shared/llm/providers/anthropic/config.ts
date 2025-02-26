@@ -31,7 +31,7 @@ export const DEFAULT_ANTHROPIC_CONFIG: Partial<AnthropicConfig> = {
   provider: 'anthropic',
   model: 'claude-3-opus-20240229',
   temperature: 0.7,
-  maxTokens: 1000
+  maxTokens: 1000,
 };
 
 /**
@@ -58,7 +58,7 @@ export function createAnthropicClient(config: AnthropicConfig): Anthropic {
 
   return new Anthropic({
     apiKey: config.apiKey,
-    baseURL: config.baseUrl
+    baseURL: config.baseUrl,
   });
 }
 
@@ -68,12 +68,12 @@ export function createAnthropicClient(config: AnthropicConfig): Anthropic {
 export async function generateAnthropicStream(
   client: Anthropic,
   messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>,
-  config: Partial<AnthropicConfig> = {}
+  config: Partial<AnthropicConfig> = {},
 ): Promise<Response> {
   try {
     // Convert messages to the format expected by Anthropic
-    const anthropicMessages = messages.filter(msg => msg.role !== 'system');
-    const systemMessage = messages.find(msg => msg.role === 'system')?.content || '';
+    const anthropicMessages = messages.filter((msg) => msg.role !== 'system');
+    const systemMessage = messages.find((msg) => msg.role === 'system')?.content || '';
 
     const response = await client.messages.create({
       model: config.model ?? DEFAULT_ANTHROPIC_CONFIG.model!,
@@ -98,15 +98,19 @@ export async function generateAnthropicStream(
               if ('text' in chunk.delta && chunk.delta.text) {
                 const content = chunk.delta.text;
                 if (content) {
-                  controller.enqueue(new TextEncoder().encode(JSON.stringify({
-                    content,
-                    model: config.model ?? DEFAULT_ANTHROPIC_CONFIG.model,
-                    usage: {
-                      prompt_tokens: 0,
-                      completion_tokens: 0,
-                      total_tokens: 0
-                    }
-                  })));
+                  controller.enqueue(
+                    new TextEncoder().encode(
+                      JSON.stringify({
+                        content,
+                        model: config.model ?? DEFAULT_ANTHROPIC_CONFIG.model,
+                        usage: {
+                          prompt_tokens: 0,
+                          completion_tokens: 0,
+                          total_tokens: 0,
+                        },
+                      }),
+                    ),
+                  );
                 }
               }
             }
@@ -115,7 +119,7 @@ export async function generateAnthropicStream(
         } catch (error) {
           controller.error(error);
         }
-      }
+      },
     });
 
     return new Response(stream);

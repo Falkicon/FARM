@@ -9,11 +9,11 @@ const mockStreamChunk = 'Test streaming response';
 
 // Create mock functions
 const mockGenerateContent = vi.fn().mockResolvedValue({
-  response: { text: () => mockResponseText }
+  response: { text: () => mockResponseText },
 });
 
 const mockGenerateContentStream = vi.fn().mockResolvedValue({
-  stream: [{ text: () => mockStreamChunk }]
+  stream: [{ text: () => mockStreamChunk }],
 });
 
 // Create a mock client that we'll inject directly
@@ -23,16 +23,16 @@ const mockClient = {
     generateContentStream: mockGenerateContentStream,
     startChat: vi.fn().mockReturnValue({
       sendMessage: vi.fn().mockResolvedValue({
-        response: { text: () => 'Mock chat response' }
-      })
-    })
-  })
+        response: { text: () => 'Mock chat response' },
+      }),
+    }),
+  }),
 };
 
 // Mock the GoogleGenerativeAI constructor
 vi.mock('@google/generative-ai', () => {
   return {
-    GoogleGenerativeAI: vi.fn().mockImplementation(() => mockClient)
+    GoogleGenerativeAI: vi.fn().mockImplementation(() => mockClient),
   };
 });
 
@@ -56,7 +56,7 @@ describe('Google Provider', () => {
         apiKey: 'test-api-key',
         model: 'gemini-1.5-pro',
         temperature: 0.5,
-        maxTokens: 500
+        maxTokens: 500,
       });
 
       // @ts-expect-error - accessing protected property for testing
@@ -89,7 +89,7 @@ describe('Google Provider', () => {
       const customClient = { ...mockClient };
       const provider = new GoogleProvider({
         apiKey: 'test-api-key',
-        client: customClient as any
+        client: customClient as any,
       });
 
       // @ts-expect-error - accessing private property for testing
@@ -102,7 +102,7 @@ describe('Google Provider', () => {
       // Mock the generateContent method to reject with a rate limit error
       mockGenerateContent.mockRejectedValueOnce({
         status: 429,
-        message: 'Rate limit exceeded'
+        message: 'Rate limit exceeded',
       });
 
       // Make the request and check that the status code is properly propagated
@@ -111,7 +111,7 @@ describe('Google Provider', () => {
 
       // Restore the original mock behavior
       mockGenerateContent.mockResolvedValue({
-        response: { text: () => mockResponseText }
+        response: { text: () => mockResponseText },
       });
     });
   });
@@ -120,7 +120,7 @@ describe('Google Provider', () => {
     describe('Text Generation', () => {
       it('should generate text with default options', async () => {
         const provider = new GoogleProvider({
-          apiKey: 'test-api-key'
+          apiKey: 'test-api-key',
         });
 
         const response = await provider.generateText('Test prompt');
@@ -132,7 +132,7 @@ describe('Google Provider', () => {
 
       it('should handle streaming', async () => {
         const provider = new GoogleProvider({
-          apiKey: 'test-api-key'
+          apiKey: 'test-api-key',
         });
 
         const response = await provider.generateText('Test prompt', { stream: true });
@@ -155,7 +155,7 @@ describe('Google Provider', () => {
         // Mock the generateContent method to reject with a rate limit error
         mockGenerateContent.mockRejectedValueOnce({
           status: 429,
-          message: 'Rate limit exceeded'
+          message: 'Rate limit exceeded',
         });
 
         // Make the request and check that the status code is properly propagated
@@ -164,7 +164,7 @@ describe('Google Provider', () => {
 
         // Restore the original mock behavior
         mockGenerateContent.mockResolvedValue({
-          response: { text: () => mockResponseText }
+          response: { text: () => mockResponseText },
         });
       });
     });
@@ -173,8 +173,7 @@ describe('Google Provider', () => {
       it('should throw error for embeddings generation', async () => {
         const provider = new GoogleProvider({ apiKey: 'test-api-key' });
 
-        await expect(provider.generateEmbeddings({ input: ['test'] }))
-          .rejects.toThrow(EmbeddingsError);
+        await expect(provider.generateEmbeddings({ input: ['test'] })).rejects.toThrow(EmbeddingsError);
       });
     });
   });

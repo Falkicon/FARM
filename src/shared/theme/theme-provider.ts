@@ -1,12 +1,12 @@
+import { FASTElement, customElement, css, html, ElementStyles, ElementController } from '@microsoft/fast-element';
 import {
-  FASTElement,
-  customElement,
-  css,
-  html,
-  ElementStyles,
-  ElementController
-} from '@microsoft/fast-element';
-import { colorTokens, typographyTokens, spacingTokens, borderTokens, shadowTokens, animationTokens } from './design-tokens';
+  colorTokens,
+  typographyTokens,
+  spacingTokens,
+  borderTokens,
+  shadowTokens,
+  animationTokens,
+} from './design-tokens';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 export type ThemeTokenName = string;
@@ -90,7 +90,7 @@ export function createThemeStyles(lightStyles: ElementStyles, darkStyles: Elemen
         controller.removeStyles(lightStyles);
         controller.removeStyles(darkStyles);
       }
-    }
+    },
   };
 }
 
@@ -100,10 +100,7 @@ globalStyles.textContent = ':not(:defined) { visibility: hidden; }';
 document.head.appendChild(globalStyles);
 
 const template = html<ThemeProvider>`
-  <template
-    role="presentation"
-    data-theme="${x => x.currentTheme}"
-    data-mode="${x => x.mode}">
+  <template role="presentation" data-theme="${(x) => x.currentTheme}" data-mode="${(x) => x.mode}">
     <slot></slot>
   </template>
 `;
@@ -159,7 +156,7 @@ export class ThemeError extends Error {
   name: 'farm-theme-provider',
   template,
   styles,
-  shadowOptions: { mode: 'open' }
+  shadowOptions: { mode: 'open' },
 })
 export class ThemeProvider extends FASTElement {
   /**
@@ -218,9 +215,9 @@ export class ThemeProvider extends FASTElement {
     attributes: [
       { property: 'mode', attribute: 'mode', mode: 'reflect' },
       { property: 'highContrast', attribute: 'high-contrast', mode: 'boolean' },
-      { property: 'debug', attribute: 'debug', mode: 'boolean' }
+      { property: 'debug', attribute: 'debug', mode: 'boolean' },
     ],
-    observables: ['currentTheme']
+    observables: ['currentTheme'],
   };
 
   /**
@@ -237,14 +234,14 @@ export class ThemeProvider extends FASTElement {
     this.observer = new MutationObserver(this.handleAttributeChange.bind(this));
 
     // Performance optimization - Cache initial system preference
-    const initialTheme = this.mode === 'system' ?
-      (this.mediaQuery.matches ? 'dark' : 'light') :
-      'light';
+    const initialTheme = this.mode === 'system' ? (this.mediaQuery.matches ? 'dark' : 'light') : 'light';
     this.currentTheme = initialTheme;
 
     // Enforce singleton pattern
     if (ThemeProvider._instance) {
-      console.warn('[ThemeProvider] An instance already exists. Use ThemeProvider.getInstance() instead of new ThemeProvider()');
+      console.warn(
+        '[ThemeProvider] An instance already exists. Use ThemeProvider.getInstance() instead of new ThemeProvider()',
+      );
       return ThemeProvider._instance as any;
     }
 
@@ -262,9 +259,7 @@ export class ThemeProvider extends FASTElement {
       // Register the instance with the DOM if it hasn't been already and we're not in a test environment
       if (!ThemeProvider._instance.isConnected) {
         // Check if we're in a test environment
-        const isTestEnvironment = typeof process !== 'undefined' &&
-          process.env &&
-          process.env.NODE_ENV === 'test';
+        const isTestEnvironment = typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'test';
 
         // Only append to document body if we're not in a test environment
         if (!isTestEnvironment && document.body) {
@@ -337,9 +332,7 @@ export class ThemeProvider extends FASTElement {
   private updateTheme(): void {
     try {
       const start = performance.now();
-      const newTheme = this.mode === 'system'
-        ? (this.mediaQuery.matches ? 'dark' : 'light')
-        : this.mode;
+      const newTheme = this.mode === 'system' ? (this.mediaQuery.matches ? 'dark' : 'light') : this.mode;
 
       if (newTheme === this.currentTheme && this.highContrast === this.previousHighContrast) {
         return;
@@ -348,7 +341,7 @@ export class ThemeProvider extends FASTElement {
       this.debugLog('Updating theme', {
         from: this.currentTheme,
         to: newTheme,
-        mode: this.mode
+        mode: this.mode,
       });
 
       // Update theme synchronously to avoid batching issues
@@ -372,9 +365,7 @@ export class ThemeProvider extends FASTElement {
       this.previousHighContrast = this.highContrast;
 
       // Check if we're in a test environment
-      const isTestEnvironment = typeof process !== 'undefined' &&
-        process.env &&
-        process.env.NODE_ENV === 'test';
+      const isTestEnvironment = typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'test';
 
       if (isTestEnvironment) {
         // In test environment, call notifyThemeChange directly
@@ -404,9 +395,7 @@ export class ThemeProvider extends FASTElement {
 
   private announceToScreenReader(message: string): void {
     // Check if we're in a test environment
-    const isTestEnvironment = typeof process !== 'undefined' &&
-      process.env &&
-      process.env.NODE_ENV === 'test';
+    const isTestEnvironment = typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'test';
 
     // Skip DOM manipulation in test environment
     if (isTestEnvironment) {
@@ -459,8 +448,8 @@ export class ThemeProvider extends FASTElement {
         error,
         timestamp: Date.now(),
         theme: this.currentTheme,
-        mode: this.mode
-      }
+        mode: this.mode,
+      },
     });
     this.dispatchEvent(event);
 
@@ -469,7 +458,7 @@ export class ThemeProvider extends FASTElement {
       code,
       error,
       theme: this.currentTheme,
-      mode: this.mode
+      mode: this.mode,
     });
   }
 
@@ -485,13 +474,13 @@ export class ThemeProvider extends FASTElement {
         detail: {
           theme: this.currentTheme,
           highContrast: this.highContrast,
-          timestamp: Date.now()
-        }
+          timestamp: Date.now(),
+        },
       });
       this.dispatchEvent(event);
 
       // Call registered listeners
-      this.themeChangeListeners.forEach(listener => {
+      this.themeChangeListeners.forEach((listener) => {
         try {
           listener();
         } catch (listenerError) {
@@ -598,14 +587,14 @@ export class ThemeProvider extends FASTElement {
         token,
         component: componentName,
         timestamp: Date.now(),
-        count: 1
+        count: 1,
       });
     }
 
     this.debugLog('Token usage tracked:', {
       token,
       component: componentName,
-      usageCount: ThemeProvider.tokenUsage.get(tokenKey)?.count
+      usageCount: ThemeProvider.tokenUsage.get(tokenKey)?.count,
     });
   }
 
@@ -638,7 +627,7 @@ export class ThemeProvider extends FASTElement {
   public dispose(): void {
     // Clean up any screen reader announcers
     const announcers = document.querySelectorAll('.theme-announcer');
-    announcers.forEach(announcer => {
+    announcers.forEach((announcer) => {
       // Clear any pending timeouts
       if ((announcer as any)._cleanupTimeoutId) {
         clearTimeout((announcer as any)._cleanupTimeoutId);
@@ -715,14 +704,19 @@ export class ThemeProvider extends FASTElement {
     } catch (error) {
       if (fallbackValue !== undefined) {
         if (ThemeProvider.isDebugMode) {
-          console.warn(`Error retrieving theme token '${tokenName}': ${error instanceof Error ? error.message : String(error)}. Using fallback value.`, fallbackValue);
+          console.warn(
+            `Error retrieving theme token '${tokenName}': ${error instanceof Error ? error.message : String(error)}. Using fallback value.`,
+            fallbackValue,
+          );
         }
         return fallbackValue;
       }
 
       // Re-throw as ThemeError if it's not already one
       if (!(error instanceof ThemeError)) {
-        throw new ThemeError(`Error retrieving theme token '${tokenName}': ${error instanceof Error ? error.message : String(error)}`);
+        throw new ThemeError(
+          `Error retrieving theme token '${tokenName}': ${error instanceof Error ? error.message : String(error)}`,
+        );
       }
       throw error;
     }
@@ -778,7 +772,7 @@ export class ThemeProvider extends FASTElement {
       ...spacingTokens,
       ...borderTokens,
       ...shadowTokens,
-      ...animationTokens
+      ...animationTokens,
     };
   }
 
@@ -795,7 +789,7 @@ export class ThemeProvider extends FASTElement {
       ...spacingTokens,
       ...borderTokens,
       ...shadowTokens,
-      ...animationTokens
+      ...animationTokens,
     };
   }
 }

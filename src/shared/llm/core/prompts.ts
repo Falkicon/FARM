@@ -11,7 +11,7 @@ export const TemplateVariableSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   required: z.boolean().default(true),
-  defaultValue: z.any().optional()
+  defaultValue: z.any().optional(),
 });
 
 export type TemplateVariable = z.infer<typeof TemplateVariableSchema>;
@@ -38,7 +38,7 @@ export interface PromptTemplate {
 export class TemplateValidationError extends Error {
   constructor(
     message: string,
-    public readonly variables: string[]
+    public readonly variables: string[],
   ) {
     super(message);
     this.name = 'TemplateValidationError';
@@ -54,13 +54,15 @@ export const PromptPatterns = {
    */
   zeroShot: (task: string): PromptTemplate => ({
     template: 'Complete the following task: {{task}}',
-    variables: [{
-      name: 'task',
-      description: 'Task to complete',
-      required: true,
-      defaultValue: task
-    }],
-    systemMessage: 'You are a helpful assistant that completes tasks accurately.'
+    variables: [
+      {
+        name: 'task',
+        description: 'Task to complete',
+        required: true,
+        defaultValue: task,
+      },
+    ],
+    systemMessage: 'You are a helpful assistant that completes tasks accurately.',
   }),
 
   /**
@@ -71,18 +73,21 @@ export const PromptPatterns = {
 {{examples}}
 
 Now complete the following task: {{task}}`,
-    variables: [{
-      name: 'examples',
-      description: 'Examples formatted as input -> output pairs',
-      required: true,
-      defaultValue: examples.map(e => `Input: ${e.input}\nOutput: ${e.output}`).join('\n\n')
-    }, {
-      name: 'task',
-      description: 'Task to complete',
-      required: true,
-      defaultValue: task
-    }],
-    systemMessage: 'You are a helpful assistant that learns from examples.'
+    variables: [
+      {
+        name: 'examples',
+        description: 'Examples formatted as input -> output pairs',
+        required: true,
+        defaultValue: examples.map((e) => `Input: ${e.input}\nOutput: ${e.output}`).join('\n\n'),
+      },
+      {
+        name: 'task',
+        description: 'Task to complete',
+        required: true,
+        defaultValue: task,
+      },
+    ],
+    systemMessage: 'You are a helpful assistant that learns from examples.',
   }),
 
   /**
@@ -93,41 +98,39 @@ Now complete the following task: {{task}}`,
 1. First, understand the task: {{task}}
 2. {{steps}}
 3. Therefore, the final answer is: {{answer}}`,
-    variables: [{
-      name: 'task',
-      description: 'Task to solve',
-      required: true,
-      defaultValue: task
-    }, {
-      name: 'steps',
-      description: 'Step-by-step reasoning process',
-      required: true
-    }, {
-      name: 'answer',
-      description: 'Final answer based on reasoning',
-      required: true
-    }],
-    systemMessage: 'You are a helpful assistant that explains your reasoning step by step.'
-  })
+    variables: [
+      {
+        name: 'task',
+        description: 'Task to solve',
+        required: true,
+        defaultValue: task,
+      },
+      {
+        name: 'steps',
+        description: 'Step-by-step reasoning process',
+        required: true,
+      },
+      {
+        name: 'answer',
+        description: 'Final answer based on reasoning',
+        required: true,
+      },
+    ],
+    systemMessage: 'You are a helpful assistant that explains your reasoning step by step.',
+  }),
 };
 
 /**
  * Validate and compile a prompt template
  */
-export function compileTemplate(
-  template: PromptTemplate,
-  variables: Record<string, any>
-): string {
+export function compileTemplate(template: PromptTemplate, variables: Record<string, any>): string {
   // Validate required variables
   const missingVariables = template.variables
-    .filter(v => v.required && !variables[v.name] && !v.defaultValue)
-    .map(v => v.name);
+    .filter((v) => v.required && !variables[v.name] && !v.defaultValue)
+    .map((v) => v.name);
 
   if (missingVariables.length > 0) {
-    throw new TemplateValidationError(
-      'Missing required variables',
-      missingVariables
-    );
+    throw new TemplateValidationError('Missing required variables', missingVariables);
   }
 
   // Replace variables in template
@@ -135,10 +138,7 @@ export function compileTemplate(
   for (const variable of template.variables) {
     const value = variables[variable.name] ?? variable.defaultValue;
     if (value !== undefined) {
-      result = result.replace(
-        new RegExp(`{{${variable.name}}}`, 'g'),
-        String(value)
-      );
+      result = result.replace(new RegExp(`{{${variable.name}}}`, 'g'), String(value));
     }
   }
 
@@ -151,11 +151,11 @@ export function compileTemplate(
 export function createTemplate(
   template: string,
   variables: TemplateVariable[] = [],
-  systemMessage?: string
+  systemMessage?: string,
 ): PromptTemplate {
   return {
     template,
-    variables: variables.map(v => TemplateVariableSchema.parse(v)),
-    systemMessage
+    variables: variables.map((v) => TemplateVariableSchema.parse(v)),
+    systemMessage,
   };
 }

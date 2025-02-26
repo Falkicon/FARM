@@ -16,7 +16,7 @@ import type {
   EmbeddingOptions,
   EmbeddingResponse,
   Message,
-  ToolCall
+  ToolCall,
 } from '../../types/core';
 import { isTestEnvironment } from '../../core/env';
 
@@ -99,7 +99,7 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
         // Initialize the OpenAI client
         const openai = new OpenAI({
           apiKey: this.config.apiKey,
-          organization: this.config.organization
+          organization: this.config.organization,
         });
 
         this.client = openai as unknown as OpenAIClient;
@@ -129,7 +129,7 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
    */
   async generateText(
     prompt: string | Message[],
-    options?: Partial<TextGenerationOptions>
+    options?: Partial<TextGenerationOptions>,
   ): Promise<TextGenerationResponse> {
     // If in test environment, return a mock response
     if (isTestEnvironment() && !options?.bypassTestMock) {
@@ -139,8 +139,8 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
         usage: {
           promptTokens: 10,
           completionTokens: 20,
-          totalTokens: 30
-        }
+          totalTokens: 30,
+        },
       };
     }
 
@@ -148,20 +148,24 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
       // Debug: Check if client is available
       console.log('generateText - Client available:', !!this.client);
       console.log('generateText - Client chat available:', !!(this.client && this.client.chat));
-      console.log('generateText - Client chat.completions available:', !!(this.client && this.client.chat && this.client.chat.completions));
-      console.log('generateText - Client chat.completions.create available:', !!(this.client && this.client.chat && this.client.chat.completions && this.client.chat.completions.create));
+      console.log(
+        'generateText - Client chat.completions available:',
+        !!(this.client && this.client.chat && this.client.chat.completions),
+      );
+      console.log(
+        'generateText - Client chat.completions.create available:',
+        !!(this.client && this.client.chat && this.client.chat.completions && this.client.chat.completions.create),
+      );
 
       // Convert prompt to messages if it's a string
-      const messages = typeof prompt === 'string'
-        ? [{ role: 'user', content: prompt }]
-        : prompt;
+      const messages = typeof prompt === 'string' ? [{ role: 'user', content: prompt }] : prompt;
 
       // Merge options with defaults
       const mergedOptions = {
         model: this.config.model || 'gpt-4',
         temperature: this.config.temperature,
         max_tokens: this.config.maxTokens,
-        ...options
+        ...options,
       };
 
       // Add system message if provided
@@ -170,24 +174,27 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
       }
 
       // Add tools if provided
-      const tools = options?.tools?.map(tool => ({
+      const tools = options?.tools?.map((tool) => ({
         type: 'function',
         function: {
           name: tool.name,
           description: tool.description,
-          parameters: tool.parameters
-        }
+          parameters: tool.parameters,
+        },
       }));
 
       // Debug: Log the request parameters
-      console.log('generateText - Request parameters:', JSON.stringify({
-        model: mergedOptions.model,
-        messages,
-        temperature: mergedOptions.temperature,
-        max_tokens: mergedOptions.max_tokens,
-        tools: tools || undefined,
-        tool_choice: options?.toolRegistry ? 'auto' : undefined
-      }));
+      console.log(
+        'generateText - Request parameters:',
+        JSON.stringify({
+          model: mergedOptions.model,
+          messages,
+          temperature: mergedOptions.temperature,
+          max_tokens: mergedOptions.max_tokens,
+          tools: tools || undefined,
+          tool_choice: options?.toolRegistry ? 'auto' : undefined,
+        }),
+      );
 
       // Call the OpenAI API
       const apiParams = {
@@ -196,7 +203,7 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
         temperature: mergedOptions.temperature,
         max_tokens: mergedOptions.max_tokens,
         ...(tools && { tools }),
-        ...(options?.toolRegistry && { tool_choice: 'auto' })
+        ...(options?.toolRegistry && { tool_choice: 'auto' }),
       };
 
       const response = await this.client.chat.completions.create(apiParams);
@@ -222,7 +229,7 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
               toolCalls.push({
                 id: toolCall.id,
                 name: toolName,
-                arguments: args
+                arguments: args,
               });
             } catch (error) {
               console.error(`Error calling tool ${toolName}:`, error);
@@ -238,7 +245,7 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
           followUpMessages.push({
             role: 'assistant',
             content: '',
-            tool_calls: response.choices[0].message.tool_calls
+            tool_calls: response.choices[0].message.tool_calls,
           } as any);
 
           // Add tool results
@@ -246,7 +253,7 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
             followUpMessages.push({
               role: 'tool',
               tool_call_id: toolCall.id,
-              content: JSON.stringify(toolCall.arguments)
+              content: JSON.stringify(toolCall.arguments),
             } as any);
           }
 
@@ -255,7 +262,7 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
             model: mergedOptions.model,
             messages: followUpMessages as any[],
             temperature: mergedOptions.temperature,
-            max_tokens: mergedOptions.max_tokens
+            max_tokens: mergedOptions.max_tokens,
           });
 
           content = followUpResponse.choices[0].message.content || '';
@@ -270,8 +277,8 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
         usage: {
           promptTokens: response.usage?.prompt_tokens || 0,
           completionTokens: response.usage?.completion_tokens || 0,
-          totalTokens: response.usage?.total_tokens || 0
-        }
+          totalTokens: response.usage?.total_tokens || 0,
+        },
       };
     } catch (error: any) {
       // Handle API errors
@@ -313,7 +320,7 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
    */
   async generateStructured<T = any>(
     prompt: string,
-    options: StructuredDataOptions
+    options: StructuredDataOptions,
   ): Promise<StructuredDataResponse<T>> {
     // Check if we're in a test environment
     if (isTestEnvironment() && !options.bypassTestMock) {
@@ -323,8 +330,8 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
         usage: {
           promptTokens: 10,
           completionTokens: 20,
-          totalTokens: 30
-        }
+          totalTokens: 30,
+        },
       };
     }
 
@@ -332,20 +339,24 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
       // Debug: Check if client is available
       console.log('generateStructured - Client available:', !!this.client);
       console.log('generateStructured - Client chat available:', !!(this.client && this.client.chat));
-      console.log('generateStructured - Client chat.completions available:', !!(this.client && this.client.chat && this.client.chat.completions));
-      console.log('generateStructured - Client chat.completions.create available:', !!(this.client && this.client.chat && this.client.chat.completions && this.client.chat.completions.create));
+      console.log(
+        'generateStructured - Client chat.completions available:',
+        !!(this.client && this.client.chat && this.client.chat.completions),
+      );
+      console.log(
+        'generateStructured - Client chat.completions.create available:',
+        !!(this.client && this.client.chat && this.client.chat.completions && this.client.chat.completions.create),
+      );
 
       // Convert prompt to messages if it's a string
-      const messages = typeof prompt === 'string'
-        ? [{ role: 'user', content: prompt }]
-        : prompt;
+      const messages = typeof prompt === 'string' ? [{ role: 'user', content: prompt }] : prompt;
 
       // Merge options with defaults
       const mergedOptions = {
         model: this.config.model || 'gpt-4',
         temperature: this.config.temperature,
         max_tokens: this.config.maxTokens,
-        ...options
+        ...options,
       };
 
       // Add system message if provided
@@ -354,17 +365,15 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
       }
 
       // Convert Zod schema to JSON schema if provided
-      const parameters = options.parameters.isSchema
-        ? zodToJsonSchema(options.parameters)
-        : options.parameters;
+      const parameters = options.parameters.isSchema ? zodToJsonSchema(options.parameters) : options.parameters;
 
       // Define the function
       const functions = [
         {
           name: options.functionName,
           description: options.functionDescription,
-          parameters
-        }
+          parameters,
+        },
       ];
 
       // Call the OpenAI API
@@ -374,7 +383,7 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
         temperature: mergedOptions.temperature,
         max_tokens: mergedOptions.max_tokens,
         functions,
-        function_call: { name: options.functionName }
+        function_call: { name: options.functionName },
       };
 
       const response = await this.client.chat.completions.create(apiParams);
@@ -396,8 +405,8 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
         usage: {
           promptTokens: response.usage?.prompt_tokens || 0,
           completionTokens: response.usage?.completion_tokens || 0,
-          totalTokens: response.usage?.total_tokens || 0
-        }
+          totalTokens: response.usage?.total_tokens || 0,
+        },
       };
     } catch (error: any) {
       // Handle API errors
@@ -429,10 +438,7 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
    *
    * @since 1.0.0
    */
-  async generateEmbeddings(
-    input: string | string[],
-    options?: Partial<EmbeddingOptions>
-  ): Promise<EmbeddingResponse> {
+  async generateEmbeddings(input: string | string[], options?: Partial<EmbeddingOptions>): Promise<EmbeddingResponse> {
     // Check if we're in a test environment
     if (isTestEnvironment() && !options?.bypassTestMock) {
       const count = Array.isArray(input) ? input.length : 1;
@@ -442,8 +448,8 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
         model: this.config.embeddingModel || 'test-embedding-model',
         usage: {
           promptTokens: 10,
-          totalTokens: 10
-        }
+          totalTokens: 10,
+        },
       };
     }
 
@@ -451,7 +457,10 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
       // Debug: Check if client is available
       console.log('generateEmbeddings - Client available:', !!this.client);
       console.log('generateEmbeddings - Client embeddings available:', !!(this.client && this.client.embeddings));
-      console.log('generateEmbeddings - Client embeddings.create available:', !!(this.client && this.client.embeddings && this.client.embeddings.create));
+      console.log(
+        'generateEmbeddings - Client embeddings.create available:',
+        !!(this.client && this.client.embeddings && this.client.embeddings.create),
+      );
 
       // Convert input to array if it's a string
       const inputArray = Array.isArray(input) ? input : [input];
@@ -459,13 +468,13 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
       // Merge options with defaults
       const mergedOptions = {
         model: this.config.embeddingModel || 'text-embedding-3-small',
-        ...options
+        ...options,
       };
 
       // Call the OpenAI API
       const apiParams = {
         model: mergedOptions.model,
-        input: inputArray
+        input: inputArray,
       };
 
       const response = await this.client.embeddings.create(apiParams);
@@ -479,8 +488,8 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
         model: response.model,
         usage: {
           promptTokens: response.usage.prompt_tokens,
-          totalTokens: response.usage.total_tokens
-        }
+          totalTokens: response.usage.total_tokens,
+        },
       };
     } catch (error: any) {
       // Handle API errors

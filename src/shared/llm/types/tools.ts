@@ -61,7 +61,7 @@ export class ToolExecutionError extends Error {
   constructor(
     message: string,
     public readonly toolName: string,
-    public readonly cause: Error
+    public readonly cause: Error,
   ) {
     super(message);
     this.name = 'ToolExecutionError';
@@ -75,7 +75,7 @@ export class ToolValidationError extends Error {
   constructor(
     message: string,
     public readonly toolName: string,
-    public readonly validationError: z.ZodError
+    public readonly validationError: z.ZodError,
   ) {
     super(message);
     this.name = 'ToolValidationError';
@@ -89,7 +89,7 @@ export class ToolTimeoutError extends Error {
   constructor(
     message: string,
     public readonly toolName: string,
-    public readonly timeout: number
+    public readonly timeout: number,
   ) {
     super(message);
     this.name = 'ToolTimeoutError';

@@ -28,49 +28,53 @@ vi.mock('openai', () => ({
             return {
               [Symbol.asyncIterator]: async function* () {
                 yield {
-                  choices: [{
-                    delta: { content: 'test response' },
-                    index: 0,
-                    finish_reason: null
-                  }]
+                  choices: [
+                    {
+                      delta: { content: 'test response' },
+                      index: 0,
+                      finish_reason: null,
+                    },
+                  ],
                 };
-              }
+              },
             };
           }
           return {
-            choices: [{
-              message: { content: 'test response' },
-              finish_reason: 'stop'
-            }],
+            choices: [
+              {
+                message: { content: 'test response' },
+                finish_reason: 'stop',
+              },
+            ],
             model: 'gpt-4',
             usage: {
               prompt_tokens: 10,
               completion_tokens: 20,
-              total_tokens: 30
-            }
+              total_tokens: 30,
+            },
           };
-        })
-      }
+        }),
+      },
     };
-  }
+  },
 }));
 
 // Mock Vercel AI SDK
 vi.mock('ai', () => ({
-  OpenAIStream: mockOpenAIStream
+  OpenAIStream: mockOpenAIStream,
 }));
 
 describe('Text Generation', () => {
   describe('Basic Generation', () => {
     it('should generate text with default options', async () => {
       const response = await generateText('Hello', {
-        config: testUtils.createMockConfig()
+        config: testUtils.createMockConfig(),
       });
       const data = await response.json();
 
       expect(data).toMatchObject({
         content: 'test response',
-        model: 'gpt-4'
+        model: 'gpt-4',
       });
       expect(data.usage).toBeDefined();
     });
@@ -78,7 +82,7 @@ describe('Text Generation', () => {
     it('should include system message when provided', async () => {
       const response = await generateText('Hello', {
         config: testUtils.createMockConfig(),
-        systemMessage: 'You are a helpful assistant'
+        systemMessage: 'You are a helpful assistant',
       });
       const data = await response.json();
 
@@ -88,7 +92,7 @@ describe('Text Generation', () => {
     it('should use custom configuration', async () => {
       const config = testUtils.createMockConfig({
         model: 'gpt-3.5-turbo',
-        temperature: 0.5
+        temperature: 0.5,
       });
 
       const response = await generateText('Hello', { config });
@@ -102,7 +106,7 @@ describe('Text Generation', () => {
     it('should stream response when requested', async () => {
       const response = await generateText('Hello', {
         stream: true,
-        config: testUtils.createMockConfig()
+        config: testUtils.createMockConfig(),
       });
 
       expect(response).toBeDefined();
@@ -123,15 +127,17 @@ describe('Text Generation', () => {
       const mockClient = {
         chat: {
           completions: {
-            create: vi.fn().mockRejectedValueOnce(new Error('API Error'))
-          }
-        }
+            create: vi.fn().mockRejectedValueOnce(new Error('API Error')),
+          },
+        },
       } as unknown as OpenAI;
 
-      await expect(generateText('Hello', {
-        stream: true,
-        config: { ...testUtils.createMockConfig(), client: mockClient }
-      })).rejects.toThrow('API Error');
+      await expect(
+        generateText('Hello', {
+          stream: true,
+          config: { ...testUtils.createMockConfig(), client: mockClient },
+        }),
+      ).rejects.toThrow('API Error');
     });
 
     it('should handle missing response body', async () => {
@@ -139,15 +145,17 @@ describe('Text Generation', () => {
       const mockClient = {
         chat: {
           completions: {
-            create: vi.fn().mockResolvedValueOnce(undefined)
-          }
-        }
+            create: vi.fn().mockResolvedValueOnce(undefined),
+          },
+        },
       } as unknown as OpenAI;
 
-      await expect(generateText('Hello', {
-        stream: true,
-        config: { ...testUtils.createMockConfig(), client: mockClient }
-      })).rejects.toThrow('No response body available for streaming');
+      await expect(
+        generateText('Hello', {
+          stream: true,
+          config: { ...testUtils.createMockConfig(), client: mockClient },
+        }),
+      ).rejects.toThrow('No response body available for streaming');
     });
   });
 
@@ -155,11 +163,10 @@ describe('Text Generation', () => {
     it('should handle missing API key', async () => {
       const config = {
         provider: 'openai' as const,
-        model: 'gpt-4'
+        model: 'gpt-4',
       };
 
-      await expect(generateText('Hello', { config }))
-        .rejects.toThrow('API key must be provided');
+      await expect(generateText('Hello', { config })).rejects.toThrow('API key must be provided');
     });
 
     it('should handle API errors', async () => {
@@ -167,14 +174,16 @@ describe('Text Generation', () => {
       const mockClient = {
         chat: {
           completions: {
-            create: vi.fn().mockRejectedValueOnce(new Error('API Error'))
-          }
-        }
+            create: vi.fn().mockRejectedValueOnce(new Error('API Error')),
+          },
+        },
       } as unknown as OpenAI;
 
-      await expect(generateText('Hello', {
-        config: { ...testUtils.createMockConfig(), client: mockClient }
-      })).rejects.toThrow('API Error');
+      await expect(
+        generateText('Hello', {
+          config: { ...testUtils.createMockConfig(), client: mockClient },
+        }),
+      ).rejects.toThrow('API Error');
     });
   });
 });

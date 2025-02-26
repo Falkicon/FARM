@@ -17,49 +17,53 @@ export function createMockOpenAIClient(): OpenAI {
         create: vi.fn().mockImplementation(async ({ stream }) => {
           if (stream) {
             return {
-              choices: [{
-                delta: { content: 'test response' },
-                index: 0,
-                finish_reason: null
-              }]
+              choices: [
+                {
+                  delta: { content: 'test response' },
+                  index: 0,
+                  finish_reason: null,
+                },
+              ],
             };
           }
           return {
-            choices: [{
-              message: {
-                content: 'test response',
-                function_call: {
-                  name: 'testFunction',
-                  arguments: '{"test":"value"}'
-                }
-              }
-            }],
+            choices: [
+              {
+                message: {
+                  content: 'test response',
+                  function_call: {
+                    name: 'testFunction',
+                    arguments: '{"test":"value"}',
+                  },
+                },
+              },
+            ],
             model: 'gpt-4',
             usage: {
               prompt_tokens: 10,
               completion_tokens: 20,
-              total_tokens: 30
-            }
+              total_tokens: 30,
+            },
           };
-        })
-      }
+        }),
+      },
     },
     embeddings: {
       create: vi.fn().mockImplementation(async () => {
         return {
           data: [
             {
-              embedding: [0.1, 0.2, 0.3, 0.4, 0.5]
-            }
+              embedding: [0.1, 0.2, 0.3, 0.4, 0.5],
+            },
           ],
           model: 'text-embedding-3-small',
           usage: {
             prompt_tokens: 10,
-            total_tokens: 10
-          }
+            total_tokens: 10,
+          },
         };
-      })
-    }
+      }),
+    },
   } as unknown as OpenAI;
 }
 
@@ -70,17 +74,21 @@ export function createMockStream(content: string = 'test response') {
   return new ReadableStream({
     start(controller) {
       const encoder = new TextEncoder();
-      controller.enqueue(encoder.encode(JSON.stringify({
-        content,
-        model: 'gpt-4',
-        usage: {
-          prompt_tokens: 10,
-          completion_tokens: 20,
-          total_tokens: 30
-        }
-      })));
+      controller.enqueue(
+        encoder.encode(
+          JSON.stringify({
+            content,
+            model: 'gpt-4',
+            usage: {
+              prompt_tokens: 10,
+              completion_tokens: 20,
+              total_tokens: 30,
+            },
+          }),
+        ),
+      );
       controller.close();
-    }
+    },
   });
 }
 
@@ -94,8 +102,8 @@ export function createMockTextResponse(content: string = 'mock response', model:
     usage: {
       promptTokens: 10,
       completionTokens: 20,
-      totalTokens: 30
-    }
+      totalTokens: 30,
+    },
   };
 }
 
@@ -109,8 +117,8 @@ export function createMockStructuredResponse<T = any>(model: string = 'test-mode
     usage: {
       promptTokens: 10,
       completionTokens: 20,
-      totalTokens: 30
-    }
+      totalTokens: 30,
+    },
   };
 }
 
@@ -125,8 +133,8 @@ export function createMockEmbeddingResponse(count: number = 1, model: string = '
     model,
     usage: {
       promptTokens: 10,
-      totalTokens: 10
-    }
+      totalTokens: 10,
+    },
   };
 }
 
@@ -149,7 +157,7 @@ afterEach(() => {
  */
 export const mockEnv = {
   OPENAI_API_KEY: 'test-key',
-  OPENAI_ORG_ID: 'test-org'
+  OPENAI_ORG_ID: 'test-org',
 };
 
 /**
@@ -165,7 +173,7 @@ export const testUtils = {
     model: 'gpt-4',
     temperature: 0.7,
     maxTokens: 1000,
-    ...overrides
+    ...overrides,
   }),
 
   /**
@@ -173,6 +181,6 @@ export const testUtils = {
    */
   createMockMessages: () => [
     { role: 'system' as const, content: 'You are a helpful assistant.' },
-    { role: 'user' as const, content: 'Hello!' }
-  ]
+    { role: 'user' as const, content: 'Hello!' },
+  ],
 };

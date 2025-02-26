@@ -21,30 +21,34 @@ describe('OpenAIProviderNew', () => {
           // Return different responses based on the test case
           if (params.functions && params.function_call) {
             const response = {
-              choices: [{
-                message: {
-                  function_call: {
-                    name: params.functions[0].name,
-                    arguments: JSON.stringify({ test: 'value' })
+              choices: [
+                {
+                  message: {
+                    function_call: {
+                      name: params.functions[0].name,
+                      arguments: JSON.stringify({ test: 'value' }),
+                    },
+                    content: null,
                   },
-                  content: null
-                }
-              }],
+                },
+              ],
               model: 'gpt-4',
-              usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 }
+              usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 },
             };
             console.log('Mock returning function call response:', JSON.stringify(response));
             return response;
           } else if (params.messages.some((m: any) => m.role === 'system')) {
             const response = {
-              choices: [{
-                message: {
-                  content: 'Mock API response with system message',
-                  function_call: undefined
-                }
-              }],
+              choices: [
+                {
+                  message: {
+                    content: 'Mock API response with system message',
+                    function_call: undefined,
+                  },
+                },
+              ],
               model: 'gpt-4',
-              usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 }
+              usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 },
             };
             console.log('Mock returning system message response:', JSON.stringify(response));
             return response;
@@ -52,19 +56,21 @@ describe('OpenAIProviderNew', () => {
 
           // Default response
           const response = {
-            choices: [{
-              message: {
-                content: 'Mock API response',
-                function_call: undefined
-              }
-            }],
+            choices: [
+              {
+                message: {
+                  content: 'Mock API response',
+                  function_call: undefined,
+                },
+              },
+            ],
             model: 'gpt-4',
-            usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 }
+            usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 },
           };
           console.log('Mock returning default response:', JSON.stringify(response));
           return response;
-        })
-      }
+        }),
+      },
     },
     embeddings: {
       create: vi.fn().mockImplementation((params) => {
@@ -73,12 +79,12 @@ describe('OpenAIProviderNew', () => {
         // Handle array inputs
         if (Array.isArray(params.input)) {
           const embeddings = params.input.map((_: any, index: number) => ({
-            embedding: index === 0 ? [0.1, 0.2, 0.3] : [0.4, 0.5, 0.6]
+            embedding: index === 0 ? [0.1, 0.2, 0.3] : [0.4, 0.5, 0.6],
           }));
           const response = {
             data: embeddings,
             model: 'text-embedding-3-small',
-            usage: { prompt_tokens: params.input.length * 10, total_tokens: params.input.length * 10 }
+            usage: { prompt_tokens: params.input.length * 10, total_tokens: params.input.length * 10 },
           };
           console.log('Mock returning array embeddings response:', JSON.stringify(response));
           return response;
@@ -88,12 +94,12 @@ describe('OpenAIProviderNew', () => {
         const response = {
           data: [{ embedding: [0.1, 0.2, 0.3] }],
           model: 'text-embedding-3-small',
-          usage: { prompt_tokens: 10, total_tokens: 10 }
+          usage: { prompt_tokens: 10, total_tokens: 10 },
         };
         console.log('Mock returning single embedding response:', JSON.stringify(response));
         return response;
-      })
-    }
+      }),
+    },
   };
 
   beforeEach(() => {
@@ -119,7 +125,7 @@ describe('OpenAIProviderNew', () => {
       provider: 'openai',
       apiKey: 'test-api-key',
       model: 'test-model',
-      embeddingModel: 'test-embedding-model'
+      embeddingModel: 'test-embedding-model',
     });
   });
 
@@ -133,7 +139,7 @@ describe('OpenAIProviderNew', () => {
       provider: 'openai',
       apiKey: 'test-api-key',
       model: 'gpt-4',
-      embeddingModel: 'text-embedding-3-small'
+      embeddingModel: 'text-embedding-3-small',
     });
 
     // Debug: Check if the client is properly set
@@ -147,7 +153,7 @@ describe('OpenAIProviderNew', () => {
     it('should initialize with valid configuration', () => {
       const provider = new OpenAIProviderNew({
         provider: 'openai',
-        apiKey: 'test-api-key'
+        apiKey: 'test-api-key',
       });
 
       expect(provider).toBeDefined();
@@ -178,14 +184,16 @@ describe('OpenAIProviderNew', () => {
 
       // Set up the mock to return a specific response
       mockOpenAIClient.chat.completions.create.mockReturnValueOnce({
-        choices: [{
-          message: {
-            content: 'Mock API response',
-            function_call: undefined
-          }
-        }],
+        choices: [
+          {
+            message: {
+              content: 'Mock API response',
+              function_call: undefined,
+            },
+          },
+        ],
         model: 'gpt-4',
-        usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 }
+        usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 },
       });
 
       // Call the method
@@ -195,8 +203,8 @@ describe('OpenAIProviderNew', () => {
       expect(mockOpenAIClient.chat.completions.create).toHaveBeenCalledWith(
         expect.objectContaining({
           model: 'gpt-4',
-          messages: [{ role: 'user', content: 'Test prompt' }]
-        })
+          messages: [{ role: 'user', content: 'Test prompt' }],
+        }),
       );
 
       // Verify the response
@@ -206,7 +214,7 @@ describe('OpenAIProviderNew', () => {
       expect(response.usage).toEqual({
         promptTokens: 10,
         completionTokens: 20,
-        totalTokens: 30
+        totalTokens: 30,
       });
     });
 
@@ -216,20 +224,22 @@ describe('OpenAIProviderNew', () => {
 
       // Set up the mock to return a specific response
       mockOpenAIClient.chat.completions.create.mockReturnValueOnce({
-        choices: [{
-          message: {
-            content: 'Mock API response with system message',
-            function_call: undefined
-          }
-        }],
+        choices: [
+          {
+            message: {
+              content: 'Mock API response with system message',
+              function_call: undefined,
+            },
+          },
+        ],
         model: 'gpt-4',
-        usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 }
+        usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 },
       });
 
       // Call the method
       await testProvider.generateText('Test prompt', {
         systemMessage: 'You are a helpful assistant',
-        bypassTestMock: true
+        bypassTestMock: true,
       });
 
       // Verify the mock was called with the correct parameters
@@ -237,9 +247,9 @@ describe('OpenAIProviderNew', () => {
         expect.objectContaining({
           messages: [
             { role: 'system', content: 'You are a helpful assistant' },
-            { role: 'user', content: 'Test prompt' }
-          ]
-        })
+            { role: 'user', content: 'Test prompt' },
+          ],
+        }),
       );
     });
 
@@ -250,15 +260,17 @@ describe('OpenAIProviderNew', () => {
       // Mock authentication error
       mockOpenAIClient.chat.completions.create.mockRejectedValueOnce({
         status: 401,
-        message: 'Invalid API key'
+        message: 'Invalid API key',
       });
 
-      await expect(errorProvider.generateText('Test prompt', { bypassTestMock: true })).rejects.toThrow(AuthenticationError);
+      await expect(errorProvider.generateText('Test prompt', { bypassTestMock: true })).rejects.toThrow(
+        AuthenticationError,
+      );
 
       // Mock rate limit error
       mockOpenAIClient.chat.completions.create.mockRejectedValueOnce({
         status: 429,
-        message: 'Rate limit exceeded'
+        message: 'Rate limit exceeded',
       });
 
       await expect(errorProvider.generateText('Test prompt', { bypassTestMock: true })).rejects.toThrow(RateLimitError);
@@ -266,7 +278,7 @@ describe('OpenAIProviderNew', () => {
       // Mock generic API error
       mockOpenAIClient.chat.completions.create.mockRejectedValueOnce({
         status: 500,
-        message: 'Server error'
+        message: 'Server error',
       });
 
       await expect(errorProvider.generateText('Test prompt', { bypassTestMock: true })).rejects.toThrow(APIError);
@@ -283,9 +295,9 @@ describe('OpenAIProviderNew', () => {
         parameters: {
           type: 'object',
           properties: {
-            test: { type: 'string' }
-          }
-        }
+            test: { type: 'string' },
+          },
+        },
       });
 
       expect(response).toBeDefined();
@@ -300,17 +312,19 @@ describe('OpenAIProviderNew', () => {
 
       // Set up the mock to return a specific response
       mockOpenAIClient.chat.completions.create.mockReturnValueOnce({
-        choices: [{
-          message: {
-            function_call: {
-              name: 'testFunction',
-              arguments: JSON.stringify({ test: 'value' })
+        choices: [
+          {
+            message: {
+              function_call: {
+                name: 'testFunction',
+                arguments: JSON.stringify({ test: 'value' }),
+              },
+              content: null,
             },
-            content: null
-          }
-        }],
+          },
+        ],
         model: 'gpt-4',
-        usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 }
+        usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 },
       });
 
       // Call the method
@@ -320,10 +334,10 @@ describe('OpenAIProviderNew', () => {
         parameters: {
           type: 'object',
           properties: {
-            test: { type: 'string' }
-          }
+            test: { type: 'string' },
+          },
         },
-        bypassTestMock: true
+        bypassTestMock: true,
       });
 
       // Verify the mock was called with the correct parameters
@@ -338,13 +352,13 @@ describe('OpenAIProviderNew', () => {
               parameters: {
                 type: 'object',
                 properties: {
-                  test: { type: 'string' }
-                }
-              }
-            }
+                  test: { type: 'string' },
+                },
+              },
+            },
           ],
-          function_call: { name: 'testFunction' }
-        })
+          function_call: { name: 'testFunction' },
+        }),
       );
 
       // Verify the response
@@ -354,7 +368,7 @@ describe('OpenAIProviderNew', () => {
       expect(response.usage).toEqual({
         promptTokens: 10,
         completionTokens: 20,
-        totalTokens: 30
+        totalTokens: 30,
       });
     });
   });
@@ -379,7 +393,7 @@ describe('OpenAIProviderNew', () => {
       mockOpenAIClient.embeddings.create.mockReturnValueOnce({
         data: [{ embedding: [0.1, 0.2, 0.3] }],
         model: 'text-embedding-3-small',
-        usage: { prompt_tokens: 10, total_tokens: 10 }
+        usage: { prompt_tokens: 10, total_tokens: 10 },
       });
 
       // Call the method
@@ -389,8 +403,8 @@ describe('OpenAIProviderNew', () => {
       expect(mockOpenAIClient.embeddings.create).toHaveBeenCalledWith(
         expect.objectContaining({
           model: 'text-embedding-3-small',
-          input: ['Test input']
-        })
+          input: ['Test input'],
+        }),
       );
 
       // Verify the response
@@ -399,7 +413,7 @@ describe('OpenAIProviderNew', () => {
       expect(response.model).toBe('text-embedding-3-small');
       expect(response.usage).toEqual({
         promptTokens: 10,
-        totalTokens: 10
+        totalTokens: 10,
       });
     });
 
@@ -409,12 +423,9 @@ describe('OpenAIProviderNew', () => {
 
       // Set up the mock to return a specific response
       mockOpenAIClient.embeddings.create.mockReturnValueOnce({
-        data: [
-          { embedding: [0.1, 0.2, 0.3] },
-          { embedding: [0.4, 0.5, 0.6] }
-        ],
+        data: [{ embedding: [0.1, 0.2, 0.3] }, { embedding: [0.4, 0.5, 0.6] }],
         model: 'text-embedding-3-small',
-        usage: { prompt_tokens: 20, total_tokens: 20 }
+        usage: { prompt_tokens: 20, total_tokens: 20 },
       });
 
       // Call the method
@@ -423,14 +434,14 @@ describe('OpenAIProviderNew', () => {
       // Verify the mock was called with the correct parameters
       expect(mockOpenAIClient.embeddings.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          input: ['Input 1', 'Input 2']
-        })
+          input: ['Input 1', 'Input 2'],
+        }),
       );
 
       // Verify the response
       expect(response.embeddings).toEqual([
         [0.1, 0.2, 0.3],
-        [0.4, 0.5, 0.6]
+        [0.4, 0.5, 0.6],
       ]);
     });
   });

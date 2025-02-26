@@ -22,12 +22,9 @@ export interface EmbeddingsConfig extends LLMConfig {
  */
 export const EmbeddingsInputSchema = z.object({
   /** Text to generate embeddings for */
-  input: z.union([
-    z.string(),
-    z.array(z.string())
-  ]),
+  input: z.union([z.string(), z.array(z.string())]),
   /** Optional user identifier for tracking */
-  user: z.string().optional()
+  user: z.string().optional(),
 });
 
 export type EmbeddingsInput = z.infer<typeof EmbeddingsInputSchema>;
@@ -64,7 +61,7 @@ export interface EmbeddingsResponse {
 export class EmbeddingsError extends Error {
   constructor(
     message: string,
-    public readonly cause?: Error
+    public readonly cause?: Error,
   ) {
     super(message);
     this.name = 'EmbeddingsError';
@@ -76,7 +73,7 @@ export class EmbeddingsError extends Error {
  */
 export function normalizeVector(vector: number[]): number[] {
   const magnitude = Math.sqrt(vector.reduce((sum, val) => sum + val * val, 0));
-  return vector.map(val => val / magnitude);
+  return vector.map((val) => val / magnitude);
 }
 
 /**
@@ -102,9 +99,7 @@ export function euclideanDistance(a: number[], b: number[]): number {
     throw new Error('Vectors must have the same length');
   }
 
-  return Math.sqrt(
-    a.reduce((sum, val, i) => sum + Math.pow(val - b[i], 2), 0)
-  );
+  return Math.sqrt(a.reduce((sum, val, i) => sum + Math.pow(val - b[i], 2), 0));
 }
 
 /**
@@ -113,12 +108,12 @@ export function euclideanDistance(a: number[], b: number[]): number {
 export function findSimilarEmbeddings(
   query: number[],
   embeddings: Array<{ embedding: number[]; metadata?: any }>,
-  topK: number = 5
+  topK: number = 5,
 ): Array<{ similarity: number; metadata?: any }> {
   return embeddings
-    .map(item => ({
+    .map((item) => ({
       similarity: cosineSimilarity(query, item.embedding),
-      metadata: item.metadata
+      metadata: item.metadata,
     }))
     .sort((a, b) => b.similarity - a.similarity)
     .slice(0, topK);
@@ -155,9 +150,9 @@ export abstract class EmbeddingsProvider {
    */
   protected processResponse(response: EmbeddingsResponse): EmbeddingsResponse {
     if (this.config.normalize) {
-      response.data = response.data.map(item => ({
+      response.data = response.data.map((item) => ({
         ...item,
-        embedding: normalizeVector(item.embedding)
+        embedding: normalizeVector(item.embedding),
       }));
     }
     return response;

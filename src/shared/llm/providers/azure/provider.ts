@@ -3,8 +3,18 @@
  */
 
 import OpenAI from 'openai';
-import { EmbeddingsProvider, type EmbeddingsInput, type EmbeddingsResponse, EmbeddingsError } from '../../core/embeddings';
-import { initializeAzureOpenAIConfig, createAzureOpenAIClient, createStreamingResponse, type AzureOpenAIConfig } from './config';
+import {
+  EmbeddingsProvider,
+  type EmbeddingsInput,
+  type EmbeddingsResponse,
+  EmbeddingsError,
+} from '../../core/embeddings';
+import {
+  initializeAzureOpenAIConfig,
+  createAzureOpenAIClient,
+  createStreamingResponse,
+  type AzureOpenAIConfig,
+} from './config';
 
 // Define message types for API communication
 type MessageRole = 'user' | 'assistant' | 'system';
@@ -40,7 +50,7 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
       systemMessage?: string;
       temperature?: number;
       maxTokens?: number;
-    } = {}
+    } = {},
   ): Promise<Response> {
     try {
       // Prepare messages
@@ -50,14 +60,14 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
       if (options.systemMessage) {
         messages.push({
           role: 'system',
-          content: options.systemMessage
+          content: options.systemMessage,
         });
       }
 
       // Add user prompt
       messages.push({
         role: 'user',
-        content: prompt
+        content: prompt,
       });
 
       // Handle streaming
@@ -65,7 +75,7 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
         return createStreamingResponse(this.client, messages, {
           ...this.config,
           temperature: options.temperature,
-          maxTokens: options.maxTokens
+          maxTokens: options.maxTokens,
         });
       }
 
@@ -78,11 +88,13 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
       });
 
       // Return completion as a Response object
-      return new Response(JSON.stringify({
-        content: completion.choices[0]?.message?.content || '',
-        model: completion.model,
-        usage: completion.usage
-      }));
+      return new Response(
+        JSON.stringify({
+          content: completion.choices[0]?.message?.content || '',
+          model: completion.model,
+          usage: completion.usage,
+        }),
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -104,7 +116,7 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
       functionName: string;
       functionDescription: string;
       parameters: Record<string, unknown>;
-    }
+    },
   ): Promise<Response> {
     try {
       // Prepare messages
@@ -114,21 +126,21 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
       if (options.systemMessage) {
         messages.push({
           role: 'system',
-          content: options.systemMessage
+          content: options.systemMessage,
         });
       }
 
       // Add user prompt
       messages.push({
         role: 'user',
-        content: prompt
+        content: prompt,
       });
 
       // Create function definition
       const functionDefinition = {
         name: options.functionName,
         description: options.functionDescription,
-        parameters: options.parameters
+        parameters: options.parameters,
       };
 
       // Handle streaming
@@ -140,7 +152,7 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
           max_tokens: options.maxTokens ?? this.config.maxTokens,
           stream: true,
           functions: [functionDefinition],
-          function_call: { name: functionDefinition.name }
+          function_call: { name: functionDefinition.name },
         });
 
         if (!response) {
@@ -155,15 +167,19 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
                 for await (const chunk of response) {
                   const functionCall = chunk.choices[0]?.delta?.function_call;
                   if (functionCall?.arguments) {
-                    controller.enqueue(new TextEncoder().encode(JSON.stringify({
-                      content: functionCall.arguments,
-                      model: this.config.deploymentName,
-                      usage: {
-                        prompt_tokens: 0,
-                        completion_tokens: 0,
-                        total_tokens: 0
-                      }
-                    })));
+                    controller.enqueue(
+                      new TextEncoder().encode(
+                        JSON.stringify({
+                          content: functionCall.arguments,
+                          model: this.config.deploymentName,
+                          usage: {
+                            prompt_tokens: 0,
+                            completion_tokens: 0,
+                            total_tokens: 0,
+                          },
+                        }),
+                      ),
+                    );
                   }
                 }
                 controller.close();
@@ -172,7 +188,7 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
               }
             };
             processStream();
-          }
+          },
         });
 
         return new Response(stream);
@@ -185,7 +201,7 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
         temperature: options.temperature ?? this.config.temperature,
         max_tokens: options.maxTokens ?? this.config.maxTokens,
         functions: [functionDefinition],
-        function_call: { name: functionDefinition.name }
+        function_call: { name: functionDefinition.name },
       });
 
       const functionCall = completion.choices[0]?.message?.function_call;
@@ -194,11 +210,13 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
       }
 
       // Return completion as a Response object
-      return new Response(JSON.stringify({
-        content: JSON.parse(functionCall.arguments),
-        model: completion.model,
-        usage: completion.usage
-      }));
+      return new Response(
+        JSON.stringify({
+          content: JSON.parse(functionCall.arguments),
+          model: completion.model,
+          usage: completion.usage,
+        }),
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -216,16 +234,14 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
       const validatedInput = await this.validateInput(input);
 
       // Convert input to array if string
-      const inputs = Array.isArray(validatedInput.input)
-        ? validatedInput.input
-        : [validatedInput.input];
+      const inputs = Array.isArray(validatedInput.input) ? validatedInput.input : [validatedInput.input];
 
       // Generate embeddings
       const response = await this.client.embeddings.create({
         model: this.config.deploymentName,
         input: inputs,
         dimensions: this.config.dimensions,
-        user: validatedInput.user
+        user: validatedInput.user,
       });
 
       // Format response
@@ -234,13 +250,13 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
         data: response.data.map((item, index) => ({
           object: 'embedding',
           embedding: item.embedding,
-          index
+          index,
         })),
         model: response.model,
         usage: {
           prompt_tokens: response.usage.prompt_tokens,
-          total_tokens: response.usage.total_tokens
-        }
+          total_tokens: response.usage.total_tokens,
+        },
       };
 
       // Post-process response (e.g., normalize vectors)

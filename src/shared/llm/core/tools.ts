@@ -13,7 +13,7 @@ import { ToolExecutionError, ToolValidationError, ToolTimeoutError } from '../ty
 const DEFAULT_CONFIG: Required<ToolRegistryConfig> = {
   maxToolCalls: 10,
   toolTimeout: 30000, // 30 seconds
-  allowParallel: false
+  allowParallel: false,
 };
 
 /**
@@ -69,10 +69,10 @@ export class ToolRegistry {
     description: string;
     parameters: ReturnType<typeof zodToJsonSchema>;
   }> {
-    return this.getAllTools().map(tool => ({
+    return this.getAllTools().map((tool) => ({
       name: tool.name,
       description: tool.description,
-      parameters: zodToJsonSchema(tool.parameters)
+      parameters: zodToJsonSchema(tool.parameters),
     }));
   }
 
@@ -82,7 +82,7 @@ export class ToolRegistry {
   async executeTool<TOutput = any>(
     name: string,
     input: unknown,
-    options: ToolExecutionOptions = {}
+    options: ToolExecutionOptions = {},
   ): Promise<ToolResult<TOutput>> {
     const startTime = performance.now();
     const tool = this.getTool(name);
@@ -102,11 +102,7 @@ export class ToolRegistry {
       const timeout = options.timeout ?? this.config.toolTimeout;
       const timeoutPromise = new Promise<never>((_, reject) => {
         const timeoutId = setTimeout(() => {
-          const error = new ToolTimeoutError(
-            `Tool execution timed out after ${timeout}ms`,
-            name,
-            timeout
-          );
+          const error = new ToolTimeoutError(`Tool execution timed out after ${timeout}ms`, name, timeout);
           reject(error);
         }, timeout);
 
@@ -120,16 +116,12 @@ export class ToolRegistry {
       return {
         toolName: name,
         output,
-        executionTime: performance.now() - startTime
+        executionTime: performance.now() - startTime,
       };
     } catch (error) {
       // Handle validation errors
       if (error instanceof z.ZodError) {
-        const validationError = new ToolValidationError(
-          'Tool input validation failed',
-          name,
-          error
-        );
+        const validationError = new ToolValidationError('Tool input validation failed', name, error);
 
         if (options.throwOnError) {
           throw validationError;
@@ -139,7 +131,7 @@ export class ToolRegistry {
           toolName: name,
           output: undefined as unknown as TOutput,
           executionTime: performance.now() - startTime,
-          error: validationError
+          error: validationError,
         };
       }
 
@@ -153,17 +145,13 @@ export class ToolRegistry {
           toolName: name,
           output: undefined as unknown as TOutput,
           executionTime: performance.now() - startTime,
-          error
+          error,
         };
       }
 
       // Handle other errors
       const executionError = error instanceof Error ? error : new Error(String(error));
-      const toolError = new ToolExecutionError(
-        'Tool execution failed',
-        name,
-        executionError
-      );
+      const toolError = new ToolExecutionError('Tool execution failed', name, executionError);
 
       if (options.throwOnError) {
         throw toolError;
@@ -173,7 +161,7 @@ export class ToolRegistry {
         toolName: name,
         output: undefined as unknown as TOutput,
         executionTime: performance.now() - startTime,
-        error: toolError
+        error: toolError,
       };
     }
   }
@@ -183,7 +171,7 @@ export class ToolRegistry {
    */
   async executeTools<TOutput = any>(
     calls: Array<{ name: string; input: unknown }>,
-    options: ToolExecutionOptions = {}
+    options: ToolExecutionOptions = {},
   ): Promise<ToolResult<TOutput>[]> {
     // Validate against max tool calls
     if (calls.length > this.config.maxToolCalls) {
@@ -193,9 +181,7 @@ export class ToolRegistry {
     // Execute tools
     if (this.config.allowParallel) {
       // Execute in parallel
-      return Promise.all(
-        calls.map(call => this.executeTool<TOutput>(call.name, call.input, options))
-      );
+      return Promise.all(calls.map((call) => this.executeTool<TOutput>(call.name, call.input, options)));
     } else {
       // Execute in sequence
       const results: ToolResult<TOutput>[] = [];

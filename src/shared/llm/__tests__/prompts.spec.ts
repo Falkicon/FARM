@@ -4,7 +4,7 @@ import {
   TemplateValidationError,
   PromptPatterns,
   compileTemplate,
-  createTemplate
+  createTemplate,
 } from '../core/prompts';
 
 describe('Prompt Engineering Utilities', () => {
@@ -12,27 +12,29 @@ describe('Prompt Engineering Utilities', () => {
     it('should validate required variables', () => {
       const template: PromptTemplate = {
         template: 'Hello {{name}}!',
-        variables: [{
-          name: 'name',
-          required: true
-        }]
+        variables: [
+          {
+            name: 'name',
+            required: true,
+          },
+        ],
       };
 
-      expect(() => compileTemplate(template, {}))
-        .toThrow(TemplateValidationError);
+      expect(() => compileTemplate(template, {})).toThrow(TemplateValidationError);
 
-      expect(() => compileTemplate(template, { name: 'World' }))
-        .not.toThrow();
+      expect(() => compileTemplate(template, { name: 'World' })).not.toThrow();
     });
 
     it('should use default values when available', () => {
       const template: PromptTemplate = {
         template: 'Hello {{name}}!',
-        variables: [{
-          name: 'name',
-          required: true,
-          defaultValue: 'World'
-        }]
+        variables: [
+          {
+            name: 'name',
+            required: true,
+            defaultValue: 'World',
+          },
+        ],
       };
 
       const result = compileTemplate(template, {});
@@ -47,14 +49,14 @@ describe('Prompt Engineering Utilities', () => {
         variables: [
           { name: 'greeting', required: true },
           { name: 'name', required: true },
-          { name: 'time', required: true }
-        ]
+          { name: 'time', required: true },
+        ],
       };
 
       const result = compileTemplate(template, {
         greeting: 'Hello',
         name: 'World',
-        time: 'morning'
+        time: 'morning',
       });
 
       expect(result).toBe('Hello World! How is the morning?');
@@ -63,7 +65,7 @@ describe('Prompt Engineering Utilities', () => {
     it('should handle repeated variables', () => {
       const template: PromptTemplate = {
         template: '{{name}}, {{name}}! Your name is {{name}}.',
-        variables: [{ name: 'name', required: true }]
+        variables: [{ name: 'name', required: true }],
       };
 
       const result = compileTemplate(template, { name: 'Alice' });
@@ -91,7 +93,7 @@ describe('Prompt Engineering Utilities', () => {
       it('should create a few-shot prompt template', () => {
         const examples = [
           { input: 'Hello', output: 'Greeting' },
-          { input: 'Goodbye', output: 'Farewell' }
+          { input: 'Goodbye', output: 'Farewell' },
         ];
         const template = PromptPatterns.fewShot('Classify: Hi', examples);
 
@@ -104,12 +106,12 @@ describe('Prompt Engineering Utilities', () => {
       it('should compile a few-shot prompt with examples', () => {
         const examples = [
           { input: 'Hello', output: 'Greeting' },
-          { input: 'Goodbye', output: 'Farewell' }
+          { input: 'Goodbye', output: 'Farewell' },
         ];
         const template = PromptPatterns.fewShot('Classify: Hi', examples);
         const result = compileTemplate(template, {
           task: 'Classify: Hi',
-          examples: examples.map(e => `Input: ${e.input}\nOutput: ${e.output}`).join('\n\n')
+          examples: examples.map((e) => `Input: ${e.input}\nOutput: ${e.output}`).join('\n\n'),
         });
 
         expect(result).toContain('Here are some examples:');
@@ -124,7 +126,7 @@ describe('Prompt Engineering Utilities', () => {
         const template = PromptPatterns.chainOfThought('Solve: 2 + 2');
         expect(template.systemMessage).toBeDefined();
         expect(template.variables).toHaveLength(3);
-        expect(template.variables.map(v => v.name)).toEqual(['task', 'steps', 'answer']);
+        expect(template.variables.map((v) => v.name)).toEqual(['task', 'steps', 'answer']);
       });
 
       it('should compile a chain-of-thought prompt', () => {
@@ -132,7 +134,7 @@ describe('Prompt Engineering Utilities', () => {
         const result = compileTemplate(template, {
           task: 'Solve: 2 + 2',
           steps: 'Let me break this down:\n1. We have two numbers: 2 and 2\n2. Addition means combining them',
-          answer: '4'
+          answer: '4',
         });
 
         expect(result).toContain("Let's solve this step by step:");
@@ -150,9 +152,9 @@ describe('Prompt Engineering Utilities', () => {
         [
           { name: 'color', required: true },
           { name: 'animal', required: true },
-          { name: 'object', required: true, defaultValue: 'fence' }
+          { name: 'object', required: true, defaultValue: 'fence' },
         ],
-        'You are a creative writing assistant.'
+        'You are a creative writing assistant.',
       );
 
       expect(template.systemMessage).toBe('You are a creative writing assistant.');
@@ -160,17 +162,19 @@ describe('Prompt Engineering Utilities', () => {
 
       const result = compileTemplate(template, {
         color: 'brown',
-        animal: 'fox'
+        animal: 'fox',
       });
 
       expect(result).toBe('The brown fox jumps over the fence');
     });
 
     it('should validate variable schema', () => {
-      expect(() => createTemplate(
-        'Hello {{name}}!',
-        [{ name: 123 as any, required: true }] // Invalid schema
-      )).toThrow();
+      expect(() =>
+        createTemplate(
+          'Hello {{name}}!',
+          [{ name: 123 as any, required: true }], // Invalid schema
+        ),
+      ).toThrow();
     });
   });
 });

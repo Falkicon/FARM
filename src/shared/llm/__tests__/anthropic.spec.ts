@@ -1,5 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
-import { initializeAnthropicConfig, createAnthropicClient, generateAnthropicStream, type AnthropicConfig } from '../providers/anthropic/config';
+import {
+  initializeAnthropicConfig,
+  createAnthropicClient,
+  generateAnthropicStream,
+  type AnthropicConfig,
+} from '../providers/anthropic/config';
 import { AnthropicProvider } from '../providers/anthropic/provider';
 import type Anthropic from '@anthropic-ai/sdk';
 
@@ -21,9 +26,9 @@ vi.mock('@anthropic-ai/sdk', () => {
                 yield {
                   delta: { text: 'test response' },
                   type: 'content_block_delta',
-                  index: 0
+                  index: 0,
                 };
-              }
+              },
             };
           }
           return {
@@ -31,12 +36,12 @@ vi.mock('@anthropic-ai/sdk', () => {
             model: 'claude-3-opus-20240229',
             usage: {
               input_tokens: 10,
-              output_tokens: 20
-            }
+              output_tokens: 20,
+            },
           };
-        })
+        }),
       };
-    }
+    },
   };
 });
 
@@ -54,9 +59,9 @@ function createMockAnthropicClient(): Anthropic {
               yield {
                 delta: { text: 'test response' },
                 type: 'content_block_delta',
-                index: 0
+                index: 0,
               };
-            }
+            },
           };
         }
         return {
@@ -64,28 +69,30 @@ function createMockAnthropicClient(): Anthropic {
           model: 'claude-3-opus-20240229',
           usage: {
             input_tokens: 10,
-            output_tokens: 20
-          }
+            output_tokens: 20,
+          },
         };
-      })
-    }
+      }),
+    },
   } as unknown as Anthropic;
 }
 
 describe('Anthropic Provider', () => {
   describe('Configuration', () => {
     it('should throw error when API key is missing', () => {
-      expect(() => initializeAnthropicConfig({
-        provider: 'anthropic',
-        model: 'claude-3-opus-20240229'
-      })).toThrow('API key must be provided');
+      expect(() =>
+        initializeAnthropicConfig({
+          provider: 'anthropic',
+          model: 'claude-3-opus-20240229',
+        }),
+      ).toThrow('API key must be provided');
     });
 
     it('should create valid configuration with API key', () => {
       const config = initializeAnthropicConfig({
         provider: 'anthropic',
         apiKey: 'test-key',
-        model: 'claude-3-opus-20240229'
+        model: 'claude-3-opus-20240229',
       });
 
       expect(config).toMatchObject({
@@ -93,7 +100,7 @@ describe('Anthropic Provider', () => {
         apiKey: 'test-key',
         model: 'claude-3-opus-20240229',
         temperature: 0.7,
-        maxTokens: 1000
+        maxTokens: 1000,
       });
     });
 
@@ -103,7 +110,7 @@ describe('Anthropic Provider', () => {
         apiKey: 'test-key',
         model: 'claude-3-sonnet-20240229',
         temperature: 0.9,
-        maxTokens: 2000
+        maxTokens: 2000,
       });
 
       expect(config).toMatchObject({
@@ -111,7 +118,7 @@ describe('Anthropic Provider', () => {
         apiKey: 'test-key',
         model: 'claude-3-sonnet-20240229',
         temperature: 0.9,
-        maxTokens: 2000
+        maxTokens: 2000,
       });
     });
   });
@@ -121,7 +128,7 @@ describe('Anthropic Provider', () => {
       const config = {
         provider: 'anthropic' as const,
         apiKey: 'test-key',
-        model: 'claude-3-opus-20240229'
+        model: 'claude-3-opus-20240229',
       };
       const client = createAnthropicClient(config as AnthropicConfig);
 
@@ -134,7 +141,7 @@ describe('Anthropic Provider', () => {
         provider: 'anthropic' as const,
         apiKey: 'test-key',
         model: 'claude-3-opus-20240229',
-        baseUrl: 'https://custom-api.anthropic.com'
+        baseUrl: 'https://custom-api.anthropic.com',
       };
 
       // We can't directly check the baseURL property, but we can verify
@@ -147,9 +154,7 @@ describe('Anthropic Provider', () => {
   describe('Streaming', () => {
     it('should create streaming response with default config', async () => {
       const client = createMockAnthropicClient();
-      const messages = [
-        { role: 'user' as const, content: 'Hello!' }
-      ];
+      const messages = [{ role: 'user' as const, content: 'Hello!' }];
 
       const response = await generateAnthropicStream(client, messages);
       expect(response).toBeDefined();
@@ -158,13 +163,11 @@ describe('Anthropic Provider', () => {
 
     it('should use provided configuration for streaming', async () => {
       const client = createMockAnthropicClient();
-      const messages = [
-        { role: 'user' as const, content: 'Hello!' }
-      ];
+      const messages = [{ role: 'user' as const, content: 'Hello!' }];
       const config = {
         model: 'claude-3-sonnet-20240229',
         temperature: 0.5,
-        maxTokens: 500
+        maxTokens: 500,
       };
 
       const response = await generateAnthropicStream(client, messages, config);
@@ -174,17 +177,12 @@ describe('Anthropic Provider', () => {
 
     it('should handle streaming errors gracefully', async () => {
       const client = createMockAnthropicClient();
-      const messages = [
-        { role: 'user' as const, content: 'Hello!' }
-      ];
+      const messages = [{ role: 'user' as const, content: 'Hello!' }];
 
       // Mock an error response
-      vi.spyOn(client.messages, 'create').mockRejectedValueOnce(
-        new Error('API Error')
-      );
+      vi.spyOn(client.messages, 'create').mockRejectedValueOnce(new Error('API Error'));
 
-      await expect(generateAnthropicStream(client, messages))
-        .rejects.toThrow('API Error');
+      await expect(generateAnthropicStream(client, messages)).rejects.toThrow('API Error');
     });
   });
 
@@ -195,7 +193,7 @@ describe('Anthropic Provider', () => {
           provider: 'anthropic',
           apiKey: 'test-key',
           model: 'claude-3-opus-20240229',
-          client: createMockAnthropicClient()
+          client: createMockAnthropicClient(),
         });
 
         const response = await provider.generateText('Hello');
@@ -203,7 +201,7 @@ describe('Anthropic Provider', () => {
 
         expect(data).toMatchObject({
           content: 'test response',
-          model: 'claude-3-opus-20240229'
+          model: 'claude-3-opus-20240229',
         });
       });
 
@@ -212,11 +210,11 @@ describe('Anthropic Provider', () => {
           provider: 'anthropic',
           apiKey: 'test-key',
           model: 'claude-3-opus-20240229',
-          client: createMockAnthropicClient()
+          client: createMockAnthropicClient(),
         });
 
         const response = await provider.generateText('Hello', {
-          systemMessage: 'You are a helpful assistant'
+          systemMessage: 'You are a helpful assistant',
         });
         const data = await response.json();
 
@@ -228,11 +226,11 @@ describe('Anthropic Provider', () => {
           provider: 'anthropic',
           apiKey: 'test-key',
           model: 'claude-3-opus-20240229',
-          client: createMockAnthropicClient()
+          client: createMockAnthropicClient(),
         });
 
         const response = await provider.generateText('Hello', {
-          stream: true
+          stream: true,
         });
 
         expect(response).toBeDefined();
@@ -242,19 +240,16 @@ describe('Anthropic Provider', () => {
 
       it('should handle errors gracefully', async () => {
         const mockClient = createMockAnthropicClient();
-        vi.spyOn(mockClient.messages, 'create').mockRejectedValueOnce(
-          new Error('API Error')
-        );
+        vi.spyOn(mockClient.messages, 'create').mockRejectedValueOnce(new Error('API Error'));
 
         const provider = new AnthropicProvider({
           provider: 'anthropic',
           apiKey: 'test-key',
           model: 'claude-3-opus-20240229',
-          client: mockClient
+          client: mockClient,
         });
 
-        await expect(provider.generateText('Hello'))
-          .rejects.toThrow('API Error');
+        await expect(provider.generateText('Hello')).rejects.toThrow('API Error');
       });
     });
 
@@ -264,7 +259,7 @@ describe('Anthropic Provider', () => {
           provider: 'anthropic',
           apiKey: 'test-key',
           model: 'claude-3-opus-20240229',
-          client: createMockAnthropicClient()
+          client: createMockAnthropicClient(),
         });
 
         // Mock the client to return a JSON string
@@ -274,8 +269,8 @@ describe('Anthropic Provider', () => {
           model: 'claude-3-opus-20240229',
           usage: {
             input_tokens: 10,
-            output_tokens: 20
-          }
+            output_tokens: 20,
+          },
         } as any);
 
         provider['client'] = mockClient;
@@ -287,15 +282,15 @@ describe('Anthropic Provider', () => {
             type: 'object',
             properties: {
               name: { type: 'string' },
-              age: { type: 'number' }
-            }
-          }
+              age: { type: 'number' },
+            },
+          },
         });
 
         const data = await response.json();
         expect(data.content).toMatchObject({
           name: 'John',
-          age: 30
+          age: 30,
         });
       });
 
@@ -304,7 +299,7 @@ describe('Anthropic Provider', () => {
           provider: 'anthropic',
           apiKey: 'test-key',
           model: 'claude-3-opus-20240229',
-          client: createMockAnthropicClient()
+          client: createMockAnthropicClient(),
         });
 
         // Mock the client to return an invalid JSON string
@@ -314,23 +309,25 @@ describe('Anthropic Provider', () => {
           model: 'claude-3-opus-20240229',
           usage: {
             input_tokens: 10,
-            output_tokens: 20
-          }
+            output_tokens: 20,
+          },
         } as any);
 
         provider['client'] = mockClient;
 
-        await expect(provider.generateStructured('Generate a person', {
-          functionName: 'generate_person',
-          functionDescription: 'Generate a person object',
-          parameters: {
-            type: 'object',
-            properties: {
-              name: { type: 'string' },
-              age: { type: 'number' }
-            }
-          }
-        })).rejects.toThrow('Failed to parse structured data response as JSON');
+        await expect(
+          provider.generateStructured('Generate a person', {
+            functionName: 'generate_person',
+            functionDescription: 'Generate a person object',
+            parameters: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                age: { type: 'number' },
+              },
+            },
+          }),
+        ).rejects.toThrow('Failed to parse structured data response as JSON');
       });
     });
 
@@ -340,12 +337,14 @@ describe('Anthropic Provider', () => {
           provider: 'anthropic',
           apiKey: 'test-key',
           model: 'claude-3-opus-20240229',
-          client: createMockAnthropicClient()
+          client: createMockAnthropicClient(),
         });
 
-        await expect(provider.generateEmbeddings({
-          input: ['Hello, world!']
-        })).rejects.toThrow('Embeddings generation is not supported by Anthropic');
+        await expect(
+          provider.generateEmbeddings({
+            input: ['Hello, world!'],
+          }),
+        ).rejects.toThrow('Embeddings generation is not supported by Anthropic');
       });
     });
   });

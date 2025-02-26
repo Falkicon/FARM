@@ -15,7 +15,7 @@ import type {
   StructuredDataResponse,
   EmbeddingOptions,
   EmbeddingResponse,
-  Message
+  Message,
 } from '../../types/core';
 
 /**
@@ -77,12 +77,15 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
         apiKey: this.config.apiKey,
         baseURL: this.config.endpoint,
         defaultQuery: { 'api-version': this.config.apiVersion || '2023-05-15' },
-        defaultHeaders: { 'api-key': this.config.apiKey }
+        defaultHeaders: { 'api-key': this.config.apiKey },
       });
 
       console.log('Azure client initialized:', !!this.client);
       console.log('Azure client chat available:', !!(this.client && this.client.chat));
-      console.log('Azure client chat.completions available:', !!(this.client && this.client.chat && this.client.chat.completions));
+      console.log(
+        'Azure client chat.completions available:',
+        !!(this.client && this.client.chat && this.client.chat.completions),
+      );
       console.log('Azure client embeddings available:', !!(this.client && this.client.embeddings));
     } catch (error) {
       console.error('Error initializing Azure OpenAI client:', error);
@@ -110,7 +113,7 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
    */
   async generateText(
     prompt: string | Message[],
-    options?: Partial<TextGenerationOptions>
+    options?: Partial<TextGenerationOptions>,
   ): Promise<TextGenerationResponse> {
     // Check if we're in a test environment
     if (this.isTestEnvironment()) {
@@ -120,22 +123,20 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
         usage: {
           promptTokens: 10,
           completionTokens: 20,
-          totalTokens: 30
-        }
+          totalTokens: 30,
+        },
       };
     }
 
     try {
       // Convert prompt to messages if it's a string
-      const messages = typeof prompt === 'string'
-        ? [{ role: 'user', content: prompt }]
-        : prompt;
+      const messages = typeof prompt === 'string' ? [{ role: 'user', content: prompt }] : prompt;
 
       // Merge options with defaults
       const mergedOptions = {
         temperature: this.config.temperature,
         max_tokens: this.config.maxTokens,
-        ...options
+        ...options,
       };
 
       // Add system message if provided
@@ -144,13 +145,13 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
       }
 
       // Add tools if provided
-      const tools = options?.tools?.map(tool => ({
+      const tools = options?.tools?.map((tool) => ({
         type: 'function',
         function: {
           name: tool.name,
           description: tool.description,
-          parameters: tool.parameters
-        }
+          parameters: tool.parameters,
+        },
       }));
 
       // Check if client.chat.completions is available
@@ -165,7 +166,7 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
         temperature: mergedOptions.temperature,
         max_tokens: mergedOptions.max_tokens,
         ...(tools && { tools }),
-        ...(options?.toolRegistry && { tool_choice: 'auto' })
+        ...(options?.toolRegistry && { tool_choice: 'auto' }),
       });
 
       // Process tool calls if present
@@ -186,7 +187,7 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
                 id: toolCall.id,
                 name: toolName,
                 arguments: args,
-                result
+                result,
               });
             } catch (error) {
               console.error(`Error calling tool ${toolName}:`, error);
@@ -202,7 +203,7 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
           followUpMessages.push({
             role: 'assistant',
             content: null,
-            tool_calls: response.choices[0].message.tool_calls
+            tool_calls: response.choices[0].message.tool_calls,
           } as any); // Type assertion to avoid TypeScript errors
 
           // Add the tool responses
@@ -210,7 +211,7 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
             followUpMessages.push({
               role: 'tool',
               tool_call_id: toolCall.id,
-              content: JSON.stringify(toolCall.result)
+              content: JSON.stringify(toolCall.result),
             } as any); // Type assertion to avoid TypeScript errors
           }
 
@@ -219,7 +220,7 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
             model: this.config.deploymentName,
             messages: followUpMessages as any[],
             temperature: mergedOptions.temperature,
-            max_tokens: mergedOptions.max_tokens
+            max_tokens: mergedOptions.max_tokens,
           });
 
           content = followUpResponse.choices[0].message.content || '';
@@ -233,8 +234,8 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
         usage: {
           promptTokens: response.usage?.prompt_tokens || 0,
           completionTokens: response.usage?.completion_tokens || 0,
-          totalTokens: response.usage?.total_tokens || 0
-        }
+          totalTokens: response.usage?.total_tokens || 0,
+        },
       };
     } catch (error: any) {
       // Handle Azure OpenAI API errors
@@ -275,7 +276,7 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
    */
   async generateStructured<T = any>(
     prompt: string | Message[],
-    options: StructuredDataOptions
+    options: StructuredDataOptions,
   ): Promise<StructuredDataResponse<T>> {
     // Check if we're in a test environment
     if (this.isTestEnvironment()) {
@@ -285,22 +286,20 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
         usage: {
           promptTokens: 10,
           completionTokens: 20,
-          totalTokens: 30
-        }
+          totalTokens: 30,
+        },
       };
     }
 
     try {
       // Convert prompt to messages if it's a string
-      const messages = typeof prompt === 'string'
-        ? [{ role: 'user', content: prompt }]
-        : prompt;
+      const messages = typeof prompt === 'string' ? [{ role: 'user', content: prompt }] : prompt;
 
       // Merge options with defaults
       const mergedOptions = {
         temperature: this.config.temperature,
         max_tokens: this.config.maxTokens,
-        ...options
+        ...options,
       };
 
       // Add system message if provided
@@ -309,17 +308,15 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
       }
 
       // Convert Zod schema to JSON schema if provided
-      const parameters = options.parameters.isSchema
-        ? zodToJsonSchema(options.parameters)
-        : options.parameters;
+      const parameters = options.parameters.isSchema ? zodToJsonSchema(options.parameters) : options.parameters;
 
       // Define the function
       const functions = [
         {
           name: options.functionName,
           description: options.functionDescription,
-          parameters
-        }
+          parameters,
+        },
       ];
 
       // Check if client.chat.completions is available
@@ -334,7 +331,7 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
         temperature: mergedOptions.temperature,
         max_tokens: mergedOptions.max_tokens,
         functions,
-        function_call: { name: options.functionName }
+        function_call: { name: options.functionName },
       });
 
       // Parse the function call
@@ -354,8 +351,8 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
         usage: {
           promptTokens: response.usage?.prompt_tokens || 0,
           completionTokens: response.usage?.completion_tokens || 0,
-          totalTokens: response.usage?.total_tokens || 0
-        }
+          totalTokens: response.usage?.total_tokens || 0,
+        },
       };
     } catch (error: any) {
       // Handle Azure OpenAI API errors
@@ -380,15 +377,10 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
    * @throws {RateLimitError} If the API rate limit is exceeded
    * @throws {APIError} If the API returns an error
    */
-  public async generateEmbeddings(
-    input: string | string[],
-    options?: EmbeddingOptions
-  ): Promise<EmbeddingResponse> {
+  public async generateEmbeddings(input: string | string[], options?: EmbeddingOptions): Promise<EmbeddingResponse> {
     // Check if embeddingDeploymentName is provided
     if (!this.config.embeddingDeploymentName) {
-      throw new ConfigurationError(
-        'embeddingDeploymentName is required for generating embeddings with Azure OpenAI'
-      );
+      throw new ConfigurationError('embeddingDeploymentName is required for generating embeddings with Azure OpenAI');
     }
 
     // Log options if provided
@@ -412,8 +404,8 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
         model: model,
         usage: {
           promptTokens: 0,
-          totalTokens: 0
-        }
+          totalTokens: 0,
+        },
       };
     }
 
@@ -429,11 +421,11 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
       // Call the Azure OpenAI API
       const response = await this.client.embeddings.create({
         model: this.config.embeddingDeploymentName,
-        input: inputArray
+        input: inputArray,
       });
 
       // Extract embeddings
-      const embeddings = response.data.map(item => item.embedding);
+      const embeddings = response.data.map((item) => item.embedding);
 
       // Return the response
       return {
@@ -441,8 +433,8 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
         model: this.config.embeddingDeploymentName,
         usage: {
           promptTokens: response.usage.prompt_tokens,
-          totalTokens: response.usage.total_tokens
-        }
+          totalTokens: response.usage.total_tokens,
+        },
       };
     } catch (error: any) {
       // Handle Azure OpenAI API errors

@@ -10,22 +10,19 @@ import type { TextGenerationResponse, StructuredDataResponse, EmbeddingResponse 
  * @param model The model name
  * @returns A Response object with the mock text generation response
  */
-export function createMockTextResponse(
-  content: string = 'Test response',
-  model: string = 'test-model'
-): Response {
+export function createMockTextResponse(content: string = 'Test response', model: string = 'test-model'): Response {
   const mockResponse: TextGenerationResponse = {
     content,
     model,
     usage: {
       promptTokens: 10,
       completionTokens: 20,
-      totalTokens: 30
-    }
+      totalTokens: 30,
+    },
   };
 
   return new Response(JSON.stringify(mockResponse), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -35,22 +32,19 @@ export function createMockTextResponse(
  * @param model The model name
  * @returns A Response object with the mock structured data response
  */
-export function createMockStructuredResponse<T = any>(
-  content: T,
-  model: string = 'test-model'
-): Response {
+export function createMockStructuredResponse<T = any>(content: T, model: string = 'test-model'): Response {
   const mockResponse: StructuredDataResponse<T> = {
     content,
     model,
     usage: {
       promptTokens: 10,
       completionTokens: 20,
-      totalTokens: 30
-    }
+      totalTokens: 30,
+    },
   };
 
   return new Response(JSON.stringify(mockResponse), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -64,11 +58,11 @@ export function createMockStructuredResponse<T = any>(
 export function createMockEmbeddingsResponse(
   dimensions: number = 3,
   count: number = 1,
-  model: string = 'test-embedding-model'
+  model: string = 'test-embedding-model',
 ): EmbeddingResponse {
   // Generate mock embeddings with the specified dimensions
   const embeddings: number[][] = Array.from({ length: count }, () =>
-    Array.from({ length: dimensions }, (_, i) => (i + 1) / dimensions)
+    Array.from({ length: dimensions }, (_, i) => (i + 1) / dimensions),
   );
 
   return {
@@ -76,8 +70,8 @@ export function createMockEmbeddingsResponse(
     model,
     usage: {
       promptTokens: count * 5,
-      totalTokens: count * 5
-    }
+      totalTokens: count * 5,
+    },
   };
 }
 
@@ -89,24 +83,24 @@ export function createMockEmbeddingsResponse(
  */
 export function createMockStreamingResponse(
   chunks: string[] = ['Hello', ', ', 'world', '!'],
-  model: string = 'test-model'
+  model: string = 'test-model',
 ): Response {
   const stream = new ReadableStream({
     async start(controller) {
       for (const chunk of chunks) {
         const data = JSON.stringify({
           content: chunk,
-          model
+          model,
         });
         controller.enqueue(new TextEncoder().encode(data));
         // Add a small delay to simulate streaming
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
       }
       controller.close();
-    }
+    },
   });
 
   return new Response(stream, {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }

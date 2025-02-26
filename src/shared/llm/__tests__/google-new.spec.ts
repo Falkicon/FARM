@@ -31,7 +31,7 @@ vi.mock('../core/base-provider', () => {
       getProviderName() {
         return this.config.provider;
       }
-    }
+    },
   };
 });
 
@@ -46,7 +46,7 @@ vi.mock('../core/config', () => {
         throw new ConfigurationError('Invalid provider');
       }
       return { ...defaults, ...config };
-    })
+    }),
   };
 });
 
@@ -54,29 +54,29 @@ vi.mock('../core/config', () => {
 vi.mock('@google/generative-ai', () => {
   const mockGenerateContent = vi.fn().mockResolvedValue({
     response: {
-      text: () => 'This is a response from Google Gemini.'
-    }
+      text: () => 'This is a response from Google Gemini.',
+    },
   });
 
   const mockModel = {
-    generateContent: mockGenerateContent
+    generateContent: mockGenerateContent,
   };
 
   const mockGetGenerativeModel = vi.fn().mockReturnValue(mockModel);
 
   return {
     GoogleGenerativeAI: vi.fn().mockImplementation(() => ({
-      getGenerativeModel: mockGetGenerativeModel
+      getGenerativeModel: mockGetGenerativeModel,
     })),
     HarmCategory: {
       HARM_CATEGORY_HARASSMENT: 'HARM_CATEGORY_HARASSMENT',
       HARM_CATEGORY_HATE_SPEECH: 'HARM_CATEGORY_HATE_SPEECH',
       HARM_CATEGORY_SEXUALLY_EXPLICIT: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-      HARM_CATEGORY_DANGEROUS_CONTENT: 'HARM_CATEGORY_DANGEROUS_CONTENT'
+      HARM_CATEGORY_DANGEROUS_CONTENT: 'HARM_CATEGORY_DANGEROUS_CONTENT',
     },
     HarmBlockThreshold: {
-      BLOCK_MEDIUM_AND_ABOVE: 'BLOCK_MEDIUM_AND_ABOVE'
-    }
+      BLOCK_MEDIUM_AND_ABOVE: 'BLOCK_MEDIUM_AND_ABOVE',
+    },
   };
 });
 
@@ -93,16 +93,16 @@ vi.mock('../core/mocks', () => {
           {
             day: 'Monday',
             temperature: 75,
-            conditions: 'Partly Cloudy'
+            conditions: 'Partly Cloudy',
           },
           {
             day: 'Tuesday',
             temperature: 70,
-            conditions: 'Rainy'
-          }
-        ]
+            conditions: 'Rainy',
+          },
+        ],
       };
-    })
+    }),
   };
 });
 
@@ -122,7 +122,7 @@ describe('GoogleProviderNew', () => {
     it('should create a new instance with default values', () => {
       const provider = new GoogleProviderNew({
         apiKey: 'test-api-key',
-        provider: 'google'
+        provider: 'google',
       });
 
       expect(provider).toBeInstanceOf(GoogleProviderNew);
@@ -131,7 +131,7 @@ describe('GoogleProviderNew', () => {
     it('should throw an error if apiKey is missing', () => {
       expect(() => {
         new GoogleProviderNew({
-          provider: 'google'
+          provider: 'google',
         } as any);
       }).toThrow(ConfigurationError);
     });
@@ -140,7 +140,7 @@ describe('GoogleProviderNew', () => {
       expect(() => {
         new GoogleProviderNew({
           apiKey: 'test-api-key',
-          provider: 'openai'
+          provider: 'openai',
         } as any);
       }).toThrow(ConfigurationError);
     });
@@ -150,7 +150,7 @@ describe('GoogleProviderNew', () => {
     it('should return a mock response in test environment', async () => {
       const provider = new GoogleProviderNew({
         provider: 'google',
-        apiKey: 'test-api-key'
+        apiKey: 'test-api-key',
       });
 
       const response = await provider.generateText('Test prompt');
@@ -163,7 +163,7 @@ describe('GoogleProviderNew', () => {
       // This test doesn't actually call the API since we're mocking isTestEnvironment to return true
       const provider = new GoogleProviderNew({
         provider: 'google',
-        apiKey: 'test-api-key'
+        apiKey: 'test-api-key',
       });
 
       const response = await provider.generateText('Test prompt');
@@ -177,17 +177,19 @@ describe('GoogleProviderNew', () => {
     it('should return a mock response in test environment', async () => {
       const provider = new GoogleProviderNew({
         provider: 'google',
-        apiKey: 'test-api-key'
+        apiKey: 'test-api-key',
       });
 
       const WeatherSchema = z.object({
         temperature: z.number(),
         conditions: z.string(),
-        forecast: z.array(z.object({
-          day: z.string(),
-          temperature: z.number(),
-          conditions: z.string()
-        }))
+        forecast: z.array(
+          z.object({
+            day: z.string(),
+            temperature: z.number(),
+            conditions: z.string(),
+          }),
+        ),
       });
 
       const response = await provider.generateStructured('What is the weather like?', WeatherSchema);
@@ -201,17 +203,19 @@ describe('GoogleProviderNew', () => {
       // This test doesn't actually call the API since we're mocking isTestEnvironment to return true
       const provider = new GoogleProviderNew({
         provider: 'google',
-        apiKey: 'test-api-key'
+        apiKey: 'test-api-key',
       });
 
       const WeatherSchema = z.object({
         temperature: z.number(),
         conditions: z.string(),
-        forecast: z.array(z.object({
-          day: z.string(),
-          temperature: z.number(),
-          conditions: z.string()
-        }))
+        forecast: z.array(
+          z.object({
+            day: z.string(),
+            temperature: z.number(),
+            conditions: z.string(),
+          }),
+        ),
       });
 
       const response = await provider.generateStructured('What is the weather like?', WeatherSchema);
@@ -225,12 +229,14 @@ describe('GoogleProviderNew', () => {
     it('should throw an error as Google Gemini does not support embeddings', async () => {
       const provider = new GoogleProviderNew({
         apiKey: 'test-api-key',
-        provider: 'google'
+        provider: 'google',
       });
 
-      await expect(provider.generateEmbeddings({
-        input: 'Hello, world!'
-      })).rejects.toThrow('Google Gemini does not support embeddings generation through this SDK');
+      await expect(
+        provider.generateEmbeddings({
+          input: 'Hello, world!',
+        }),
+      ).rejects.toThrow('Google Gemini does not support embeddings generation through this SDK');
     });
   });
 });

@@ -27,8 +27,8 @@ vi.mock('openai', () => ({
             arguments: JSON.stringify({
               name: 'Test User',
               age: 25,
-              email: 'test@example.com'
-            })
+              email: 'test@example.com',
+            }),
           };
 
           if (stream) {
@@ -36,57 +36,61 @@ vi.mock('openai', () => ({
             return {
               [Symbol.asyncIterator]: async function* () {
                 yield {
-                  choices: [{
-                    delta: {
-                      function_call: mockResponse
+                  choices: [
+                    {
+                      delta: {
+                        function_call: mockResponse,
+                      },
+                      index: 0,
+                      finish_reason: null,
                     },
-                    index: 0,
-                    finish_reason: null
-                  }]
+                  ],
                 };
-              }
+              },
             };
           }
 
           return {
-            choices: [{
-              message: {
-                function_call: mockResponse
+            choices: [
+              {
+                message: {
+                  function_call: mockResponse,
+                },
+                finish_reason: 'stop',
               },
-              finish_reason: 'stop'
-            }],
+            ],
             model: 'gpt-4',
             usage: {
               prompt_tokens: 10,
               completion_tokens: 20,
-              total_tokens: 30
-            }
+              total_tokens: 30,
+            },
           };
-        })
-      }
+        }),
+      },
     };
-  }
+  },
 }));
 
 describe('Structured Data Generation', () => {
   const userSchema = z.object({
     name: z.string(),
     age: z.number(),
-    email: z.string().email()
+    email: z.string().email(),
   });
 
   describe('Basic Generation', () => {
     it('should generate structured data with default options', async () => {
       const response = await generateStructured('Generate user data', {
         config: testUtils.createMockConfig(),
-        schema: userSchema
+        schema: userSchema,
       });
       const data = await response.json();
 
       expect(data.content).toMatchObject({
         name: 'Test User',
         age: 25,
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
       expect(data.model).toBe('gpt-4');
       expect(data.usage).toBeDefined();
@@ -96,14 +100,14 @@ describe('Structured Data Generation', () => {
       const response = await generateStructured('Generate user data', {
         config: testUtils.createMockConfig(),
         schema: userSchema,
-        systemMessage: 'You are a user data generator'
+        systemMessage: 'You are a user data generator',
       });
       const data = await response.json();
 
       expect(data.content).toMatchObject({
         name: 'Test User',
         age: 25,
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
     });
 
@@ -112,14 +116,14 @@ describe('Structured Data Generation', () => {
         config: testUtils.createMockConfig(),
         schema: userSchema,
         functionName: 'generate_user',
-        functionDescription: 'Generate user profile data'
+        functionDescription: 'Generate user profile data',
       });
       const data = await response.json();
 
       expect(data.content).toMatchObject({
         name: 'Test User',
         age: 25,
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
     });
   });
@@ -129,7 +133,7 @@ describe('Structured Data Generation', () => {
       const response = await generateStructured('Generate user data', {
         stream: true,
         config: testUtils.createMockConfig(),
-        schema: userSchema
+        schema: userSchema,
       });
 
       expect(response).toBeDefined();
@@ -146,7 +150,7 @@ describe('Structured Data Generation', () => {
       expect(content).toMatchObject({
         name: 'Test User',
         age: 25,
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
     });
 
@@ -155,16 +159,18 @@ describe('Structured Data Generation', () => {
       const mockClient = {
         chat: {
           completions: {
-            create: vi.fn().mockRejectedValueOnce(new Error('API Error'))
-          }
-        }
+            create: vi.fn().mockRejectedValueOnce(new Error('API Error')),
+          },
+        },
       } as unknown as OpenAI;
 
-      await expect(generateStructured('Generate user data', {
-        stream: true,
-        config: { ...testUtils.createMockConfig(), client: mockClient },
-        schema: userSchema
-      })).rejects.toThrow('API Error');
+      await expect(
+        generateStructured('Generate user data', {
+          stream: true,
+          config: { ...testUtils.createMockConfig(), client: mockClient },
+          schema: userSchema,
+        }),
+      ).rejects.toThrow('API Error');
     });
 
     it('should handle missing response body', async () => {
@@ -172,16 +178,18 @@ describe('Structured Data Generation', () => {
       const mockClient = {
         chat: {
           completions: {
-            create: vi.fn().mockResolvedValueOnce(undefined)
-          }
-        }
+            create: vi.fn().mockResolvedValueOnce(undefined),
+          },
+        },
       } as unknown as OpenAI;
 
-      await expect(generateStructured('Generate user data', {
-        stream: true,
-        config: { ...testUtils.createMockConfig(), client: mockClient },
-        schema: userSchema
-      })).rejects.toThrow('No response body available for streaming');
+      await expect(
+        generateStructured('Generate user data', {
+          stream: true,
+          config: { ...testUtils.createMockConfig(), client: mockClient },
+          schema: userSchema,
+        }),
+      ).rejects.toThrow('No response body available for streaming');
     });
   });
 
@@ -189,13 +197,15 @@ describe('Structured Data Generation', () => {
     it('should handle missing API key', async () => {
       const config = {
         provider: 'openai' as const,
-        model: 'gpt-4'
+        model: 'gpt-4',
       };
 
-      await expect(generateStructured('Generate user data', {
-        config,
-        schema: userSchema
-      })).rejects.toThrow('API key must be provided');
+      await expect(
+        generateStructured('Generate user data', {
+          config,
+          schema: userSchema,
+        }),
+      ).rejects.toThrow('API key must be provided');
     });
 
     it('should handle API errors', async () => {
@@ -203,15 +213,17 @@ describe('Structured Data Generation', () => {
       const mockClient = {
         chat: {
           completions: {
-            create: vi.fn().mockRejectedValueOnce(new Error('API Error'))
-          }
-        }
+            create: vi.fn().mockRejectedValueOnce(new Error('API Error')),
+          },
+        },
       } as unknown as OpenAI;
 
-      await expect(generateStructured('Generate user data', {
-        config: { ...testUtils.createMockConfig(), client: mockClient },
-        schema: userSchema
-      })).rejects.toThrow('API Error');
+      await expect(
+        generateStructured('Generate user data', {
+          config: { ...testUtils.createMockConfig(), client: mockClient },
+          schema: userSchema,
+        }),
+      ).rejects.toThrow('API Error');
     });
 
     it('should handle invalid response data', async () => {
@@ -220,27 +232,31 @@ describe('Structured Data Generation', () => {
         chat: {
           completions: {
             create: vi.fn().mockResolvedValueOnce({
-              choices: [{
-                message: {
-                  function_call: {
-                    name: 'generate_structured_data',
-                    arguments: JSON.stringify({
-                      name: 'Test User',
-                      age: 'invalid', // Should be a number
-                      email: 'test@example.com'
-                    })
-                  }
-                }
-              }]
-            })
-          }
-        }
+              choices: [
+                {
+                  message: {
+                    function_call: {
+                      name: 'generate_structured_data',
+                      arguments: JSON.stringify({
+                        name: 'Test User',
+                        age: 'invalid', // Should be a number
+                        email: 'test@example.com',
+                      }),
+                    },
+                  },
+                },
+              ],
+            }),
+          },
+        },
       } as unknown as OpenAI;
 
-      await expect(generateStructured('Generate user data', {
-        config: { ...testUtils.createMockConfig(), client: mockClient },
-        schema: userSchema
-      })).rejects.toThrow();
+      await expect(
+        generateStructured('Generate user data', {
+          config: { ...testUtils.createMockConfig(), client: mockClient },
+          schema: userSchema,
+        }),
+      ).rejects.toThrow();
     });
   });
 });

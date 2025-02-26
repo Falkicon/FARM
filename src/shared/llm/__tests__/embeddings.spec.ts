@@ -4,12 +4,12 @@ import {
   cosineSimilarity,
   euclideanDistance,
   findSimilarEmbeddings,
-  EmbeddingsError
+  EmbeddingsError,
 } from '../core/embeddings';
 import {
   OpenAIEmbeddingsProvider,
   DEFAULT_OPENAI_EMBEDDINGS_CONFIG,
-  type OpenAIEmbeddingsConfig
+  type OpenAIEmbeddingsConfig,
 } from '../providers/openai/embeddings';
 
 describe('Embeddings Core', () => {
@@ -61,16 +61,16 @@ describe('Embeddings Core', () => {
     it('should find most similar embeddings', () => {
       const query = [1, 0, 0];
       const embeddings = [
-        { embedding: [1, 0, 0], metadata: { id: 1 } },    // Same as query
-        { embedding: [0, 1, 0], metadata: { id: 2 } },    // Perpendicular
-        { embedding: [-1, 0, 0], metadata: { id: 3 } },   // Opposite
-        { embedding: [0.9, 0.1, 0], metadata: { id: 4 } } // Similar
+        { embedding: [1, 0, 0], metadata: { id: 1 } }, // Same as query
+        { embedding: [0, 1, 0], metadata: { id: 2 } }, // Perpendicular
+        { embedding: [-1, 0, 0], metadata: { id: 3 } }, // Opposite
+        { embedding: [0.9, 0.1, 0], metadata: { id: 4 } }, // Similar
       ];
 
       const results = findSimilarEmbeddings(query, embeddings, 2);
 
       expect(results).toHaveLength(2);
-      expect(results[0].similarity).toBeCloseTo(1);     // Exact match
+      expect(results[0].similarity).toBeCloseTo(1); // Exact match
       expect(results[0].metadata.id).toBe(1);
       expect(results[1].similarity).toBeCloseTo(0.994); // Similar vector
       expect(results[1].metadata.id).toBe(4);
@@ -78,10 +78,12 @@ describe('Embeddings Core', () => {
 
     it('should respect topK parameter', () => {
       const query = [1, 0];
-      const embeddings = Array(10).fill(0).map((_, i) => ({
-        embedding: [1, i / 10],
-        metadata: { id: i }
-      }));
+      const embeddings = Array(10)
+        .fill(0)
+        .map((_, i) => ({
+          embedding: [1, i / 10],
+          metadata: { id: i },
+        }));
 
       const results = findSimilarEmbeddings(query, embeddings, 3);
       expect(results).toHaveLength(3);
@@ -93,7 +95,7 @@ describe('OpenAI Embeddings Provider', () => {
   const baseConfig: OpenAIEmbeddingsConfig = {
     provider: 'openai',
     apiKey: 'test-key',
-    model: 'text-embedding-ada-002'
+    model: 'text-embedding-ada-002',
   };
 
   describe('Configuration', () => {
@@ -109,7 +111,7 @@ describe('OpenAI Embeddings Provider', () => {
       const config: OpenAIEmbeddingsConfig = {
         ...baseConfig,
         dimensions: 512,
-        normalize: true
+        normalize: true,
       };
       const provider = new OpenAIEmbeddingsProvider(config);
 
@@ -126,15 +128,15 @@ describe('OpenAI Embeddings Provider', () => {
             data: [{ embedding: Array(1536).fill(0.1) }],
             usage: {
               prompt_tokens: 10,
-              total_tokens: 10
-            }
-          })
-        }
+              total_tokens: 10,
+            },
+          }),
+        },
       };
 
       const provider = new OpenAIEmbeddingsProvider({
         ...baseConfig,
-        client: mockClient as any
+        client: mockClient as any,
       });
 
       const result = await provider.generateEmbeddings({ input: 'test input' });
@@ -146,25 +148,22 @@ describe('OpenAI Embeddings Provider', () => {
       const mockClient = {
         embeddings: {
           create: vi.fn().mockResolvedValue({
-            data: [
-              { embedding: Array(1536).fill(0.1) },
-              { embedding: Array(1536).fill(0.2) }
-            ],
+            data: [{ embedding: Array(1536).fill(0.1) }, { embedding: Array(1536).fill(0.2) }],
             usage: {
               prompt_tokens: 20,
-              total_tokens: 20
-            }
-          })
-        }
+              total_tokens: 20,
+            },
+          }),
+        },
       };
 
       const provider = new OpenAIEmbeddingsProvider({
         ...baseConfig,
-        client: mockClient as any
+        client: mockClient as any,
       });
 
       const result = await provider.generateEmbeddings({
-        input: ['test input 1', 'test input 2']
+        input: ['test input 1', 'test input 2'],
       });
       expect(result.data).toHaveLength(2);
       expect(result.data[0].embedding).toHaveLength(1536);
@@ -174,26 +173,30 @@ describe('OpenAI Embeddings Provider', () => {
     it('should handle API errors gracefully', async () => {
       const mockClient = {
         embeddings: {
-          create: vi.fn().mockRejectedValue(new Error('API Error'))
-        }
+          create: vi.fn().mockRejectedValue(new Error('API Error')),
+        },
       };
 
       const provider = new OpenAIEmbeddingsProvider({
         ...baseConfig,
-        client: mockClient as any
+        client: mockClient as any,
       });
 
-      await expect(provider.generateEmbeddings({
-        input: 'test input'
-      })).rejects.toThrow(EmbeddingsError);
+      await expect(
+        provider.generateEmbeddings({
+          input: 'test input',
+        }),
+      ).rejects.toThrow(EmbeddingsError);
     });
 
     it('should validate input', async () => {
       const provider = new OpenAIEmbeddingsProvider(baseConfig);
 
-      await expect(provider.generateEmbeddings({
-        input: {} as any // Invalid input type
-      })).rejects.toThrow(EmbeddingsError);
+      await expect(
+        provider.generateEmbeddings({
+          input: {} as any, // Invalid input type
+        }),
+      ).rejects.toThrow(EmbeddingsError);
     });
 
     it('should normalize embeddings when configured', async () => {
@@ -203,24 +206,20 @@ describe('OpenAI Embeddings Provider', () => {
             data: [{ embedding: [0.5, 0.5, 0.5] }],
             usage: {
               prompt_tokens: 10,
-              total_tokens: 10
-            }
-          })
-        }
+              total_tokens: 10,
+            },
+          }),
+        },
       };
 
       const provider = new OpenAIEmbeddingsProvider({
         ...baseConfig,
         normalize: true,
-        client: mockClient as any
+        client: mockClient as any,
       });
 
       const result = await provider.generateEmbeddings({ input: 'test input' });
-      const normalizedVector = [
-        0.5773502691896258,
-        0.5773502691896258,
-        0.5773502691896258
-      ];
+      const normalizedVector = [0.5773502691896258, 0.5773502691896258, 0.5773502691896258];
       expect(result.data[0].embedding).toEqual(normalizedVector);
     });
   });

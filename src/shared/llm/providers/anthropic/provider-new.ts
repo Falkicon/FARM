@@ -18,7 +18,7 @@ import {
   EmbeddingOptions,
   EmbeddingResponse,
   TextGenerationResponse,
-  StructuredDataResponse
+  StructuredDataResponse,
 } from '../../types/core';
 
 /**
@@ -99,7 +99,7 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
       model: 'claude-3-opus-20240229',
       maxTokens: 1024,
       temperature: 0.7,
-      topP: 1
+      topP: 1,
     };
 
     // Merge with user config
@@ -120,7 +120,7 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
     // Initialize the Anthropic client if not in test environment
     if (!this.isTestEnvironment()) {
       this.client = new Anthropic({
-        apiKey: this.config.apiKey
+        apiKey: this.config.apiKey,
       });
     } else {
       // Initialize with a dummy client for type safety in test environment
@@ -152,8 +152,8 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
         usage: {
           promptTokens: 10,
           completionTokens: 20,
-          totalTokens: 30
-        }
+          totalTokens: 30,
+        },
       };
     }
 
@@ -164,10 +164,10 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
       // Handle tool calls if provided
       let tools: any[] | undefined;
       if (options.tools && options.tools.length > 0) {
-        tools = options.tools.map(tool => ({
+        tools = options.tools.map((tool) => ({
           name: tool.name,
           description: tool.description,
-          input_schema: zodToJsonSchema(tool.parameters)
+          input_schema: zodToJsonSchema(tool.parameters),
         }));
       }
 
@@ -179,11 +179,11 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
         temperature: options.temperature || this.config.temperature,
         top_p: options.topP || this.config.topP,
         system: options.systemMessage,
-        tools
+        tools,
       });
 
       // Extract text content from the response
-      const textContent = response.content.find(c => c.type === 'text');
+      const textContent = response.content.find((c) => c.type === 'text');
       const content = textContent && 'text' in textContent ? textContent.text : '';
 
       return {
@@ -192,8 +192,8 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
         usage: {
           promptTokens: response.usage?.input_tokens || 0,
           completionTokens: response.usage?.output_tokens || 0,
-          totalTokens: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0)
-        }
+          totalTokens: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0),
+        },
       };
     } catch (error) {
       // Handle API errors
@@ -233,7 +233,7 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
    * ```
    */
   async generateStructured<T extends z.ZodType>(
-    options: StructuredDataOptions & { schema: T }
+    options: StructuredDataOptions & { schema: T },
   ): Promise<StructuredDataResponse<z.infer<T>>> {
     // Return mock response in test environment
     if (this.isTestEnvironment()) {
@@ -244,14 +244,14 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
           {
             day: 'Monday',
             temperature: 75,
-            conditions: 'Partly Cloudy'
+            conditions: 'Partly Cloudy',
           },
           {
             day: 'Tuesday',
             temperature: 70,
-            conditions: 'Rainy'
-          }
-        ]
+            conditions: 'Rainy',
+          },
+        ],
       };
 
       return {
@@ -260,8 +260,8 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
         usage: {
           promptTokens: 10,
           completionTokens: 20,
-          totalTokens: 30
-        }
+          totalTokens: 30,
+        },
       };
     }
 
@@ -274,8 +274,8 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
         {
           name: 'generate_structured_data',
           description: 'Generate structured data according to the provided schema',
-          input_schema: zodToJsonSchema(options.schema)
-        }
+          input_schema: zodToJsonSchema(options.schema),
+        },
       ];
 
       // Generate the response
@@ -286,13 +286,11 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
         temperature: options.temperature || this.config.temperature,
         top_p: options.topP || this.config.topP,
         system: options.systemMessage,
-        tools
+        tools,
       });
 
       // Extract and parse the structured data
-      const toolCall = response.content.find(
-        content => content.type === 'tool_use'
-      );
+      const toolCall = response.content.find((content) => content.type === 'tool_use');
 
       if (!toolCall || !('input' in toolCall)) {
         throw new Error('No structured data was generated');
@@ -307,8 +305,8 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
         usage: {
           promptTokens: response.usage?.input_tokens || 0,
           completionTokens: response.usage?.output_tokens || 0,
-          totalTokens: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0)
-        }
+          totalTokens: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0),
+        },
       };
     } catch (error) {
       // Handle API errors
@@ -351,13 +349,13 @@ export class AnthropicProviderNew extends BaseProvider<AnthropicProviderConfig> 
    * @private
    */
   private convertMessagesToAnthropicFormat(messages: Message[]): any[] {
-    return messages.map(message => {
+    return messages.map((message) => {
       // Map role to Anthropic format
       const role = message.role === 'assistant' ? 'assistant' : 'user';
 
       return {
         role,
-        content: message.content
+        content: message.content,
       };
     });
   }

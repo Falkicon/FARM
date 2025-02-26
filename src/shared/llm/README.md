@@ -1,6 +1,7 @@
 # Farm LLM Module
 
-A unified interface for interacting with various Large Language Model (LLM) providers, including OpenAI, Azure OpenAI, Anthropic, and Google.
+A unified interface for interacting with various Large Language Model (LLM) providers, including OpenAI, Azure OpenAI,
+Anthropic, and Google.
 
 ## Features
 
@@ -35,15 +36,13 @@ import { createProvider } from '@farm/llm';
 // Create a provider using the factory function
 const provider = createProvider({
   provider: 'openai',
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 // Generate text
 async function generateResponse() {
   const response = await provider.generateText({
-    messages: [
-      { role: 'user', content: 'What is the capital of France?' }
-    ]
+    messages: [{ role: 'user', content: 'What is the capital of France?' }],
   });
 
   console.log(response.text);
@@ -56,16 +55,14 @@ async function generateStructuredData() {
   const schema = z.object({
     name: z.string(),
     age: z.number(),
-    email: z.string().email()
+    email: z.string().email(),
   });
 
   const response = await provider.generateStructured(
     {
-      messages: [
-        { role: 'user', content: 'Generate a user profile for John Doe, age 30, email john@example.com' }
-      ]
+      messages: [{ role: 'user', content: 'Generate a user profile for John Doe, age 30, email john@example.com' }],
     },
-    schema
+    schema,
   );
 
   console.log(response.data);
@@ -75,7 +72,7 @@ async function generateStructuredData() {
 // Generate embeddings
 async function generateEmbeddings() {
   const response = await provider.generateEmbeddings({
-    input: ['What is the capital of France?', 'What is the capital of Germany?']
+    input: ['What is the capital of France?', 'What is the capital of Germany?'],
   });
 
   console.log(response.embeddings);
@@ -88,6 +85,7 @@ async function generateEmbeddings() {
 For detailed documentation, please refer to:
 
 - [**API Documentation**](./docs/API.md): Comprehensive API reference with examples
+
   - Provider configuration
   - Text generation
   - Structured data generation
@@ -98,12 +96,14 @@ For detailed documentation, please refer to:
   - Testing
 
 - [**Architecture**](./docs/ARCHITECTURE.md): Design decisions and module structure
+
   - Core components
   - Provider architecture
   - Type system
   - Error handling strategy
 
 - [**Testing Guide**](./docs/TESTING.md): Testing approach and best practices
+
   - Test structure and organization
   - Mock responses and utilities
   - Testing asynchronous operations
@@ -111,6 +111,7 @@ For detailed documentation, please refer to:
   - Performance testing
 
 - [**Contributing Guide**](./docs/CONTRIBUTING.md): Guidelines for contributors
+
   - Development setup
   - Adding new providers
   - Testing requirements
@@ -123,7 +124,8 @@ For detailed documentation, please refer to:
 
 ## Current Status
 
-The LLM module is at a stable MVP state with all core functionality implemented and tested. For details on completed features and upcoming work, see the [Roadmap](./docs/ROADMAP.md).
+The LLM module is at a stable MVP state with all core functionality implemented and tested. For details on completed
+features and upcoming work, see the [Roadmap](./docs/ROADMAP.md).
 
 ## Recent Improvements
 
@@ -135,7 +137,8 @@ The LLM module is at a stable MVP state with all core functionality implemented 
 
 ## Support
 
-If you encounter any issues or have questions about the LLM module, please file an issue in the repository or contact the Farm team.
+If you encounter any issues or have questions about the LLM module, please file an issue in the repository or contact
+the Farm team.
 
 ## License
 

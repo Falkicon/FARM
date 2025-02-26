@@ -35,7 +35,7 @@ export const DEFAULT_AZURE_OPENAI_CONFIG: Partial<AzureOpenAIConfig> = {
   temperature: 0.7,
   maxTokens: 1000,
   model: 'text-embedding-3-small',
-  dimensions: 1536
+  dimensions: 1536,
 };
 
 /**
@@ -72,7 +72,7 @@ export function createAzureOpenAIClient(config: AzureOpenAIConfig): OpenAI {
     apiKey: config.apiKey,
     baseURL: `${config.endpoint}/openai/deployments/${config.deploymentName}`,
     defaultQuery: { 'api-version': config.apiVersion },
-    defaultHeaders: { 'api-key': config.apiKey }
+    defaultHeaders: { 'api-key': config.apiKey },
   });
 }
 
@@ -82,7 +82,7 @@ export function createAzureOpenAIClient(config: AzureOpenAIConfig): OpenAI {
 export async function createStreamingResponse(
   client: OpenAI,
   messages: OpenAI.Chat.ChatCompletionMessageParam[],
-  config: Partial<AzureOpenAIConfig> = {}
+  config: Partial<AzureOpenAIConfig> = {},
 ): Promise<Response> {
   try {
     const response = await client.chat.completions.create({
@@ -104,22 +104,26 @@ export async function createStreamingResponse(
           for await (const chunk of response) {
             const content = chunk.choices[0]?.delta?.content;
             if (content) {
-              controller.enqueue(new TextEncoder().encode(JSON.stringify({
-                content,
-                model: config.deploymentName,
-                usage: {
-                  prompt_tokens: 0,
-                  completion_tokens: 0,
-                  total_tokens: 0
-                }
-              })));
+              controller.enqueue(
+                new TextEncoder().encode(
+                  JSON.stringify({
+                    content,
+                    model: config.deploymentName,
+                    usage: {
+                      prompt_tokens: 0,
+                      completion_tokens: 0,
+                      total_tokens: 0,
+                    },
+                  }),
+                ),
+              );
             }
           }
           controller.close();
         } catch (error) {
           controller.error(error);
         }
-      }
+      },
     });
 
     return new Response(stream);

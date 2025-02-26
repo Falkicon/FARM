@@ -44,41 +44,48 @@ themeProvider.addEventListener('theme-change', (event) => {
 For detailed documentation, please refer to:
 
 - [**Architecture**](./docs/ARCHITECTURE.md): Design decisions and system structure
+
   - Core components
   - Singleton pattern
   - Event system
   - Performance considerations
 
 - [**API Reference**](./docs/API.md): Comprehensive API documentation
+
   - ThemeProvider methods
   - Event handling
   - Token management
   - Web component usage
 
 - [**Usage Guide**](./docs/USAGE.md): Step-by-step guide on how to use the theme system
+
   - Basic setup
   - Theme switching
   - Token access
   - Event subscription
 
 - [**Examples**](./docs/EXAMPLES.md): Practical examples of theme system implementation
+
   - Basic usage
   - Advanced scenarios
   - Integration with frameworks
   - Custom theme creation
 
 - [**Testing Guide**](./docs/TESTING.md): Testing approach and best practices
+
   - Unit testing
   - Integration testing
   - Event testing
   - Performance testing
 
 - [**Roadmap**](./docs/ROADMAP.md): Future plans and enhancements
+
   - Planned features
   - Improvements
   - Timeline
 
 - [**Changelog**](./docs/CHANGELOG.md): History of changes and improvements
+
   - Version history
   - Breaking changes
   - New features
@@ -101,7 +108,8 @@ The theme system supports all modern browsers, including:
 
 ## Current Status
 
-The theme system is stable and ready for production use. For details on completed features and upcoming work, see the [Roadmap](./docs/ROADMAP.md).
+The theme system is stable and ready for production use. For details on completed features and upcoming work, see the
+[Roadmap](./docs/ROADMAP.md).
 
 ## Recent Improvements
 
@@ -113,7 +121,8 @@ The theme system is stable and ready for production use. For details on complete
 
 ## Support
 
-If you encounter any issues or have questions about the theme system, please file an issue in the repository or contact the Farm team.
+If you encounter any issues or have questions about the theme system, please file an issue in the repository or contact
+the Farm team.
 
 ## License
 
