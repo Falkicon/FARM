@@ -512,7 +512,7 @@ describe('ThemeProvider', () => {
       // Add a bunch of listeners
       const listeners = [];
       for (let i = 0; i < 10; i++) {
-        listeners.push(provider.onThemeChange(() => { }));
+        listeners.push(provider.onThemeChange(() => {}));
       }
 
       // Verify we have 10 listeners
