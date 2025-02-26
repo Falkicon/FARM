@@ -36,33 +36,42 @@ npm run dev
 # Development
 npm run dev              # Start all development servers
 npm run dev:frontend    # Frontend only (port 3000)
-npm run dev:backend     # Backend only (port 3001)
+npm run dev:backend     # Backend only
+npm run kill-ports      # Kill development server ports
+npm run preview        # Preview production build
 
 # Building
 npm run build           # Build all
 npm run build:frontend  # Build frontend
 npm run build:backend   # Build backend
+npm run build:backend:skip-lib-check # Build backend skipping TypeScript library checks
+npm run start          # Start production server
 
 # Testing
 npm run test           # Run unit tests
-npm run test:ui       # Run tests with UI
-npm run test:coverage # Run tests with coverage
-npm run test:e2e     # Run end-to-end tests with Playwright
-npm run test:e2e:ui  # Run Playwright tests with UI
+npm run test:safe      # Run tests ignoring unhandled rejections
+npm run test:ui        # Run tests with UI
+npm run test:coverage  # Run tests with coverage
+npm run test:e2e      # Run end-to-end tests with Playwright
+npm run test:e2e:ui   # Run Playwright tests with UI
 
 # Documentation
 npm run docs          # Serve documentation
 npm run docs:build    # Build documentation
 npm run docs:deploy   # Deploy to GitHub Pages
+npm run docs:api      # Generate API documentation
+npm run docs:api:watch # Watch and generate API documentation
 
 # Code Quality
-npm run lint         # Run ESLint
-npm run format       # Run Prettier
-npm run typecheck    # Run TypeScript checks
+npm run lint          # Run ESLint
+npm run lint:fix      # Fix ESLint issues
+npm run format        # Run Prettier
+npm run format:check  # Check Prettier formatting
+npm run typecheck     # Run TypeScript checks
 
 # Utilities
-npm run clean        # Clean build artifacts
-npm run clean:all    # Clean everything including node_modules
+npm run clean         # Clean build artifacts
+npm run clean:all     # Clean everything including node_modules
 ```
 
 ## Features
@@ -73,6 +82,14 @@ npm run clean:all    # Clean everything including node_modules
 - 🌐 Universal Router for client-side routing
 - 📱 Responsive design with modern CSS
 - 🔄 Type-safe development with TypeScript
+
+### AI Integration
+- 🤖 Provider-agnostic LLM integration (OpenAI, Azure, Anthropic, Google)
+- 📊 Standardized interfaces for text, structured data, and embeddings
+- 🔄 Comprehensive testing utilities with mock responses
+- 🎯 Type-safe development with TypeScript
+- 🛡️ Built-in error handling and configuration validation
+- 📈 Performance-optimized implementations
 
 ### Backend
 - 🚀 High-performance Fastify server
@@ -105,6 +122,11 @@ farm/
 │   │   ├── prisma/     # Database schema
 │   │   └── config/     # Configuration
 │   └── shared/
+│       ├── llm/        # LLM integration system
+│       │   ├── core/   # Core LLM abstractions
+│       │   ├── providers/ # Provider implementations
+│       │   ├── types/  # Type definitions
+│       │   └── docs/   # LLM system docs
 │       ├── types/      # Shared types
 │       └── utils/      # Shared utilities
 ├── tests/
@@ -125,6 +147,15 @@ Visit our [comprehensive documentation](https://falkicon.github.io/farm) for:
 - Security Best Practices
 - Performance Optimization
 
+### Module Documentation
+
+Each major module includes its own comprehensive documentation:
+
+- **LLM Module**: See [src/shared/llm/README.md](src/shared/llm/README.md) for the LLM integration system documentation
+- **Theme System**: See [src/shared/theme/README.md](src/shared/theme/README.md) for the theme system documentation
+
+These module-specific READMEs provide detailed information about features, usage examples, and architecture. For known issues and limitations, see [docs/KNOWN-ISSUES.md](docs/KNOWN-ISSUES.md).
+
 ## Contributing
 
 We welcome contributions! Please see our [Contributing Guide](docs/contributing.md) for details on:
@@ -136,3 +167,54 @@ We welcome contributions! Please see our [Contributing Guide](docs/contributing.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## AI Integration with LLM Module
+
+The LLM module provides a unified interface for interacting with various Large Language Model providers:
+
+### Core Features
+- Support for multiple providers (OpenAI, Azure, Anthropic, Google)
+- Text generation for chat and completion tasks
+- Structured data generation with schema validation
+- Embeddings generation for semantic search
+- Streaming responses for real-time interactions
+- Tool calling for function execution
+
+### Performance and Quality
+- Automatic test environment detection
+- Standardized mock responses for testing
+- Comprehensive error handling
+- Type-safe interfaces with TypeScript
+
+### Example Usage
+```typescript
+import { createProvider } from '@shared/llm';
+
+// Initialize LLM provider
+const provider = createProvider({
+    provider: 'openai',
+    apiKey: process.env.OPENAI_API_KEY,
+    model: 'gpt-4'
+});
+
+// Generate text
+const response = await provider.generateText({
+    messages: [
+        { role: 'user', content: 'Hello, AI!' }
+    ]
+});
+
+console.log(response.content);
+```
+
+## Known Issues
+
+See [Known Issues](docs/KNOWN-ISSUES.md) for a list of current issues and workarounds.
+
+## Documentation
+
+- [API Documentation](docs/API.md)
+- [Architecture Overview](ARCHITECTURE.md)
+- [Known Issues](docs/KNOWN-ISSUES.md)
+- [Contributing Guidelines](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)

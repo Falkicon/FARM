@@ -20,11 +20,19 @@ body {
 
 .header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 2rem;
+}
+
+.header-actions {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.header-actions a {
+  display: inline-flex;
+  text-decoration: none;
 }
 
 .info-grid {

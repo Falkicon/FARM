@@ -1,0 +1,11 @@
+---
+description: Security guidelines covering HTTP headers, CSP, CORS, and sanitization of inputs and outputs.
+globs: *.{js,ts,tsx}
+---
+# Security Guidelines
+
+- **Headers:** Ensure proper HTTP security headers.
+- **CSP:** Implement a robust Content Security Policy.
+- **CORS:** Set CORS policy to internal.
+- **Input Validation:** Strict validation.
+- **Output Sanitization:** Always sanitize outputs.

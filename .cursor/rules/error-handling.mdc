@@ -1,0 +1,10 @@
+---
+description: Error handling practices including validation, error boundaries, logging, and recovery.
+globs: *.{js,ts,tsx}
+---
+# Error Handling
+
+- **Validation:** Use Zod for runtime validation.
+- **Boundaries:** Implement error boundaries in components.
+- **Logging:** Include contextual information with every log.
+- **Recovery:** Provide graceful fallbacks for errors.

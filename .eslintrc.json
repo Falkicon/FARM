@@ -109,8 +109,7 @@
         "*.mjs",
         "*.config.js",
         "*.config.cjs",
-        "postcss.config.js",
-        "tailwind.config.js"
+        "postcss.config.js"
       ],
       "extends": [
         "eslint:recommended"

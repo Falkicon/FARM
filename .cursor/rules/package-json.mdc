@@ -1,0 +1,124 @@
+---
+description: Guidelines for maintaining and updating npm scripts in package.json. Focus on script naming, chaining commands, and automation best practices.
+globs: package.json
+---
+# Best Practices for `@package.json`
+
+[package.json](mdc:package.json)
+
+## 1. Essential Fields
+
+- **`name`**  
+  Assign a unique and descriptive name to your project. For organization-specific packages, consider using scoped names.
+
+- **`version`**  
+  Implement [Semantic Versioning (SemVer)](mdc:https:/semver.org) to clearly communicate the nature of changes in your project.
+
+- **`description`**  
+  Provide a concise summary of your project to aid discoverability and understanding.
+
+- **`keywords`**  
+  Include relevant keywords to enhance searchability.
+
+- **`license`**  
+  Specify the licensing information to clarify usage rights.
+
+- **`repository`**  
+  Link to your project's version control repository for easy access.
+
+- **`bugs`**  
+  (Optional but encouraged) Provide a link or email to report issues. This makes it easier for users to find the appropriate channel for bug reporting.
+
+- **`homepage`**  
+  (Optional but encouraged) Provide a project homepage or documentation URL for quick reference.
+
+- **`engines`**  
+  (Optional but useful) Specify the Node.js (and possibly npm or yarn) versions you expect, e.g.,
+  ```json
+  "engines": {
+    "node": ">=14 <18"
+  }
+  ```
+  This can help ensure contributors use compatible versions.
+
+## 2. Dependency Management
+
+- **Categorization**  
+  - **`dependencies`**: List packages required for the application to run.  
+  - **`devDependencies`**: List packages needed only during development and testing.
+
+- **Versioning**  
+  - **Caret (`^`)**: Allows updates that do not change the leftmost non-zero digit. For example, `^1.2.3` permits versions up to but not including `2.0.0`.  
+  - **Tilde (`~`)**: Allows updates to the most recent patch version. For example, `~1.2.3` permits versions up to but not including `1.3.0`.  
+  - If you need absolute certainty in versions, pin them exactly (e.g., `1.2.3`), but be mindful of potential security updates in patch and minor releases.
+
+- **Consistency**  
+  - Commit both `package.json` and `package-lock.json` (or `yarn.lock`) to version control to ensure consistent installations across environments.  
+  - Use `npm ci` (or `yarn install --frozen-lockfile`) for clean installations in continuous integration environments to ensure reproducibility.
+
+## 3. Scripts and Automation
+
+- **Naming and Grouping**  
+  - **Development**: `start`, `dev`, `lint`  
+  - **Testing**: `test`, `test:watch`  
+  - **Building**: `build`, `build:prod`  
+  - **Deployment**: `deploy`, `release`
+
+- **Cross-Platform Compatibility**  
+  - Avoid shell-specific syntax in scripts. If you need environment variables, consider using packages like `cross-env`.  
+  - For parallel tasks, consider tools like `concurrently` or `npm-run-all` which work across operating systems.
+
+- **Chaining**  
+  - Use `&&` for sequential execution where environment compatibility is ensured. For more complex parallel or cross-platform tasks, consider the tools above:
+    ```json
+    "scripts": {
+      "build": "webpack --mode production",
+      "deploy": "npm run build && firebase deploy"
+    }
+    ```
+
+- **Pre and Post Hooks**  
+  - Define scripts that run before or after other scripts by prefixing them with `pre` or `post`:
+    ```json
+    "scripts": {
+      "prebuild": "npm run lint",
+      "build": "webpack --mode production",
+      "postbuild": "npm run test"
+    }
+    ```
+
+- **Documentation**  
+  - Update the project README (or dedicated documentation) with descriptions for any modified or added scripts to ensure clarity for all contributors.
+
+## 4. Version Control
+
+- **Commit `package-lock.json` or `yarn.lock`**  
+  Ensures that all collaborators and deployment environments use the exact same versions of dependencies, leading to consistent behavior.
+
+- **Semantic Versioning**  
+  Follow SemVer guidelines in your `version` field to communicate the impact of changes clearly.
+
+## 5. Security Practices
+
+- **Regular Audits**  
+  Use `npm audit` (or `yarn audit`) to identify and address vulnerabilities in dependencies.
+
+- **Minimal Dependencies**  
+  Only include necessary dependencies to reduce the attack surface and simplify maintenance.
+
+- **Scoped Packages**  
+  Use scoped packages (e.g., `@yourorg/package-name`) to prevent name conflicts and enhance security.
+
+## 6. Documentation
+
+- **Comprehensive Metadata**  
+  Ensure fields like `name`, `version`, `description`, `keywords`, `repository`, and `license` are accurately filled to facilitate understanding and usage.
+
+- **Usage Instructions**  
+  Provide clear instructions on how to install and use your package, including any necessary configuration steps.
+
+- **Changelog**  
+  (Optional but recommended) Maintain a `CHANGELOG.md` or update release notes for major changes that correspond to new `version` entries.
+
+
+.

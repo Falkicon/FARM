@@ -10,7 +10,8 @@
     "*.js": "javascript",
     "*.ts": "typescript",
     "*.tsx": "typescriptreact",
-    "*.ps1": "powershell"
+    "*.ps1": "powershell",
+    ".cursorrules": "plaintext"
   },
   "files.eol": "\n",
   "[powershell]": {

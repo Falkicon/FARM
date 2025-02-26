@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ButtonDefinition, DividerDefinition, SpinnerDefinition, TextDefinition } from '@fluentui/web-components';
-import { CardDefinition } from '@fabric-msft/fabric-web';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+// Remove Fluent UI imports since we'll mock them
+// import { ButtonDefinition, DividerDefinition, SpinnerDefinition, TextDefinition } from '@fluentui/web-components';
+// import { CardDefinition } from '@fabric-msft/fabric-web';
 
 describe('SystemInfo', () => {
   const mockSystemInfo = {
@@ -24,12 +25,73 @@ describe('SystemInfo', () => {
   };
 
   beforeEach(() => {
-    // Define web components
-    ButtonDefinition.define(customElements);
-    CardDefinition.define(customElements);
-    DividerDefinition.define(customElements);
-    SpinnerDefinition.define(customElements);
-    TextDefinition.define(customElements);
+    // Clear module cache
+    vi.resetModules();
+
+    // Clear any intervals
+    vi.clearAllTimers();
+
+    // Mock setInterval to prevent automatic updates
+    vi.spyOn(global, 'setInterval').mockImplementation(() => {
+      return setTimeout(() => {}, 0) as unknown as NodeJS.Timeout;
+    });
+
+    // Mock web components
+    class MockFluentSpinner extends HTMLElement {
+      constructor() {
+        super();
+        this.innerHTML = '<div class="spinner"></div>';
+      }
+    }
+
+    class MockFluentCard extends HTMLElement {
+      constructor() {
+        super();
+      }
+    }
+
+    class MockFluentText extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      get appearance() {
+        return this.getAttribute('appearance') || '';
+      }
+
+      set appearance(value) {
+        this.setAttribute('appearance', value);
+      }
+    }
+
+    class MockFluentButton extends HTMLElement {
+      constructor() {
+        super();
+      }
+    }
+
+    class MockFluentDivider extends HTMLElement {
+      constructor() {
+        super();
+      }
+    }
+
+    // Register mock components if not already defined
+    if (!customElements.get('fluent-spinner')) {
+      customElements.define('fluent-spinner', MockFluentSpinner);
+    }
+    if (!customElements.get('fluent-card')) {
+      customElements.define('fluent-card', MockFluentCard);
+    }
+    if (!customElements.get('fluent-text')) {
+      customElements.define('fluent-text', MockFluentText);
+    }
+    if (!customElements.get('fluent-button')) {
+      customElements.define('fluent-button', MockFluentButton);
+    }
+    if (!customElements.get('fluent-divider')) {
+      customElements.define('fluent-divider', MockFluentDivider);
+    }
 
     // Mock fetch API
     global.fetch = vi.fn().mockImplementation(() =>
@@ -41,6 +103,11 @@ describe('SystemInfo', () => {
 
     // Reset the DOM
     document.body.innerHTML = '';
+  });
+
+  afterEach(() => {
+    // Restore original setInterval
+    vi.restoreAllMocks();
   });
 
   it('should render system info correctly', async () => {
@@ -55,8 +122,6 @@ describe('SystemInfo', () => {
 
     // Import dynamically to ensure DOM is ready
     const { updateSystemInfo } = await import('../index');
-
-    // Call the update function directly
     await updateSystemInfo();
 
     // Wait for content to be updated
@@ -128,39 +193,37 @@ describe('SystemInfo', () => {
       </div>
     `;
 
-    // Set up event listener
-    document.addEventListener('DOMContentLoaded', () => {
-      const refreshButton = document.getElementById('refreshButton');
-      if (refreshButton) {
-        refreshButton.addEventListener('click', () => {
-          import('../index').then((module) => {
-            module.updateSystemInfo();
-          });
-        });
-      }
-    });
+    // Set up fetch mock
+    const fetchMock = vi.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockSystemInfo),
+      }),
+    );
+    global.fetch = fetchMock;
 
-    // Trigger DOMContentLoaded
+    // Import the module but don't need to extract updateSystemInfo
+    await import('../index');
+
+    // Trigger DOMContentLoaded to set up click handler
     document.dispatchEvent(new Event('DOMContentLoaded'));
 
-    // Initial load
-    const { updateSystemInfo } = await import('../index');
-    await updateSystemInfo();
+    // Wait for initial fetch and DOM update
     await vi.waitFor(() => document.querySelector('fluent-card'));
 
-    // Clear the fetch mock calls
-    vi.clearAllMocks();
+    // Clear any intervals and reset fetch mock
+    vi.clearAllTimers();
+    fetchMock.mockClear();
 
     // Click refresh button
     const refreshButton = document.getElementById('refreshButton') as HTMLButtonElement;
     expect(refreshButton).toBeTruthy();
     refreshButton.click();
 
-    // Wait for the async operation
-    await vi.waitFor(() => (global.fetch as any).mock.calls.length > 0);
+    // Wait for the fetch call
+    await vi.waitFor(() => fetchMock.mock.calls.length === 1);
 
-    // Verify fetch was called again
-    expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch).toHaveBeenCalledWith('http://localhost:3001/api/system/info');
+    // Verify fetch was called with the correct URL
+    expect(fetchMock).toHaveBeenCalledWith('http://localhost:3001/api/system/info');
   });
 });

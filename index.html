@@ -1,12 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Web App</title>
-  </head>
-  <body>
-    <app-shell id="app"></app-shell>
-    <script type="module" src="/src/frontend/index.ts"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FARM Stack</title>
+  <link rel="stylesheet" href="/src/frontend/styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <fluent-text size="700" weight="bold">FARM</fluent-text>
+      <fluent-text size="400">Modern web application boilerplate with FAST Element, Fluent UI Web Components, and
+        Fastify</fluent-text>
+      <div class="header-actions">
+        <a href="/src/shared/agents/docs/examples/index.html" style="text-decoration: none;">
+          <fluent-button appearance="accent">View Agent Examples</fluent-button>
+        </a>
+        <fluent-button id="refreshButton" appearance="primary">Refresh Data</fluent-button>
+      </div>
+    </header>
+
+    <main>
+      <fluent-text size="600" weight="semibold">System Information</fluent-text>
+      <div id="systemInfo" class="info-grid">
+        <fluent-spinner></fluent-spinner>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="/src/frontend/index.ts"></script>
+</body>
+
 </html>

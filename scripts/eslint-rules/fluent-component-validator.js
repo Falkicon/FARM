@@ -2169,11 +2169,31 @@ function checkThemeSetup(node) {
         hasThemeImport = true;
       }
 
-      // Check for setTheme call
+      // Check for setTheme call directly in program body
       if (statement.type === AST_NODE_TYPES.ExpressionStatement &&
         statement.expression.type === AST_NODE_TYPES.CallExpression &&
         statement.expression.callee.name === 'setTheme') {
         hasThemeSet = true;
+      }
+
+      // Check for setTheme call inside conditional statements
+      if (statement.type === AST_NODE_TYPES.IfStatement) {
+        const checkForSetTheme = (node) => {
+          if (node.type === AST_NODE_TYPES.BlockStatement) {
+            node.body.forEach(stmt => {
+              if (stmt.type === AST_NODE_TYPES.ExpressionStatement &&
+                stmt.expression.type === AST_NODE_TYPES.CallExpression &&
+                stmt.expression.callee.name === 'setTheme') {
+                hasThemeSet = true;
+              }
+            });
+          }
+        };
+
+        checkForSetTheme(statement.consequent);
+        if (statement.alternate) {
+          checkForSetTheme(statement.alternate);
+        }
       }
     });
   }
@@ -2184,6 +2204,8 @@ function checkThemeSetup(node) {
 function checkEventListenerCleanup(node) {
   let hasAddListener = false;
   let hasRemoveListener = false;
+  let hasMediaQueryListener = false;
+  let hasMediaQueryCleanup = false;
 
   // Check for event listener cleanup in component disconnectedCallback
   if (node.type === AST_NODE_TYPES.ClassDeclaration) {
@@ -2198,6 +2220,13 @@ function checkEventListenerCleanup(node) {
               statement.expression.callee.property?.name === 'addEventListener') {
               hasAddListener = true;
             }
+
+            // Check for mediaQueryListener assignment
+            if (statement.type === AST_NODE_TYPES.ExpressionStatement &&
+              statement.expression.type === AST_NODE_TYPES.AssignmentExpression &&
+              statement.expression.left.property?.name === 'mediaQueryListener') {
+              hasMediaQueryListener = true;
+            }
           });
         }
         if (member.key.name === 'disconnectedCallback') {
@@ -2209,10 +2238,22 @@ function checkEventListenerCleanup(node) {
               statement.expression.callee.property?.name === 'removeEventListener') {
               hasRemoveListener = true;
             }
+
+            // Check for mediaQueryListener cleanup
+            if (statement.type === AST_NODE_TYPES.IfStatement &&
+              statement.test.type === AST_NODE_TYPES.MemberExpression &&
+              statement.test.property?.name === 'mediaQueryListener') {
+              hasMediaQueryCleanup = true;
+            }
           });
         }
       }
     });
+  }
+
+  // If we have a mediaQueryListener and it's cleaned up, don't report an issue
+  if (hasMediaQueryListener && hasMediaQueryCleanup) {
+    return false;
   }
 
   return hasAddListener && !hasRemoveListener;

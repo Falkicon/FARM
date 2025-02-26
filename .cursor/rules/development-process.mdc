@@ -1,0 +1,11 @@
+---
+description: Guidelines for the overall development process including testing strategy, workflow, quality assurance, and integration practices.
+globs: *.{js,ts,tsx}
+---
+# Development Process
+
+- **Testing:** Implement comprehensive testing with high coverage.
+- **Workflow:** Use static type checking and linting in pre-commit hooks.
+- **Quality:** Follow code quality gates and standards.
+- **Context:** Review the project state before modifications.
+- **Integration:** Ensure new code integrates smoothly with the existing architecture.
