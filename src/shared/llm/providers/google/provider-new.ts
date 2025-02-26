@@ -5,12 +5,11 @@
  * @since 1.0.0
  */
 
-import { GoogleGenerativeAI, GenerativeModel, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 
 import { BaseProvider } from '../../core/base-provider';
-import { validateConfig } from '../../core/config';
 import { ConfigurationError } from '../../core/errors';
 import {
   Message,
@@ -21,7 +20,6 @@ import {
   TextGenerationResponse,
   StructuredDataResponse
 } from '../../types/core';
-import { createMockTextResponse, createMockStructuredResponse } from '../../core/mocks';
 
 /**
  * Configuration options for the Google provider.
@@ -372,24 +370,26 @@ export class GoogleProviderNew extends BaseProvider<GoogleProviderConfig> {
   }
 
   /**
-   * Generates embeddings for the provided text.
+   * Generates embeddings for the given input.
    *
-   * @param options - The options for embeddings generation.
-   * @throws {Error} Google Gemini does not support embeddings generation through this SDK.
+   * Note: Google Gemini does not currently support embeddings generation through this SDK.
    *
+   * @param options - The embedding options.
+   * @throws {Error} Always throws an error since embeddings are not supported.
    * @example
-   * ```typescript
+   * ```ts
    * try {
-   *   const response = await provider.generateEmbeddings({
-   *     input: 'Hello, world!'
-   *   });
+   *   await provider.generateEmbeddings({ input: 'Hello, world!' });
    * } catch (error) {
    *   console.error(error.message); // "Google Gemini does not support embeddings generation through this SDK"
    * }
    * ```
    */
   async generateEmbeddings(options: EmbeddingOptions): Promise<EmbeddingResponse> {
-    throw new Error('Google Gemini does not support embeddings generation through this SDK');
+    // Log the options for debugging purposes
+    console.log('Embedding options that cannot be used:', options);
+
+    throw new Error(`Google Gemini does not support embeddings generation through this SDK for input: ${JSON.stringify(options.input)}`);
   }
 
   /**

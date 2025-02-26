@@ -6,7 +6,7 @@ import {
   ElementStyles,
   ElementController
 } from '@microsoft/fast-element';
-import { baseStyles, colorTokens, typographyTokens, spacingTokens, borderTokens, shadowTokens, animationTokens } from './design-tokens';
+import { colorTokens, typographyTokens, spacingTokens, borderTokens, shadowTokens, animationTokens } from './design-tokens';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 export type ThemeTokenName = string;
@@ -108,25 +108,11 @@ const template = html<ThemeProvider>`
   </template>
 `;
 
-// Define styles but don't use them directly - they're used by createThemeStyles
-const _lightStyles = css`
-  ${baseStyles}
-  :host {
-    color-scheme: light;
-    --background: var(--neutral-layer-1);
-    --foreground: var(--neutral-foreground-rest);
-  }
-`;
+// Note: Light theme styles would use baseStyles with color-scheme: light
+// and set --background to var(--neutral-layer-1) and --foreground to var(--neutral-foreground-rest)
 
-// Define styles but don't use them directly - they're used by createThemeStyles
-const _darkStyles = css`
-  ${baseStyles}
-  :host {
-    color-scheme: dark;
-    --background: var(--neutral-layer-1);
-    --foreground: var(--neutral-foreground-rest);
-  }
-`;
+// Note: Dark theme styles would use baseStyles with color-scheme: dark
+// and set --background to var(--neutral-layer-1) and --foreground to var(--neutral-foreground-rest)
 
 const styles = css`
   :host {
@@ -364,8 +350,6 @@ export class ThemeProvider extends FASTElement {
         to: newTheme,
         mode: this.mode
       });
-
-      const previousTheme = this.currentTheme;
 
       // Update theme synchronously to avoid batching issues
       document.documentElement.setAttribute('theme', newTheme);
@@ -756,12 +740,7 @@ export class ThemeProvider extends FASTElement {
       throw new ThemeError('Token name cannot be empty');
     }
 
-    // Track token usage if debug mode is enabled
     if (ThemeProvider.isDebugMode) {
-      // Get the component name for tracking
-      const componentName = this.tagName.toLowerCase();
-      const key = `${tokenName}:${componentName}`;
-
       // Update existing entry or create a new one
       this.trackTokenUsage(tokenName);
     }

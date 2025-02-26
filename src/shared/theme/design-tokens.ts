@@ -166,16 +166,90 @@ const wrapWithValidation = <T extends Record<string, any>>(obj: T): T => {
   });
 };
 
-// Define the token record type first
+// Define specific interfaces for the color tokens structure
+interface BrandColors {
+  primary: string;
+  secondary: string;
+  tertiary: string;
+}
+
+interface NeutralColors {
+  background: string;
+  foreground: string;
+  border: string;
+  divider: string;
+}
+
+interface StatusColors {
+  success: string;
+  warning: string;
+  error: string;
+  info: string;
+}
+
+interface AccentColors {
+  base: string;
+  hover: string;
+  pressed: string;
+  selected: string;
+}
+
+interface ForegroundColors {
+  base: string;
+  secondary: string;
+  tertiary: string;
+  disabled: string;
+}
+
+interface BackgroundColors {
+  canvas: string;
+  layer1: string;
+  layer2: string;
+  layer3: string;
+  layer4: string;
+}
+
+interface StrokeColors {
+  base: string;
+  accessible: string;
+  disabled: string;
+  focus: string;
+}
+
+interface FabricColors {
+  accent: AccentColors;
+  foreground: ForegroundColors;
+  background: BackgroundColors;
+  stroke: StrokeColors;
+}
+
+interface CompoundColors {
+  buttonFace: string;
+  buttonText: string;
+  fieldBorder: string;
+  focusStroke: string;
+  cardBackground: string;
+  cardShadow: string;
+}
+
+interface ColorTokensStructure {
+  brand: BrandColors;
+  neutral: NeutralColors;
+  status: StatusColors;
+  fabric: FabricColors;
+  compound: CompoundColors;
+}
+
+// Define the token record type for simpler tokens
 export type TokenRecord = Record<string, string | number>;
 
-// Then define the tokens
-export const colorTokens: TokenRecord = wrapWithValidation({
+// Then define the tokens with the specific structure
+export const colorTokens = wrapWithValidation({
   // Brand Colors
   brand: {
-    primary: 'var(--accent-fill-rest)' as ColorToken,
-    secondary: 'var(--accent-fill-hover)' as ColorToken,
-    tertiary: 'var(--accent-fill-active)' as ColorToken,
+    primary: 'var(--accent-fill-rest)',
+    secondary: 'var(--accent-fill-hover)',
+    tertiary: 'var(--accent-fill-active)',
   },
 
   // Neutral Colors
@@ -232,7 +306,7 @@ export const colorTokens: TokenRecord = wrapWithValidation({
     cardBackground: 'var(--card-background)',
     cardShadow: 'var(--card-shadow)',
   }
-} as const);
+} as ColorTokensStructure);
 
 // Memoize computed values for performance
 const memoizedSpacing = new Map<number, string>();
@@ -569,7 +643,7 @@ export const isValidToken = (token: unknown): token is string => {
 };
 
 // Define token types based on the keys
-export type ColorToken = keyof typeof colorTokens;
+export type ColorToken = string;
 export type TypographyToken = keyof typeof typographyTokens;
 export type SpacingToken = keyof typeof spacingTokens;
 export type BorderToken = keyof typeof borderTokens;

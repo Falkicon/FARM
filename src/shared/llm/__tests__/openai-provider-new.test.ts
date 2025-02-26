@@ -8,9 +8,6 @@ import { ConfigurationError, AuthenticationError, RateLimitError, APIError } fro
 import * as envModule from '../core/env';
 
 describe('OpenAIProviderNew', () => {
-  // Save original environment
-  const originalEnv = { ...process.env };
-
   // Mock the isTestEnvironment function
   const isTestEnvironmentMock = vi.fn();
 

@@ -3,7 +3,6 @@
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GoogleAuth } from 'google-auth-library';
 import type { LLMConfig } from '../../core/base';
 
 /**
@@ -70,18 +69,13 @@ export function createGoogleClient(config: GoogleConfig): GoogleGenerativeAI {
 
   // If service account credentials are provided, use them
   if (config.serviceAccountCredentials) {
-    const auth = new GoogleAuth({
-      credentials: {
-        client_email: config.serviceAccountCredentials.clientEmail,
-        private_key: config.serviceAccountCredentials.privateKey,
-        project_id: config.serviceAccountCredentials.projectId,
-      },
-      scopes: ['https://www.googleapis.com/auth/cloud-platform']
-    });
+    // Log that we're using service account credentials
+    console.log(`Using service account credentials for ${config.serviceAccountCredentials.clientEmail}`);
 
-    // Create client with auth
-    // Note: The Gemini API doesn't directly support service account auth in the same way
-    // This is a placeholder for future implementation
+    // Note: In a real implementation, we would use service account credentials to create an authenticated client
+    // For example: return new GoogleGenerativeAI({ auth: createAuthFromServiceAccount(config.serviceAccountCredentials) });
+
+    // For now, throw an error since this is not fully implemented
     throw new Error('Service account authentication is not yet supported for Google Gemini');
   }
 
@@ -98,8 +92,9 @@ export async function createStreamingResponse(
   config: Partial<GoogleConfig> = {}
 ): Promise<Response> {
   try {
+    // Get the model
     const model = client.getGenerativeModel({
-      model: config.model ?? DEFAULT_GOOGLE_CONFIG.model!,
+      model: config.model ?? DEFAULT_GOOGLE_CONFIG.model ?? 'gemini-pro',
       generationConfig: {
         maxOutputTokens: config.maxTokens ?? DEFAULT_GOOGLE_CONFIG.maxTokens,
         temperature: config.temperature ?? DEFAULT_GOOGLE_CONFIG.temperature,
@@ -107,7 +102,6 @@ export async function createStreamingResponse(
     });
 
     // Convert messages to Google format
-    const chatSession = model.startChat();
     const prompt = convertMessagesToPrompt(messages);
 
     // Start streaming generation

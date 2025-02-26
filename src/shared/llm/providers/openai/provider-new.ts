@@ -216,6 +216,9 @@ export class OpenAIProviderNew extends BaseProvider<OpenAIConfig> {
               const args = JSON.parse(toolCall.function.arguments);
               const result = await toolFunction(args);
 
+              // Log the result for debugging
+              console.log(`Tool ${toolName} returned:`, result);
+
               toolCalls.push({
                 id: toolCall.id,
                 name: toolName,

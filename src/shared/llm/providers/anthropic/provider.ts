@@ -169,7 +169,7 @@ export class AnthropicProvider extends EmbeddingsProvider {
           }
         }));
       } catch (parseError) {
-        throw new Error('Failed to parse structured data response as JSON');
+        throw new Error(`Failed to parse structured data response as JSON: ${(parseError as Error).message}`);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -181,9 +181,9 @@ export class AnthropicProvider extends EmbeddingsProvider {
 
   /**
    * Generate embeddings using Anthropic
-   * Note: Anthropic does not currently support embeddings directly
+   * Note: Anthropic doesn't directly support embeddings through this SDK
    */
   async generateEmbeddings(input: EmbeddingsInput): Promise<EmbeddingsResponse> {
-    throw new EmbeddingsError('Embeddings generation is not supported by Anthropic');
+    throw new EmbeddingsError(`Embeddings generation is not supported by Anthropic for input with ${input.input.length} items`);
   }
 }

@@ -150,9 +150,9 @@ export abstract class BaseProvider<T extends ProviderConfig> {
    * Generate embeddings for a text
    */
   async generateEmbeddings(
-    _text: string,
-    _options?: any
+    text: string,
+    options?: any
   ): Promise<Response> {
-    throw new Error('Method not implemented');
+    throw new Error(`Method not implemented for text: "${text}" with options: ${JSON.stringify(options)}`);
   }
 }

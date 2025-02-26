@@ -59,26 +59,23 @@ describe('Google Provider', () => {
         maxTokens: 500
       });
 
-      // @ts-ignore - accessing protected property for testing
+      // @ts-expect-error - accessing protected property for testing
       expect(provider.config.model).toBe('gemini-1.5-pro');
-      // @ts-ignore - accessing protected property for testing
+      // @ts-expect-error - accessing protected property for testing
       expect(provider.config.temperature).toBe(0.5);
-      // @ts-ignore - accessing protected property for testing
+      // @ts-expect-error - accessing protected property for testing
       expect(provider.config.maxTokens).toBe(500);
     });
 
     it('should handle invalid API key', async () => {
-      // @ts-expect-error - Testing invalid configuration
+      // Create provider with invalid API key
       const provider = new GoogleProvider({ apiKey: 'invalid' });
 
-      // @ts-expect-error - Testing error handling
-      const response = await provider.generateText('Test prompt');
+      // Mock the generateContent method to reject with an error
+      mockGenerateContent.mockRejectedValueOnce(new Error('Invalid API key'));
 
-      // @ts-expect-error - Testing response parsing
-      const data = await response.json();
-
-      expect(data.error).toBeDefined();
-      expect(data.error.message).toContain('API key');
+      // Now test that the error is properly propagated
+      await expect(provider.generateText('Test prompt')).rejects.toThrow('Invalid API key');
     });
   });
 
@@ -95,8 +92,27 @@ describe('Google Provider', () => {
         client: customClient as any
       });
 
-      // @ts-ignore - accessing private property for testing
+      // @ts-expect-error - accessing private property for testing
       expect(provider.client).toBe(customClient);
+    });
+
+    it('should handle rate limits', async () => {
+      const provider = new GoogleProvider({ apiKey: 'test-api-key' });
+
+      // Mock the generateContent method to reject with a rate limit error
+      mockGenerateContent.mockRejectedValueOnce({
+        status: 429,
+        message: 'Rate limit exceeded'
+      });
+
+      // Make the request and check that the status code is properly propagated
+      const response = await provider.generateText('Test prompt that triggers rate limit');
+      expect(response.status).toBe(429);
+
+      // Restore the original mock behavior
+      mockGenerateContent.mockResolvedValue({
+        response: { text: () => mockResponseText }
+      });
     });
   });
 
@@ -126,7 +142,7 @@ describe('Google Provider', () => {
         // Test reading from the stream
         const reader = response.body?.getReader();
         if (reader) {
-          const { value, done } = await reader.read();
+          const { value } = await reader.read();
           const decoded = new TextDecoder().decode(value);
           const data = JSON.parse(decoded);
           expect(data.content).toBe('Test streaming response');
@@ -136,11 +152,20 @@ describe('Google Provider', () => {
       it('should handle rate limits', async () => {
         const provider = new GoogleProvider({ apiKey: 'test-api-key' });
 
-        // @ts-expect-error - Testing error handling
-        const response = await provider.generateText('Test prompt that triggers rate limit');
-        const done = await response.json();
+        // Mock the generateContent method to reject with a rate limit error
+        mockGenerateContent.mockRejectedValueOnce({
+          status: 429,
+          message: 'Rate limit exceeded'
+        });
 
+        // Make the request and check that the status code is properly propagated
+        const response = await provider.generateText('Test prompt that triggers rate limit');
         expect(response.status).toBe(429);
+
+        // Restore the original mock behavior
+        mockGenerateContent.mockResolvedValue({
+          response: { text: () => mockResponseText }
+        });
       });
     });
 

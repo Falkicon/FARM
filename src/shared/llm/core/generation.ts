@@ -61,19 +61,14 @@ export async function generateText(
   // For mock clients in tests, we need to directly call the create method
   // and handle errors differently
   if (isMockClient) {
-    try {
-      // This will either resolve or reject based on the mock implementation
-      await client.chat.completions.create({
-        model: config.model,
-        messages,
-        stream: options.stream,
-        temperature: config.temperature,
-        max_tokens: config.maxTokens,
-      });
-    } catch (error) {
-      // If the mock rejects, we should propagate that rejection
-      throw error;
-    }
+    // This will either resolve or reject based on the mock implementation
+    await client.chat.completions.create({
+      model: config.model,
+      messages,
+      stream: options.stream,
+      temperature: config.temperature,
+      max_tokens: config.maxTokens,
+    });
   }
 
   // Handle streaming

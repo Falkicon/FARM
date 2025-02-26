@@ -4,15 +4,13 @@ import {
   cosineSimilarity,
   euclideanDistance,
   findSimilarEmbeddings,
-  EmbeddingsError,
-  type EmbeddingsResponse
+  EmbeddingsError
 } from '../core/embeddings';
 import {
   OpenAIEmbeddingsProvider,
   DEFAULT_OPENAI_EMBEDDINGS_CONFIG,
   type OpenAIEmbeddingsConfig
 } from '../providers/openai/embeddings';
-import { testUtils } from './setup';
 
 describe('Embeddings Core', () => {
   describe('Vector Operations', () => {

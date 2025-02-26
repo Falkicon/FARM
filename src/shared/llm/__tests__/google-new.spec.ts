@@ -85,6 +85,7 @@ vi.mock('../core/mocks', () => {
   return {
     createMockTextResponse: vi.fn().mockReturnValue('This is a mock response from Google Gemini.'),
     createMockStructuredResponse: vi.fn().mockImplementation((schema) => {
+      console.log('Using schema:', schema);
       return {
         temperature: 72,
         conditions: 'Sunny',

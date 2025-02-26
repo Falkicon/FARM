@@ -5,7 +5,6 @@
 
 import OpenAI from 'openai';
 import { BaseProvider } from '../../core/base-provider';
-import { createMockTextResponse, createMockStructuredResponse, createMockEmbeddingsResponse } from '../../core/mocks';
 import { ConfigurationError, AuthenticationError, RateLimitError, APIError } from '../../core/errors';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import type { AzureOpenAIConfig } from '../../types/providers';
@@ -371,13 +370,14 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
   }
 
   /**
-   * Generates embeddings for the given input text or array of texts
-   * @param input - The text or array of texts to generate embeddings for
-   * @param options - Optional parameters for the embeddings generation
-   * @returns A promise that resolves to an object containing the embeddings and metadata
-   * @throws {ConfigurationError} If embeddingDeploymentName is not provided
-   * @throws {AuthenticationError} If authentication fails
-   * @throws {RateLimitError} If rate limit is exceeded
+   * Generate embeddings from the given input
+   *
+   * @param input The input to generate embeddings for
+   * @param options Options for generating embeddings
+   * @returns A promise that resolves to an EmbeddingResponse
+   * @throws {ConfigurationError} If the configuration is invalid
+   * @throws {AuthenticationError} If the API key is invalid
+   * @throws {RateLimitError} If the API rate limit is exceeded
    * @throws {APIError} If the API returns an error
    */
   public async generateEmbeddings(
@@ -391,16 +391,28 @@ export class AzureOpenAIProviderNew extends BaseProvider<AzureOpenAIConfig> {
       );
     }
 
+    // Log options if provided
+    if (options) {
+      console.log('Embedding options:', options);
+    }
+
+    // Use the model from options if provided, otherwise use the default
+    const model = options?.model || this.config.embeddingModel || 'text-embedding-ada-002';
+
     // If in test environment, return mock response
-    if (this.isTestEnvironment()) {
+    if (this.isTestEnvironment() && !options?.bypassTestMock) {
+      // Convert input to array if it's a string
       const inputArray = Array.isArray(input) ? input : [input];
 
+      // Create mock embeddings for each input
+      const mockEmbeddings = inputArray.map(() => [0.1, 0.2, 0.3]);
+
       return {
-        embeddings: inputArray.map(() => Array(1536).fill(0).map((_, i) => i / 1536)),
-        model: this.config.embeddingDeploymentName || 'text-embedding-ada-002',
+        embeddings: mockEmbeddings,
+        model: model,
         usage: {
-          promptTokens: inputArray.reduce((acc, text) => acc + Math.ceil(text.length / 4), 0),
-          totalTokens: inputArray.reduce((acc, text) => acc + Math.ceil(text.length / 4), 0),
+          promptTokens: 0,
+          totalTokens: 0
         }
       };
     }

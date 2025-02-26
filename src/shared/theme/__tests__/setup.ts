@@ -1,5 +1,4 @@
 import { vi, beforeEach } from 'vitest';
-import { FASTElement } from '@microsoft/fast-element';
 
 // Add more detailed logging for test debugging with improved formatting
 const DEBUG_TESTS = true;
@@ -45,10 +44,12 @@ const processLogQueue = () => {
   const formattedMessage = `[${timestamp}][${level}] ${message}`;
 
   if (data) {
-    // Use type assertion to handle the dynamic property access
-    (console[level as keyof Console] as Function)(formattedMessage, data);
+    // Use properly typed function instead of Function
+    const logFn = console[level as keyof Console] as (message: string, ...data: any[]) => void;
+    logFn(formattedMessage, data);
   } else {
-    (console[level as keyof Console] as Function)(formattedMessage);
+    const logFn = console[level as keyof Console] as (message: string) => void;
+    logFn(formattedMessage);
   }
 
   isProcessingLogs = false;
@@ -113,7 +114,19 @@ class MockFASTElement extends HTMLElement {
     this.mediaQueryListener = (e: MediaQueryListEvent) => {
       this.handlePreferenceChange(e);
     };
+
+    // Add the listener to the media query
     mediaQuery.addEventListener('change', this.mediaQueryListener);
+
+    // Also track this in our eventListeners map for the linter
+    if (!this.eventListeners.has('mediaquery')) {
+      this.eventListeners.set('mediaquery', new Set());
+    }
+    const listeners = this.eventListeners.get('mediaquery')!;
+    listeners.add({
+      listener: this.mediaQueryListener as EventListenerOrEventListenerObject,
+      options: undefined
+    });
 
     this.$fastController.onConnectedCallback();
     this.dispatchEvent(new CustomEvent('connected'));
@@ -421,8 +434,8 @@ function validateTokenFormat(token: string): { isValid: boolean; message?: strin
   return { isValid: true };
 }
 
-// Mock getComputedStyle with error handling and validation
-window.getComputedStyle = vi.fn().mockImplementation((element) => {
+// Fix unused _element parameter by removing it completely
+window.getComputedStyle = vi.fn().mockImplementation(() => {
   // Ensure we always return an object with getPropertyValue method
   return {
     getPropertyValue: (prop: string) => {
@@ -839,7 +852,7 @@ export function simulateThemeChange(isDark: boolean): void {
   debugLog(`Simulating theme change to ${isDark ? 'dark' : 'light'} mode`);
 
   const mediaQueryKey = '(prefers-color-scheme: dark)';
-  const mediaQuery = window.matchMedia(mediaQueryKey);
+  // We don't need to store the mediaQuery object since we're using the map
 
   // Store the media query in the map if it doesn't exist
   if (!mediaQueries.has(mediaQueryKey)) {

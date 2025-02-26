@@ -3,9 +3,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { initializeAzureOpenAIConfig, createAzureOpenAIClient, createStreamingResponse, type AzureOpenAIConfig } from '../providers/azure/config';
+import { initializeAzureOpenAIConfig, createAzureOpenAIClient, type AzureOpenAIConfig } from '../providers/azure/config';
 import { AzureOpenAIProvider } from '../providers/azure/provider';
-import { testUtils } from './setup';
 
 // Mock OpenAI client
 vi.mock('openai', () => ({

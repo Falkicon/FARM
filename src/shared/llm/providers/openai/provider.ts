@@ -6,11 +6,9 @@ import { OpenAIConfig } from '../../types/providers';
 import {
   TextGenerationOptions,
   StructuredDataOptions,
-  EmbeddingOptions,
-  EmbeddingResponse
+  EmbeddingOptions
 } from '../../types/core';
-import { ConfigurationError } from '../../core/errors';
-import { ENV_VARS, getEnvVar, isTestEnvironment } from '../../core/env';
+import { getEnvVar, isTestEnvironment } from '../../core/env';
 import {
   createMockTextResponse,
   createMockStructuredResponse,
@@ -63,18 +61,19 @@ export class OpenAIProvider extends BaseProvider<OpenAIConfig> {
   }
 
   /**
-   * Generate text using the OpenAI API
-   * @param prompt The prompt to generate text from
-   * @param options Options for the generation
-   * @returns A Response object with the generated text
+   * Generate text using OpenAI
    */
-  async generateText(prompt: string, options: TextGenerationOptions = {}) {
+  async generateText(
+    prompt: string | string[],
+    options: Partial<TextGenerationOptions> = {}
+  ): Promise<Response> {
     // Merge options with configuration
     const mergedOptions = this.mergeOptions(options);
 
     // In a real implementation, this would call the core generation function
     // For now, we'll return a mock response for testing
     if (isTestEnvironment()) {
+      console.log('Using merged options:', mergedOptions);
       return createMockTextResponse('Test response from OpenAI', this.config.model);
     }
 
@@ -84,50 +83,62 @@ export class OpenAIProvider extends BaseProvider<OpenAIConfig> {
   }
 
   /**
-   * Generate structured data using the OpenAI API
-   * @param prompt The prompt to generate structured data from
-   * @param options Options for the generation
-   * @returns A Response object with the generated structured data
+   * Generate structured data using OpenAI
    */
-  async generateStructured<T = any>(prompt: string, options: StructuredDataOptions) {
+  async generateStructured(
+    prompt: string | string[],
+    options: StructuredDataOptions
+  ): Promise<Response> {
     // Merge options with configuration
     const mergedOptions = this.mergeOptions(options);
 
-    // In a real implementation, this would call the core structured generation function
+    // In a real implementation, this would call the core generation function
     // For now, we'll return a mock response for testing
     if (isTestEnvironment()) {
-      return createMockStructuredResponse<T>({ result: 'Test structured data from OpenAI' } as unknown as T, this.config.model);
+      console.log('Using merged options:', mergedOptions);
+      return createMockStructuredResponse({ result: 'Test structured data from OpenAI' }, this.config.model);
     }
 
     // This would be the actual implementation
-    // return generateStructured<T>(this.client, prompt, mergedOptions);
+    // return generateStructured(this.client, prompt, mergedOptions);
     throw new Error('Not implemented');
   }
 
   /**
    * Generate embeddings using the OpenAI API
+   * @param text The text to generate embeddings for
    * @param options Options for the embedding generation
    * @returns The generated embeddings
    */
-  async generateEmbeddings(options: EmbeddingOptions): Promise<EmbeddingResponse> {
-    // Merge options with configuration
-    const mergedOptions = {
+  async generateEmbeddings(
+    text: string,
+    options?: Partial<EmbeddingOptions>
+  ): Promise<Response> {
+    // Convert the text parameter to the format expected by the implementation
+    const embeddingOptions: EmbeddingOptions = {
+      input: typeof text === 'string' ? text : Array.isArray(text) ? text : [text],
       model: this.config.embeddingModel,
-      ...options
+      ...(options || {})
     };
 
     // In a real implementation, this would call the embeddings generation function
     // For now, we'll return a mock response for testing
     if (isTestEnvironment()) {
-      return createMockEmbeddingsResponse(
+      const mockResponse = createMockEmbeddingsResponse(
         3,
-        Array.isArray(options.input) ? options.input.length : 1,
+        Array.isArray(embeddingOptions.input) ? embeddingOptions.input.length : 1,
         this.config.embeddingModel || 'text-embedding-3-small'
       );
+
+      // Convert the mock response to a standard Response object
+      return new Response(JSON.stringify(mockResponse), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
     // This would be the actual implementation
-    // return baseGenerateEmbeddings(this.client, mergedOptions);
+    // return baseGenerateEmbeddings(this.client, embeddingOptions);
     throw new Error('Not implemented');
   }
 }

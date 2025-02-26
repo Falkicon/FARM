@@ -202,8 +202,8 @@ describe('SystemInfo', () => {
     );
     global.fetch = fetchMock;
 
-    // Import the module first
-    const { updateSystemInfo } = await import('../index');
+    // Import the module but don't need to extract updateSystemInfo
+    await import('../index');
 
     // Trigger DOMContentLoaded to set up click handler
     document.dispatchEvent(new Event('DOMContentLoaded'));

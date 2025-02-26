@@ -44,6 +44,7 @@ npm run preview        # Preview production build
 npm run build           # Build all
 npm run build:frontend  # Build frontend
 npm run build:backend   # Build backend
+npm run build:backend:skip-lib-check # Build backend skipping TypeScript library checks
 npm run start          # Start production server
 
 # Testing
@@ -205,3 +206,15 @@ const response = await provider.generateText({
 
 console.log(response.content);
 ```
+
+## Known Issues
+
+See [Known Issues](docs/KNOWN-ISSUES.md) for a list of current issues and workarounds.
+
+## Documentation
+
+- [API Documentation](docs/API.md)
+- [Architecture Overview](ARCHITECTURE.md)
+- [Known Issues](docs/KNOWN-ISSUES.md)
+- [Contributing Guidelines](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)

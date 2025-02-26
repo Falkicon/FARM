@@ -3,10 +3,15 @@
  */
 
 import OpenAI from 'openai';
-import { z } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
 import { EmbeddingsProvider, type EmbeddingsInput, type EmbeddingsResponse, EmbeddingsError } from '../../core/embeddings';
 import { initializeAzureOpenAIConfig, createAzureOpenAIClient, createStreamingResponse, type AzureOpenAIConfig } from './config';
+
+// Define message types for API communication
+type MessageRole = 'user' | 'assistant' | 'system';
+type Message = {
+  role: MessageRole;
+  content: string;
+};
 
 /**
  * Azure OpenAI provider implementation
@@ -39,7 +44,7 @@ export class AzureOpenAIProvider extends EmbeddingsProvider {
   ): Promise<Response> {
     try {
       // Prepare messages
-      const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [];
+      const messages: Message[] = [];
 
       // Add system message if provided
       if (options.systemMessage) {

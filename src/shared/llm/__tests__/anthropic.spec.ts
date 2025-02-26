@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { initializeAnthropicConfig, createAnthropicClient, generateAnthropicStream, type AnthropicConfig } from '../providers/anthropic/config';
 import { AnthropicProvider } from '../providers/anthropic/provider';
-import { testUtils } from './setup';
 import type Anthropic from '@anthropic-ai/sdk';
 
 // Mock Anthropic client
