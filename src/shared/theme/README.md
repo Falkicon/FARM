@@ -2,23 +2,6 @@
 
 A robust, type-safe, and performant system for managing design tokens and theme switching in web applications.
 
-## Features
-
-- **Singleton Pattern**: Ensures consistent theme state across the application
-- **Theme Mode Management**: Easily switch between light and dark themes
-- **Type Safety**: Strong typing for all tokens and APIs
-- **Performance Optimization**: Minimal DOM operations and efficient token access
-- **Error Handling**: Comprehensive error handling with fallback values
-- **Event System**: Subscribe to theme changes to update components
-- **CSS Custom Properties**: Leverages native CSS for efficient theme application
-- **Web Component**: Can be used as both a JavaScript API and a Web Component
-
-## Installation
-
-```bash
-npm install @farm/theme
-```
-
 ## Quick Example
 
 ```typescript
@@ -37,6 +20,23 @@ themeProvider.setTheme('dark');
 themeProvider.addEventListener('theme-change', (event) => {
   console.log(`Theme changed to: ${event.detail.theme}`);
 });
+```
+
+## Features
+
+- **Singleton Pattern**: Ensures consistent theme state across the application
+- **Theme Mode Management**: Easily switch between light and dark themes
+- **Type Safety**: Strong typing for all tokens and APIs
+- **Performance Optimization**: Minimal DOM operations and efficient token access
+- **Error Handling**: Comprehensive error handling with fallback values
+- **Event System**: Subscribe to theme changes to update components
+- **CSS Custom Properties**: Leverages native CSS for efficient theme application
+- **Web Component**: Can be used as both a JavaScript API and a Web Component
+
+## Installation
+
+```bash
+npm install @farm/theme
 ```
 
 ## Documentation
@@ -127,3 +127,28 @@ the Farm team.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+
+## Example Usage
+
+```typescript
+import { ThemeProvider } from '@farm/theme';
+
+// Get the singleton instance
+const themeProvider = ThemeProvider.getInstance();
+
+// Access theme tokens
+const primaryColor = themeProvider.getToken('color.primary');
+
+// Switch themes
+themeProvider.setTheme('dark');
+
+// Subscribe to theme changes
+themeProvider.addEventListener('theme-change', (event) => {
+  console.log(`Theme changed to: ${event.detail.theme}`);
+});
+```
+
+## Current Status
+
+The theme system is stable and ready for production use. For details on completed features and upcoming work, see the
+[Roadmap](./docs/ROADMAP.md).
